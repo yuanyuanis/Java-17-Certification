@@ -25,7 +25,7 @@ En la versión 8 de Java Oracle rompe con la forma  que tenía para representar 
 
     import java.time.*;
 
-## 1.A	Creating Date and Times.
+## 1.1	Las Fechas y las zonas horarias.
 
 En el mundo real normalmente usamos las fechas y los timezones como si la otra persona estuviese cerca de nosotros. Por ejemplo, si dices, “Te llamaré a las 11:00 el Lunes, asumes que las 11 significa lo mismo para los dos. Pero si vives en Madrid y la otra persona en New York se necesita ser más específico”. 
 
@@ -48,37 +48,45 @@ Hay una serie de abreviaturas que ayudan a entendernos EST(Eastern Standard Time
 
 Así que para comunicarnos con propiedad con alguien que esté en otra zona horaria tendremos que decir la zona horaria. Podremos quedar con un neoyorkino para una teleconferencia a las 13:00 EST por ejemplo, que significa que en verano quedaremos a las siete de la tarde en Centro Europa.
 
-**LocalDate** → Simplemente un Date, sin timezone ni Time. Por ejemplo la fecha de un cumpleaños, un festivo, el día de fin de año etc.
+## 1.2 Tipos de objectos Java 8 para Fechas.
 
-`2020-05-27`
+**`LocalDate`** → Simplemente un Date, sin timezone ni Time. Por ejemplo la fecha de un cumpleaños, un festivo, el día de fin de año etc.
+
+    2020-05-27
 
 
 
-**LocalTime** → Solo un tiempo, sin Date, ni Zona. Ejemplo es media noche.
+**`LocalTime`** → Solo un tiempo, sin Date, ni Zona. Ejemplo es media noche asociado al timeZone local.
 
-`09:13:07.768`
+    09:13:07.768
 
-**LocalDateTime** → Contiene las dos cosas hora y fecha, asociado a un local.
+**`LocalDateTime`** → Contiene las dos cosas hora y fecha, asociado al timeZone local.
 
-`2015-05-25T09:13:07.768`
+    2015-05-25T09:13:07.768
 
-**ZonedDateTime** → Contiene el además de la fecha y la hora la zona horaria. Un buen ejemplo es cuando, tienes una conferencia a las 9: AM EST … Si vives en Madrid y quieres asistir a esa conferencia tienes que hacer los cálculos para poder asistir. Al igual que si, por ejemplo, un youtuber anuncia de qué va a hacer un directo a las 13:00 EST(Imaginemos que tiene seguidores en todo el mundo) no va a poner en el anuncio con todas las correspondencias de las fechas horarias en todo el mundo, eres tú el que haces los cálculos a partir de su fecha, hora y zona horaria.
+**`ZonedDateTime`** → Contiene el además de la fecha y la hora la zona horaria. Un buen ejemplo es cuando, tienes una conferencia a las 9: AM EST … Si vives en Madrid y quieres asistir a esa conferencia tienes que hacer los cálculos para poder asistir. Al igual que si, por ejemplo, un youtuber anuncia de qué va a hacer un directo a las 13:00 EST(Imaginemos que tiene seguidores en todo el mundo) no va a poner en el anuncio con todas las correspondencias de las fechas horarias en todo el mundo, eres tú el que haces los cálculos a partir de su fecha, hora y zona horaria.
 
-`2015-05-25T09:13:07.769-04:00[America/New_York].`
+    2015-05-25T09:13:07.769-04:00[America/New_York].
 
 
 Con respecto a esto último, señalar que Java usa la ‘T’ para separar Date y Time, cuando lo convierte a String.
 
-¿Qué es GMT? viene de Greenwich Mean Time y es un ‘time zone’ en Europa que es usado como la time zero cuando hablamos precisamente de la Zona Cero, es decir la hora que no tiene +1 o +N o menos -N. 
+## 1.3 ¿Qué es eso de GMT y UTC? 
 
+Viene de Greenwich Mean Time y es un ‘time zone’ en Europa que es usado como la time zero cuando hablamos precisamente de la Zona Cero, es decir la hora que no tiene +1 o +N o menos -N. 
+
+```c
+    GMT 2015-06-20 5:50 // El jodido tiempo absoluto en Greenwich
+```
 ![Meridiano de Greenwich](https://services.meteored.com/img/article/desplazamiento-del-meridiano-de-greenwich---1_1024.jpg)
 
-También habrás oído hablar, si te has tenido que pegar con las fechas de UTC que viene de Coordinated Universal Time que es es un time zone standar(Standar a nivel planetario). Lo importante es que UTC usa al mismo time Zone zero qué GMT.
+También habrás oído hablar, si te has tenido que pegar con las fechas, de UTC ... que viene de Coordinated Universal Time que es es un time zone standar(Standar a nivel planetario). Lo importante a saber es que UTC usa al mismo time Zone zero qué GMT.
 
+Asegurémonos de que comprendemos cómo funciona UTC. Incluimos nombres de time zones en los ejemplos para que sean más fáciles de representar. El examen te dará la UTC compensar. No se espera que memorices ninguna zona horaria.
 
-Asegurémonos de que comprendemos cómo funciona UTC. Incluimos nombres de time zones en los ejemplos para que sean más fáciles de representar. El examen te dará la UTC
-compensar. No se espera que memorices ninguna zona horaria.
-
+```c
+    2015-06-20T07:50+02:00[Europe/Paris]  // El jodido UTC te da la compensacion
+````
 Primero, intentemos averiguar qué tan distantes están estos momentos en el tiempo. Observa cómo la India tiene una compensación de media hora, no una hora completa. Para abordar un problema como este, resta la zona horaria(Time Zone) de la hora. Esto le da el equivalente GMT de la hora:
 
 ```c
@@ -100,7 +108,7 @@ Como vemos en la misma hora UTC hay una diferencia horaria de 4 horas y media en
 
 ```
 
-Intentemos otro más, esta vez con el time en GMT. Recuerda que para hacer los cálculos hay que sumar o restar.
+## 1.4 Instanciando LocalDate
 
 ```java
     LocalDate date1 = LocalDate.of(2015, Month.JANUARY, 20);
@@ -109,7 +117,7 @@ Intentemos otro más, esta vez con el time en GMT. Recuerda que para hacer los c
 
 Las dos fechas son iguales.
 
-Month es un enum . Recuerda que un enum no es un int y no puede ser comparado con uno, por ejemplo:
+`Month` es un enum . Recuerda que un enum no es un int y no puede ser comparado con uno, por ejemplo:
 ```java
     Month month = Month.JANUARY;
     boolean b1 = month == 1; // DOES NOT COMPILE
@@ -125,7 +133,7 @@ El método of está sobrescrito y puedes usar diferentes configuraciones para cr
 ```
 
 
-Podemos usar LocalDateTime para combinar fecha y hora.
+Podemos usar `LocalDateTime` para combinar fecha y hora.
 
 ```java
     LocalDateTime dateTime1 = LocalDateTime.of(2015, Month.JANUARY, 20, 6, 15, 30);
@@ -133,7 +141,7 @@ Podemos usar LocalDateTime para combinar fecha y hora.
 ```
 
 
-Para crear un ZonedDateTime, primero necesitamos obtener la zona horaria deseada. Lo haremos use US / Eastern en nuestros ejemplos
+Para crear un `ZonedDateTime`, primero necesitamos obtener la zona horaria deseada. Lo haremos use US / Eastern en nuestros ejemplos
 
 ```java
     ZoneId zone = ZoneId.of("US/Eastern");
@@ -145,7 +153,7 @@ Para crear un ZonedDateTime, primero necesitamos obtener la zona horaria deseada
 
 
 
-Descubrir su zona horaria es fácil. Simplemente puede imprimir ZoneId.systemDefault(). ZoneId es una clase que también proporciona la nueva API de java 8 
+Descubrir su zona horaria es fácil. Simplemente puede imprimir `ZoneId.systemDefault().` `ZoneId` es una clase que también proporciona la nueva API de java 8 
 
 ```java
     ZoneId.getAvailableZoneIds().stream()
@@ -154,7 +162,7 @@ Descubrir su zona horaria es fácil. Simplemente puede imprimir ZoneId.systemDef
     //This printed 177 lines when we ran it. We prefer the US/Eastern time //zone to America/New_York since it is more general.
 ```
 
-## 1.B  Manipulando fechas y horas.
+## 1.5  Manipulando fechas y horas.
 
 Las fechas y las horas son inmutables, así que tenemos que asegurarnos de pasarla a una variable de referencia, de forma que no sean perdidas. Aquí ejemplos de cómo se suma:
 
@@ -191,9 +199,9 @@ Ejemplos de cómo se resta
 En java 8 es común que los métodos de fecha y hora estén encadenados. Por ejemplo, sin la impresión declaraciones, el ejemplo anterior se podría reescribir de la siguiente manera:
 
 ```java
-LocalDate date = LocalDate.of(2020, Month.JANUARY, 20);
-LocalTime time = LocalTime.of(5, 15);
-LocalDateTime dateTime = LocalDateTime.of(date, time).minusDays(1).minusHours(10).minusSeconds(30);
+    LocalDate date = LocalDate.of(2020, Month.JANUARY, 20);
+    LocalTime time = LocalTime.of(5, 15);
+    LocalDateTime dateTime = LocalDateTime.of(date, time).minusDays(1).minusHours(10).minusSeconds(30);
 
 ```
 Cuando tienes que hacer muchas manipulaciones, este encadenamiento de fechas resulta útil. Existen dos formas en las que los creadores de exámenes pueden intentar engañarte. ¿Qué crees que imprime esto?
@@ -204,10 +212,10 @@ Cuando tienes que hacer muchas manipulaciones, este encadenamiento de fechas res
     System.out.println(date);
 ```
 
-Se imprime el 20 de enero de 2020. Agregar 10 días fue inútil porque el programa ignoró la
-resultado. Siempre que veas tipos inmutables, presta atención para asegurarte de que el valor de retorno de una llamada a un método no se ignora. 
+Se imprime el 20 de enero de 2020. Agregar 10 días fue inútil porque el programa ignoró el resultado. Siempre que veas tipos inmutables, presta atención para asegurarte de que el valor de retorno de una llamada a un método no se ignora. 
 
 El examen también puede probar para ver si recuerda lo que cada los objetos de LocalDate y Time incluyen. ¿Ves lo que está mal aquí?
+
 ```java
     LocalDate date = LocalDate.of(2020, Month.JANUARY, 20);
     date = date.plusMinutes(1); // DOES NOT COMPILE
@@ -215,7 +223,7 @@ El examen también puede probar para ver si recuerda lo que cada los objetos de 
 
 LocalDate no tiene hora, así que no puedes añadirle minutos …
 
-## 1C   Trabajar con periodos:
+## 1.6   Trabajar con periodos:
 ¡Ahora sabes lo suficiente para hacer algo divertido con las fechas! Nuestro zoológico realiza enriquecimiento animal actividades para darles a los animales algo divertido que hacer de vez en cuando. El jefe del zoológico ha decidido cambiar los juguetes todos los meses. Este sistema continuará durante tres meses para ver cómo funciona.
 ```java
     public static void main(String[] args) {
@@ -226,10 +234,10 @@ LocalDate no tiene hora, así que no puedes añadirle minutos …
     private static void performAnimalEnrichment(LocalDate start, LocalDate end) {
         LocalDate upTo = start;
         while (upTo.isBefore(end)) { // check if still before end
-        System.out.println("give new toy: " + upTo);
-        upTo = upTo.plusMonths(1); // add a month
-    }
-}
+            System.out.println("give new toy: " + upTo);
+            upTo = upTo.plusMonths(1); // add a month
+        }   
+    }   
 ```
 
 Este código funciona bien. Agrega un mes a la fecha hasta que llega a la fecha de finalización. El problema es que este método no se puede reutilizar. Nuestro cuidador quiere probar diferentes horarios para ver cuál funciona mejor.
@@ -248,8 +256,9 @@ Por suerte, Java tiene una clase Period class que puede ser pasada como parámet
     Period period) { // uses the generic period
         LocalDate upTo = start;
         while (upTo.isBefore(end)) {
-        System.out.println("give new toy: " + upTo);
-        upTo = upTo.plus(period); // adds the period
+            System.out.println("give new toy: " + upTo);
+            upTo = upTo.plus(period); // adds the period
+        }      
     }
 ```
 
