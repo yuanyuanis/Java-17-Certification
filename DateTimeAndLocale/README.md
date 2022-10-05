@@ -735,7 +735,7 @@ Esta vez, no especificamos ningún código de país, por lo que Java se saltó l
 ¿Lo pillas? Guay, porque hay un giro. Los pasos que hemos discutido hasta ahora son para encontrar el paquete de recursos correspondiente para usarlo como base. No se requiere Java para obtener todas las claves del mismo paquete de recursos. Puede obtenerlos de cualquier paquete de recursos padre correspondiente. 
 
 
-![Descripción de la imagen](./resources/Figure8.jpg)
+![Descripción de la imagen](./resources/Figure8.JPG)
 
 
 ```properties
