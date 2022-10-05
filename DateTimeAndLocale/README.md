@@ -69,7 +69,7 @@ Así que para comunicarnos con propiedad con alguien que esté en otra zona hora
     2015-05-25T09:13:07.769-04:00[America/New_York].
 
 
-Con respecto a esto último, señalar que Java usa la ‘T’ para separar Date y Time, cuando lo convierte a String.
+Señalar que Java usa la ‘T’ para separar Date y Time, cuando lo convierte a String.
 
 ## 1.3 ¿Qué es eso de GMT y UTC? 
 
@@ -80,14 +80,14 @@ Viene de Greenwich Mean Time y es un ‘time zone’ en Europa que es usado como
 ```
 ![Meridiano de Greenwich](https://services.meteored.com/img/article/desplazamiento-del-meridiano-de-greenwich---1_1024.jpg)
 
-También habrás oído hablar, si te has tenido que pegar con las fechas, de UTC ... que viene de Coordinated Universal Time que es es un time zone standar(Standar a nivel planetario). Lo importante a saber es que UTC usa al mismo time Zone zero qué GMT.
+También habrás oído hablar, si te has tenido que pegar con las fechas, de UTC ... que viene de Coordinated Universal Time que es es un time zone standar(Estandar a nivel planetario). Lo importante a saber es que UTC usa al mismo time Zone zero qué GMT.
 
-Asegurémonos de que comprendemos cómo funciona UTC. Incluimos nombres de time zones en los ejemplos para que sean más fáciles de representar. El examen te dará la UTC compensar. No se espera que memorices ninguna zona horaria.
+Asegurémonos de que comprendemos cómo funciona UTC. Incluiremos nombres de time zones(Zonas Horarias) en los ejemplos para que sean más fáciles de representar. El examen te dará la UTC compensar. No se espera que memorices ninguna zona horaria.
 
 ```c
     2015-06-20T07:50+02:00[Europe/Paris]  // El jodido UTC te da la compensacion
 ````
-Primero, intentemos averiguar qué tan distantes están estos momentos en el tiempo. Observa cómo la India tiene una compensación de media hora, no una hora completa. Para abordar un problema como este, resta la zona horaria(Time Zone) de la hora. Esto le da el equivalente GMT de la hora:
+Primero, intentemos averiguar como de distantes están estos momentos en el tiempo. Observa cómo la India tiene una compensación de media hora, no una hora completa. Para abordar un problema como este, resta la zona horaria(Time Zone) de la hora. Esto le da el equivalente GMT de la hora:
 
 ```c
     2015-06-20T07:50+02:00[Europe/Paris] --> GMT 2015-06-20 5:50
@@ -145,8 +145,7 @@ Para crear un `ZonedDateTime`, primero necesitamos obtener la zona horaria desea
 
 ```java
     ZoneId zone = ZoneId.of("US/Eastern");
-    ZonedDateTime zoned1 = ZonedDateTime.of(2015, 1, 20,
-    6, 15, 30, 200, zone);
+    ZonedDateTime zoned1 = ZonedDateTime.of(2015, 1, 20, 6, 15, 30, 200, zone);
     ZonedDateTime zoned2 = ZonedDateTime.of(date1, time1, zone);
     ZonedDateTime zoned3 = ZonedDateTime.of(dateTime1, zone);
 ```
@@ -214,7 +213,9 @@ Cuando tienes que hacer muchas manipulaciones, este encadenamiento de fechas res
 
 Se imprime el 20 de enero de 2020. Agregar 10 días fue inútil porque el programa ignoró el resultado. Siempre que veas tipos inmutables, presta atención para asegurarte de que el valor de retorno de una llamada a un método no se ignora. 
 
-El examen también puede probar para ver si recuerda lo que cada los objetos de LocalDate y Time incluyen. ¿Ves lo que está mal aquí?
+El examen también puede cuestionar tu conocimiento sobre la diferencia entre objetos de LocalDate y LocalTime. 
+
+¿Ves lo que está mal aquí?
 
 ```java
     LocalDate date = LocalDate.of(2020, Month.JANUARY, 20);
@@ -224,7 +225,10 @@ El examen también puede probar para ver si recuerda lo que cada los objetos de 
 LocalDate no tiene hora, así que no puedes añadirle minutos …
 
 ## 1.6   Trabajar con periodos:
-¡Ahora sabes lo suficiente para hacer algo divertido con las fechas! Nuestro zoológico realiza enriquecimiento animal actividades para darles a los animales algo divertido que hacer de vez en cuando. El jefe del zoológico ha decidido cambiar los juguetes todos los meses. Este sistema continuará durante tres meses para ver cómo funciona.
+¡Ahora sabes lo suficiente para hacer algo divertido con fechas! 
+
+Supongamos un zoológico que realiza entretenimiento animal, actividades para darles a los animales algo divertido que hacer de vez en cuando. El jefe del zoológico ha decidido cambiar los juguetes todos los meses. Este sistema continuará durante tres meses para ver cómo funciona.
+
 ```java
     public static void main(String[] args) {
         LocalDate start = LocalDate.of(2015, Month.JANUARY, 1);
@@ -233,14 +237,15 @@ LocalDate no tiene hora, así que no puedes añadirle minutos …
     }
     private static void performAnimalEnrichment(LocalDate start, LocalDate end) {
         LocalDate upTo = start;
-        while (upTo.isBefore(end)) { // check if still before end
-            System.out.println("give new toy: " + upTo);
-            upTo = upTo.plusMonths(1); // add a month
+        while (upTo.isBefore(end)) { // testea si la fecha es anterior a la fechade fin
+            System.out.println("Dar un juguete: " + upTo); // ACCION de entretener
+            upTo = upTo.plusMonths(1); // añadir un mes
         }   
     }   
 ```
 
-Este código funciona bien. Agrega un mes a la fecha hasta que llega a la fecha de finalización. El problema es que este método no se puede reutilizar. Nuestro cuidador quiere probar diferentes horarios para ver cuál funciona mejor.
+Este código funciona bien. Agrega un mes a la fecha hasta que llega a la fecha de finalización. 
+El problema es que este método no se puede reutilizar y nuestro cuidador quiere probar diferentes horarios para ver cuál funciona mejor.
 
 Por suerte, Java tiene una clase Period class que puede ser pasada como parámetro:
 
@@ -248,12 +253,12 @@ Por suerte, Java tiene una clase Period class que puede ser pasada como parámet
     public static void main(String[] args) {
         LocalDate start = LocalDate.of(2015, Month.JANUARY, 1);
         LocalDate end = LocalDate.of(2015, Month.MARCH, 30);
-        Period period = Period.ofMonths(1); // create a period
+        Period period = Period.ofMonths(1); // Crear periodo
         performAnimalEnrichment(start, end, period);
     }
 
     private static void performAnimalEnrichment(LocalDate start, LocalDate end,
-    Period period) { // uses the generic period
+    Period period) { // usa el periodo generico.
         LocalDate upTo = start;
         while (upTo.isBefore(end)) {
             System.out.println("give new toy: " + upTo);
@@ -261,8 +266,9 @@ Por suerte, Java tiene una clase Period class que puede ser pasada como parámet
         }      
     }
 ```
+Los periodos por definición son unidades temporales de mas de 1 dia, es decir, que no podemos crear periodos con horas o minutos etc...
 
-Distintos modos legales de crear periodos
+Distintos modos legales de instanciar periodos.
 
 ```java
 Period annually = Period.ofYears(1); // every 1 year
@@ -279,12 +285,12 @@ Period everyYearAndAWeek = Period.of(1, 0, 7); // every year and 7 days
 ```java
     System.out.println(Period.ofMonths(3));
 ```
-El output es P3M. Recuerda que Java omite cualquier medida que sea cero. Probemos con otro.
+El output es `P3M`. Recuerda que Java omite cualquier medida que sea cero. Probemos con otro.
 
 ```java
     System.out.println(Period.of(0, 20, 47));
 ```
-El output es  P20M47D. No hay años así que se omite esa parte. Está bien tener más
+El output es  `P20M47D`. No hay años así que se omite esa parte. Está bien tener más
 días que en un mes. También está bien tener más meses de los que hay en un año. Usos de Java las medidas previstas para cada uno.
 
 Ahora intentemos uno complicado:
@@ -292,7 +298,7 @@ Ahora intentemos uno complicado:
 ```java
     System.out.println(Period.ofWeeks(3));
 ```
-Imprime P20M47D ya que no hay semanas en Periodos para la salida.
+Imprime `P21D`  ya que no hay semanas en Periodos para la salida.
 
 ```java
     LocalDate date = LocalDate.of(2015, 1, 20);
@@ -301,15 +307,21 @@ Imprime P20M47D ya que no hay semanas en Periodos para la salida.
     Period period = Period.ofMonths(1);
     System.out.println(date.plus(period)); // 2015–02–20
     System.out.println(dateTime.plus(period)); // 2015–02–20T06:15
-    System.out.println(time.plus(period)); // UnsupportedTemporalTypeException
+    System.out.println(time.plus(period)); // !!!!!! ---- UnsupportedTemporalTypeException!!!!
 ```
+En el código anterior quizás te preguntes como una `time` no tiene sentido sumarle periodos ¿porque hay una excepción en tiempo de ejecucion y no un fallo de compilación? , ya que estos, los Period, por definicion son tramos horarios de un dia o mas.
 
-## 1D  Trabajar con Durations
+![Descripción de la imagen](./resources/Figure9.jpg)
 
-Las duraciones son para periodos más pequeños que no son fechas. Podemos especificar, días, horas, minutos, segundos o milisegundos. 
+Como se puede ver en la imagen tranajamos con unidades Temporales, asi que el metodo plus recime un TemporalAmount
+
+## 1  Trabajar con Durations
+
+Las duraciones son para periodos más pequeños que no son fechas. Podemos especificar, días, horas, minutos, segundos, milisegundos y nanos. 
 Y sí, podrías pasar 365 días para hacer un año, pero no debería hacerlo, para eso es Period.
 
 Podemos crear Duration con diferentes granularidades:
+
 ```java
     Duration daily = Duration.ofDays(1); // PT24H
     Duration hourly = Duration.ofHours(1); // PT1H
@@ -319,7 +331,7 @@ Podemos crear Duration con diferentes granularidades:
     Duration everyNano = Duration.ofNanos(1); // PT0.000000001S
 ```
 
-Hay otras formas de especificar … 
+Hay otras formas de especificar ... haciendo uso de Unidades temporales con  `ChronoUnit`
 ```java
     Duration daily = Duration.of(1, ChronoUnit.DAYS);
     Duration hourly = Duration.of(1, ChronoUnit.HOURS);
@@ -335,7 +347,11 @@ Hay otras formas de especificar …
     System.out.println(ChronoUnit.MINUTES.between(one, two)); // 75
     System.out.println(ChronoUnit.MINUTES.between(one, date)); // DateTimeException
 ```
-Using a Duration works the same way as using a Period, for example:
+
+La clase `ChronoUnit` tiene distintos métodos que pueden ser usados como `ChronoUnit.MINUTES.between` en la última linea de código se produce 
+`DateTimeException` porque no se puede calcular la diferencia entre diferentes unidades temporales.
+
+Se usa `Duration` del mismo modo que `Period`
 
 ```java
     LocalDate date = LocalDate.of(2015, 1, 20);
@@ -347,8 +363,7 @@ Using a Duration works the same way as using a Period, for example:
     System.out.println(date.plus(duration)); // UnsupportedTemporalException
 ```
 
-Let’s try that again, but add 23 hours this time.
-
+Existe excepcion ya que a una fecha `LocalDate` no se le pueden sumar horas.
 
 ```java
 
@@ -362,7 +377,7 @@ Let’s try that again, but add 23 hours this time.
 ```
 ## Trabajar con Instants
 
-Un instant representa un momento específico en el tiempo en el GMT time zone. Supón que queremos hacer correr un reloj
+Un instant representa un momento específico en el tiempo en el **GMT** time zone. Supón que queremos hacer correr un reloj
 
 
 ```java
@@ -373,7 +388,7 @@ Un instant representa un momento específico en el tiempo en el GMT time zone. S
     System.out.println(duration.toMillis());
 ```
 
-Si tienes un ZonedDateTime, lo puedes pasar a un Instant.
+Si tienes un `ZonedDateTime`, lo puedes pasar a un `Instant`.
 
 ```java
     LocalDate date = LocalDate.of(2015, 5, 25);
@@ -385,9 +400,9 @@ Si tienes un ZonedDateTime, lo puedes pasar a un Instant.
     System.out.println(instant); // 2015-05-25T15:55:00Z
 ```
 
-Las últimas dos líneas representan el mismo momento en el tiempo.  La ZonedDateTime incluye un time zone.
+Las últimas dos líneas representan el mismo momento en el tiempo, una está sobre **GMT**.  La `ZonedDateTime` incluye un time zone, o sea **UTC**.
 
-Usando ese Instant, puedes hacer matemáticas. Instant le permite agregar cualquier unidad de día o menos, por ejemplo:
+Usando ese `Instant`, puedes hacer matemáticas. `Instant` le permite agregar cualquier unidad de día o menos, por ejemplo:
 
 ```java
     Instant nextDay = instant.plus(1, ChronoUnit.DAYS);
@@ -397,11 +412,11 @@ Usando ese Instant, puedes hacer matemáticas. Instant le permite agregar cualqu
     Instant nextWeek = instant.plus(1, ChronoUnit.WEEKS); // exception
 ```
 
-Es raro pero Instant muestra los meses y los años, pero no te deja hacer operaciones sobre ellos. Esto hay que saberlo para el examen. 
+Es raro pero `Instant` muestra los meses y los años, pero no te deja hacer operaciones sobre ellos. Esto hay que saberlo para el examen. 
 
-## Accounting for Daylight Saving Time.
+## Contabilización del horario de verano.
 
-Como sabemos muchos países tienen estas modificaciones para hacer un mejor uso de las horas solares tanto en invierno como en verano.
+Como sabemos muchos países tienen estas modificaciones para hacer un mejor uso de las horas solares, tanto en invierno como en verano.
 
 En el caso de USA, en Marzo se mueven los relojes una hora más en verano y una hora menos en invierno.
 
@@ -409,7 +424,7 @@ En el caso de USA, en Marzo se mueven los relojes una hora más en verano y una 
 
 Por ejemplo, el 13 de marzo de 2016, adelantamos nuestros relojes una hora y saltamos de `2:00 a.m. a 3:00 a.m.` Esto significa que no hay 2:30 a.m. ese día. 
 
-Si quisiéramos saber la hora una hora después de la 1:30, serían las 3:30.
+Si quisiéramos saber la hora una hora después de la 1:30, serían las 3:30 ya que en verano se suma una hora
 
 ```java
     LocalDate date = LocalDate.of(2016, Month.MARCH, 13);
@@ -421,7 +436,7 @@ Si quisiéramos saber la hora una hora después de la 1:30, serían las 3:30.
     System.out.println(dateTime); // 2016-03-13T03:30-04:00[US/Eastern]
 ```
 
-Aquí un ejemplo restando 
+En invierno se restan las horas.
 
 ```java
     LocalDate date = LocalDate.of(2016, Month.NOVEMBER, 6);
@@ -434,8 +449,6 @@ Aquí un ejemplo restando
     dateTime = dateTime.plusHours(1);
     System.out.println(dateTime); // 2016-11-06T02:30-05:00[US/Eastern]
 ```
-
-
 
 
 ## Internazionalizacion y localización
@@ -454,21 +467,20 @@ Dado que internacionalización y localización son palabras tan largas, a menudo
 
 ## Seleccionando un Locale
 
-La clase `Locale` esta en el paquete `java.util`. La forma de saber cual es el Locale actual es mediante el siguiente código:
+La clase `Locale` esta en el paquete `java.util`. La forma de saber cual es el `Locale` actual es mediante el siguiente código:
 
 ```java
-Locale locale = Locale.getDefault();
-System.out.println(locale);
+    Locale locale = Locale.getDefault();
+    System.out.println(locale);
 ```
-Así accedemos a nuestro `Locale`, es decir la localizacion geografica y de lenguaje que esta corriendo en nuestra JVM actualmente.
+Así accedemos a nuestro `Locale`, es decir la localizacion geografica y de lenguaje que esta corriendo en nuestra JVM actualmente y que depende a su vez del SO sobre el que se este ejecutando.
 
-Si ejecutamos este cóidgo nos puede dar el siguiente resultado, en el caso de que nuestro locale sea Español y España:
+Si ejecutamos este código nos puede dar el siguiente resultado, en el caso de que nuestro locale sea Español y España:
 
 ```html
-<!--La salida por consola es--> es_ES
+    <!--La salida por consola es--> es_ES
 ```
-
-En este caso lo primero es el lenguaje que viene en minusculas, luego el pais que es en mayúsculas separados por un underscore que es opcional.
+En este caso lo primero es el lenguaje que viene en minusculas, luego el pais que es en mayúsculas separados por un underscore. El pais es opcional.
 
 **RECUERDA** -> Para una localización es valido poner solo el lenguaje.
 
@@ -479,8 +491,8 @@ Los siguientes ejemplos están MAL
 ```java
 US // Podemos tener leguaje sin pais pero no al revés.
 enUS // Falta el underscore
-US_en // Estan invertidos los oredenes.
-EN // language must be lowercase
+US_en // Estan invertidos los ordenes.
+EN // El lenguaje tiene que estar en minusculas
 ```
 La versión correcta es `en_US` .
 
@@ -502,7 +514,6 @@ El lenguaje es el Frances pero el país es India.
 Esta opción nos permite ser más especificos con respecto a las compinaciones, pero como hemos dicho anteriormente será mas propenso a errores.
 
 Java te permitirá crear lenguajes y paises que no existan, no hay errores en tiempo de ejecución, pero no se comportarán claro, de la forma esperada.
-
 
 La tercera forma es mediante un constructor, en este caso, no aporta mayor legibilidad que el constructor y son mas lineas.
 
@@ -581,8 +592,8 @@ Zoo_fr.properties
 public class ZooOpen {
 	
 	public static void main(String ...args) {
-		Locale us = Locale.US;
-		Locale france = Locale.FRANCE;
+		var us = Locale.US;
+		var france = Locale.FRANCE;
 
 		System.out.println(us);
 
@@ -768,7 +779,112 @@ Los Resource-Bundles son geniales para contenido que no cambia, como textos de b
 
 Para esto estan las clases derivadas del paquete `java.text` que nos ayudan con estos formatos ...
 
+
 ## Formateando y Parseando Numbers y Currency(Monedas)
+
+
+    a. Format
+
+| Descripcion | Using Default Locale and a Specified Locale  |
+| ----------- | ----------- |
+| Instancia de proposito general | NumberFormat.getInstance() |
+|                                | NumberFormat.getInstance(locale) |
+| Igual que *getInstance*         | NumberFormat.getNumberInstance() |
+|                                | NumberFormat.getNumberInstance(locale) |
+
+| formatear cantidades de dinero        | NumberFormat.getCurrencyInstance() |
+|                                | NumberFormat.getCurrencyInstance(locale) |
+
+| Formatear porcentajes         | NumberFormat.getNumberInstance() |
+|                                | NumberFormat.getNumberInstance(locale) |
+
+En el ejemplo anterior del Zoo podemos hacer unos calculos sobre el numero de visitas y mostrar ese numero con distintos 
+Locales
+
+```java
+public class FormatNumbers {
+
+	public static void main(String[] args) {
+		
+		int visitantesAnio = 3_200_000;
+		int visitantesMes = visitantesAnio/12;
+		
+		NumberFormat us = NumberFormat.getInstance(Locale.US);
+		System.out.println(us.format(visitantesMes));
+		
+		NumberFormat es = NumberFormat.getInstance(new Locale("es", "ES"));
+		System.out.println(es.format(visitantesMes));
+		
+		NumberFormat ca = NumberFormat.getInstance(Locale.CANADA_FRENCH);
+		System.out.println(ca.format(visitantesMes));
+
+	}
+
+}
+```
+
+La salida es 
+
+```
+266,666
+266.666
+266 666
+```
+Como vemos para representar cantidades, cada pais tiene distintos modos de representar la misma información
+
+Exactamente lo mismo ocurre cuando hablamos de dinero
+
+```java
+    double price = 48;
+    NumberFormat us = NumberFormat.getCurrencyInstance();
+    System.out.println(us.format(price));
+
+```
+
+Imprime `$48.00` en el caso de que el default locale este `en_US`  o 
+Imprime `48,00 €` en el caso de que estemos en algun pais de la comunidad economica europea.
+
+
+    b. Parse
+
+La clase NumberFormat tiene el método parse, este metodo recibe un String y trata de pasarlo al formato que depende del locale.
+Recuerda que estos método lanzan la excepcion controlada ParseException si fallan que tendrás que controlar de algun modo.
+
+En el siguiente ejemplo asumiendo que el extracto de código se esta tratando la excepcion de algun modo
+
+```java
+    NumberFormat en = NumberFormat.getInstance(Locale.US);
+    NumberFormat fr = NumberFormat.getInstance(Locale.FRANCE);
+    String s = "40.45";
+    System.out.println(en.parse(s)); // 40.45
+    System.out.println(fr.parse(s)); // 40
+
+```
+
+Dos formas de representar un numero que varian en funcion del Locale
+
+Recuerda que el método parse de NumberFormat elimina de la derecha todo lo que no le gusta, pero lo que esta mas a la izquierda lo tiene que entender o fallará
+
+```java
+    NumberFormat nf = NumberFormat.getInstance();
+    String one = "456abc";
+    String two = "-2.5165x10";
+    String three = "x85.3";
+    System.out.println(nf.parse(one)); // 456
+    System.out.println(nf.parse(two)); // -2.5165
+    System.out.println(nf.parse(three));// throws ParseException
+
+```
+Los primeros dos funcionan correctamente, eliminando la parte que no entiende, pero el tercero no es un numero y no lo puede parsear.
+
+Con el parse del Currency ocurre exactamente lo mismo
+
+```java
+    String amt = "$92,807.99";
+    NumberFormat cf = NumberFormat.getCurrencyInstance();
+    double value = (Double) cf.parse(amt);
+    System.out.println(value); // 92807.99
+````
 
 ## Formateando Dates y Times
 
