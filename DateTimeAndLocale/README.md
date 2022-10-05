@@ -649,7 +649,8 @@ rb.keySet().stream()
 
 ```
 
-![Descripción de la imagen](./resources/Figure7.jpg)
+
+![Descripción de la imagen](./resources/Figure7.JPG)
 
 
 ## Creando la clase Java Resource Bundle
@@ -703,7 +704,7 @@ Tenemos dos formas de recuperar el los resource-bundle(paquete de recursos)
 La Tabla 5.7 muestra como Java encuentra el recurso cuando se le solicita el Resource-Bundle con el nombre Zoo con la configuración regional new Locale("fr", "FR") y la configuración regional predeterminada es inglés estadounidense.
 
 
-![Descripción de la imagen](./resources/Figure6.jpg)
+![Descripción de la imagen](./resources/Figure6.JPG)
 
 Como regla los archivos `.java` tienen preferencia sobre los archivos `.properties`.
 
@@ -877,7 +878,7 @@ Recuerda que el método parse de NumberFormat elimina de la derecha todo lo que 
 ```
 Los primeros dos funcionan correctamente, eliminando la parte que no entiende, pero el tercero no es un numero y no lo puede parsear.
 
-Con el parse del Currency ocurre exactamente lo mismo
+Con el parse del Currency ocurre exactamente lo mismo:
 
 ```java
     String amt = "$92,807.99";
