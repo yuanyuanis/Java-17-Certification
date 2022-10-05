@@ -304,7 +304,7 @@ Imprime P20M47D ya que no hay semanas en Periodos para la salida.
     System.out.println(time.plus(period)); // UnsupportedTemporalTypeException
 ```
 
-## 1D   ---- Trabajar con Durations
+## 1D  Trabajar con Durations
 
 Las duraciones son para periodos más pequeños que no son fechas. Podemos especificar, días, horas, minutos, segundos o milisegundos. 
 Y sí, podrías pasar 365 días para hacer un año, pero no debería hacerlo, para eso es Period.
@@ -435,104 +435,7 @@ Aquí un ejemplo restando
     System.out.println(dateTime); // 2016-11-06T02:30-05:00[US/Eastern]
 ```
 
-## Formateando Dates y Times
 
-Las clases de date y time soportan muchos métodos para extraer información de el:
-
-```java
-LocalDate date = LocalDate.of(2020, Month.JANUARY, 20);
-System.out.println(date.getDayOfWeek()); // MONDAY
-System.out.println(date.getMonth()); // JANUARY
-System.out.println(date.getYear()); // 2020
-System.out.println(date.getDayOfYear()); // 20
-```
-
-Podemos usar esa informacion para mostrar acerca de la fecha. De todos modos, puede haber mas trabajo del necesario. 
-La clase DateTimeFormater nos ayuda con esto, podemos usarla para cambair el formato de culquier date o time
-
-DateTimeFormatter esta en el paquete java.time.format.
-
-```java
-LocalDate date = LocalDate.of(2020, Month.JANUARY, 20);
-LocalTime time = LocalTime.of(11, 12, 34);
-LocalDateTime dateTime = LocalDateTime.of(date, time);
-System.out.println(date.format(DateTimeFormatter.ISO_LOCAL_DATE));
-System.out.println(time.format(DateTimeFormatter.ISO_LOCAL_TIME));
-System.out.println(dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-```
-
-ISO es un "STANDAR"  para fechas. La salida se pinta de la siguiente forma.
-
-```
-2020–01–20
-11:12:3
-2020–01–20T11:12:34
-```
-
-Tener un standar es una forma razonable de comunicarlse entre computadoras, pero probablemente no es lo que tu quieres pintar en tu programa, que puede estar en Español, Italiano. Indio, etc.
-
-Hay algunos formatos predefinidos:
-```java
-    DateTimeFormatter shortDateTime =
-    DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
-    System.out.println(shortDateTime.format(dateTime)); // 1/20/20
-    System.out.println(shortDateTime.format(date)); // 1/20/20
-    System.out.println(
-    shortDateTime.format(time)); // UnsupportedTemporalTypeException
-```
-
-Aquí decimos que queremos un formateador localizado en el formato corto predefinido. La última línea arroja una excepción porque una hora no se puede formatear como una fecha. El método format() se declara tanto en los objetos del formateador como en los objetos de fecha/hora, lo que le permite hacer referencia a los objetos en cualquier orden. Las siguientes declaraciones imprimen exactamente lo mismo que el código anterior:
-
-```java
-    DateTimeFormatter shortDateTime =
-    DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
-    System.out.println(dateTime.format(shortDateTime));
-    System.out.println(date.format(shortDateTime));
-    System.out.println(time.format(shortDateTime));
-```
-
-In this book, we’ll change around the orders to get you used to seeing it both ways.
-Table 5.10 shows the legal and illegal localized formatting methods.
-
-Hay dos formatos predefinidos que pueden aparecer en el examen: SHORT y MEDIUM. Los otros formatos predefinidos involucran zonas horarias, que no están en el examen.
-
-```java
-    LocalDate date = LocalDate.of(2020, Month.JANUARY, 20);
-    LocalTime time = LocalTime.of(11, 12, 34);
-    LocalDateTime dateTime = LocalDateTime.of(date, time);
-    DateTimeFormatter shortF = DateTimeFormatter
-    .ofLocalizedDateTime(FormatStyle.SHORT);
-    DateTimeFormatter mediumF = DateTimeFormatter
-    .ofLocalizedDateTime(FormatStyle.MEDIUM);
-    System.out.println(shortF.format(dateTime)); // 1/20/20 11:12 AM
-    System.out.println(mediumF.format(dateTime)); // Jan 20, 2020 11:12:34 AM
-```
-
-Si no desea utilizar uno de los formatos predefinidos, puede crear uno propio. Por ejemplo, este código detalla el mes:
-
-```java
-    DateTimeFormatter f = DateTimeFormatter.ofPattern("MMMM dd, yyyy, hh:mm");
-    System.out.println(dateTime.format(f)); // January 20, 2020, 11:12
-```
-
-
-Lo máximo que tendrá que hacer es reconocer las partes de fecha y hora. `MMMM` M representa el mes. Cuantas más Ms tenga, más detallada será la salida de Java. Por ejemplo, `M` genera 1, `MM` genera 01, `MMM` genera Jan y `MMMM` genera January. dd d representa el día del mes. Al igual que con el mes, cuantos más ds tenga, más detallado será el resultado de Java. `dd` significa incluir el cero inicial para un día de un solo dígito. 
-
-Utilice `,` si desea generar una coma (esto también aparece después del año).
-
-`yyyy` y representa el año. yy genera un año de dos dígitos y yyyy genera un año de cuatro dígitos.
-
-`hh` h representa la hora. Use hh para incluir el cero inicial si está generando una hora de un solo dígito.
-
-`:` Utilice : si desea generar dos puntos.
-
-`mm` --> m representa el minuto omitiendo el cero inicial si está presente. mm es más común y representa los minutos usando dos dígitos.
-
-
-Adición de internacionalización y localización
-Muchas aplicaciones necesitan funcionar para diferentes países y con diferentes idiomas. Por ejemplo, considere la oración "El zoológico realizará un evento especial el 1/4/15 para ver animales".
-malas conductas.”
-¿Cuándo es el evento? En los Estados Unidos, es el 1 de abril. Sin embargo, un lector británico interpretaría esto como el 4 de enero. Un lector británico también podría preguntarse por qué no escribimos "comportamientos". Si estamos creando un sitio web o un programa que se ejecutará en varios países, queremos usar el idioma y el formato correctos.
 
 
 ## Internazionalizacion y localización
@@ -822,4 +725,147 @@ Esta vez, no especificamos ningún código de país, por lo que Java se saltó l
 
 ![Descripción de la imagen](./resources/Figure8.jpg)
 
+
+```properties
+#Zoo.properties
+    name=Vancouver Zoo
+#Zoo_en.properties
+    hello=Hello
+    open=is open
+#Zoo_en_CA.properties
+    visitor=Canada visitor
+#Zoo_fr.properties
+    hello=Bonjour
+    open=est ouvert
+
+#Zoo_fr_CA.properties
+    visitor=Canada visiteur
+
+```
+
+
+Supon que tenemos un visitante de Quebec (con el locale por defecto en frances ) y le pide a nuestro programa que quiere que se presente la información en Ingles. ¿ Cual crees que es la salida  de este código?
+
+```java
+    2: Locale locale = new Locale("en", "CA");
+    3: ResourceBundle rb = ResourceBundle.getBundle("Zoo", locale);
+    4: System.out.print(rb.getString("hello"));
+    5: System.out.print(". ");
+    6: System.out.print(rb.getString("name"));
+    7: System.out.print(" ");
+    8: System.out.print(rb.getString("open"));
+    9: System.out.print(" ");
+    10: System.out.print(rb.getString("visitor"));
+
+
+```
+La respuesta es Hello. Vancouver Zoo is open Canada visitor.
+
+
+## Formateando Numbers
+
+Los Resource-Bundles son geniales para contenido que no cambia, como textos de bienvenida etc ... Sin embargo cuando hablamos de fechas y precios los formatos varian, y no solo el texto.
+
+Para esto estan las clases derivadas del paquete `java.text` que nos ayudan con estos formatos ...
+
+## Formateando y Parseando Numbers y Currency(Monedas)
+
+## Formateando Dates y Times
+
+Las clases de date y time soportan muchos métodos para extraer información de el:
+
+```java
+LocalDate date = LocalDate.of(2020, Month.JANUARY, 20);
+System.out.println(date.getDayOfWeek()); // MONDAY
+System.out.println(date.getMonth()); // JANUARY
+System.out.println(date.getYear()); // 2020
+System.out.println(date.getDayOfYear()); // 20
+```
+
+Podemos usar esa informacion para mostrar acerca de la fecha. De todos modos, puede haber mas trabajo del necesario. 
+La clase DateTimeFormater nos ayuda con esto, podemos usarla para cambair el formato de culquier date o time
+
+DateTimeFormatter esta en el paquete java.time.format.
+
+```java
+LocalDate date = LocalDate.of(2020, Month.JANUARY, 20);
+LocalTime time = LocalTime.of(11, 12, 34);
+LocalDateTime dateTime = LocalDateTime.of(date, time);
+System.out.println(date.format(DateTimeFormatter.ISO_LOCAL_DATE));
+System.out.println(time.format(DateTimeFormatter.ISO_LOCAL_TIME));
+System.out.println(dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+```
+
+ISO es un "STANDAR"  para fechas. La salida se pinta de la siguiente forma.
+
+```
+2020–01–20
+11:12:3
+2020–01–20T11:12:34
+```
+
+Tener un standar es una forma razonable de comunicarlse entre computadoras, pero probablemente no es lo que tu quieres pintar en tu programa, que puede estar en Español, Italiano. Indio, etc.
+
+Hay algunos formatos predefinidos:
+```java
+    DateTimeFormatter shortDateTime =
+    DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
+    System.out.println(shortDateTime.format(dateTime)); // 1/20/20
+    System.out.println(shortDateTime.format(date)); // 1/20/20
+    System.out.println(
+    shortDateTime.format(time)); // UnsupportedTemporalTypeException
+```
+
+Aquí decimos que queremos un formateador localizado en el formato corto predefinido. La última línea arroja una excepción porque una hora no se puede formatear como una fecha. El método format() se declara tanto en los objetos del formateador como en los objetos de fecha/hora, lo que le permite hacer referencia a los objetos en cualquier orden. Las siguientes declaraciones imprimen exactamente lo mismo que el código anterior:
+
+```java
+    DateTimeFormatter shortDateTime =
+    DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
+    System.out.println(dateTime.format(shortDateTime));
+    System.out.println(date.format(shortDateTime));
+    System.out.println(time.format(shortDateTime));
+```
+
+In this book, we’ll change around the orders to get you used to seeing it both ways.
+Table 5.10 shows the legal and illegal localized formatting methods.
+
+Hay dos formatos predefinidos que pueden aparecer en el examen: SHORT y MEDIUM. Los otros formatos predefinidos involucran zonas horarias, que no están en el examen.
+
+```java
+    LocalDate date = LocalDate.of(2020, Month.JANUARY, 20);
+    LocalTime time = LocalTime.of(11, 12, 34);
+    LocalDateTime dateTime = LocalDateTime.of(date, time);
+    DateTimeFormatter shortF = DateTimeFormatter
+    .ofLocalizedDateTime(FormatStyle.SHORT);
+    DateTimeFormatter mediumF = DateTimeFormatter
+    .ofLocalizedDateTime(FormatStyle.MEDIUM);
+    System.out.println(shortF.format(dateTime)); // 1/20/20 11:12 AM
+    System.out.println(mediumF.format(dateTime)); // Jan 20, 2020 11:12:34 AM
+```
+
+Si no desea utilizar uno de los formatos predefinidos, puede crear uno propio. Por ejemplo, este código detalla el mes:
+
+```java
+    DateTimeFormatter f = DateTimeFormatter.ofPattern("MMMM dd, yyyy, hh:mm");
+    System.out.println(dateTime.format(f)); // January 20, 2020, 11:12
+```
+
+
+Lo máximo que tendrá que hacer es reconocer las partes de fecha y hora. `MMMM` M representa el mes. Cuantas más Ms tenga, más detallada será la salida de Java. Por ejemplo, `M` genera 1, `MM` genera 01, `MMM` genera Jan y `MMMM` genera January. dd d representa el día del mes. Al igual que con el mes, cuantos más ds tenga, más detallado será el resultado de Java. `dd` significa incluir el cero inicial para un día de un solo dígito. 
+
+Utilice `,` si desea generar una coma (esto también aparece después del año).
+
+`yyyy` y representa el año. yy genera un año de dos dígitos y yyyy genera un año de cuatro dígitos.
+
+`hh` h representa la hora. Use hh para incluir el cero inicial si está generando una hora de un solo dígito.
+
+`:` Utilice : si desea generar dos puntos.
+
+`mm` --> m representa el minuto omitiendo el cero inicial si está presente. mm es más común y representa los minutos usando dos dígitos.
+
+
+Adición de internacionalización y localización
+Muchas aplicaciones necesitan funcionar para diferentes países y con diferentes idiomas. Por ejemplo, considere la oración "El zoológico realizará un evento especial el 1/4/15 para ver animales".
+malas conductas.”
+¿Cuándo es el evento? En los Estados Unidos, es el 1 de abril. Sin embargo, un lector británico interpretaría esto como el 4 de enero. Un lector británico también podría preguntarse por qué no escribimos "comportamientos". Si estamos creando un sitio web o un programa que se ejecutará en varios países, queremos usar el idioma y el formato correctos.
 
