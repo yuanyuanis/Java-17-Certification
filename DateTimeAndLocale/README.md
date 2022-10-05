@@ -436,7 +436,8 @@ Aquí un ejemplo restando
 ```
 
 ## Formateando Dates y Times
-The date and time classes support many methods to get data out of them:
+
+Las clases de date y time soportan muchos métodos para extraer información de el:
 
 ```java
 LocalDate date = LocalDate.of(2020, Month.JANUARY, 20);
@@ -446,7 +447,10 @@ System.out.println(date.getYear()); // 2020
 System.out.println(date.getDayOfYear()); // 20
 ```
 
-We could use this information to display information about the date. However, it would be more work than necessary. Java provides a class called DateTimeFormatter to help us out. Unlike the LocalDateTime class, DateTimeFormatter can be used to format any type of date and/or time object. What changes is the format. DateTimeFormatter is in the package java.time.format.
+Podemos usar esa informacion para mostrar acerca de la fecha. De todos modos, puede haber mas trabajo del necesario. 
+La clase DateTimeFormater nos ayuda con esto, podemos usarla para cambair el formato de culquier date o time
+
+DateTimeFormatter esta en el paquete java.time.format.
 
 ```java
 LocalDate date = LocalDate.of(2020, Month.JANUARY, 20);
@@ -457,16 +461,17 @@ System.out.println(time.format(DateTimeFormatter.ISO_LOCAL_TIME));
 System.out.println(dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 ```
 
-ISO is a standard for dates. The output of the previous code looks like this:
+ISO es un "STANDAR"  para fechas. La salida se pinta de la siguiente forma.
 
 ```
 2020–01–20
 11:12:3
 2020–01–20T11:12:34
 ```
-This is a reasonable way for computers to communicate, but it is probably not how
-you want to output the date and time in your program. Luckily, there are some predefined formats that are more useful:
 
+Tener un standar es una forma razonable de comunicarlse entre computadoras, pero probablemente no es lo que tu quieres pintar en tu programa, que puede estar en Español, Italiano. Indio, etc.
+
+Hay algunos formatos predefinidos:
 ```java
     DateTimeFormatter shortDateTime =
     DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
@@ -476,8 +481,7 @@ you want to output the date and time in your program. Luckily, there are some pr
     shortDateTime.format(time)); // UnsupportedTemporalTypeException
 ```
 
-Here we say that we want a localized formatter in the predefined short format. The
-last line throws an exception because a time cannot be formatted as a date. The format() method is declared on both the formatter objects and the date/time objects, allowing you to reference the objects in either order. The following statements print exactly the same thing as the previous code:
+Aquí decimos que queremos un formateador localizado en el formato corto predefinido. La última línea arroja una excepción porque una hora no se puede formatear como una fecha. El método format() se declara tanto en los objetos del formateador como en los objetos de fecha/hora, lo que le permite hacer referencia a los objetos en cualquier orden. Las siguientes declaraciones imprimen exactamente lo mismo que el código anterior:
 
 ```java
     DateTimeFormatter shortDateTime =
@@ -490,8 +494,7 @@ last line throws an exception because a time cannot be formatted as a date. The 
 In this book, we’ll change around the orders to get you used to seeing it both ways.
 Table 5.10 shows the legal and illegal localized formatting methods.
 
-There are two predefined formats that can show up on the exam: SHORT and MEDIUM. The
-other predefined formats involve time zones, which are not on the exam.
+Hay dos formatos predefinidos que pueden aparecer en el examen: SHORT y MEDIUM. Los otros formatos predefinidos involucran zonas horarias, que no están en el examen.
 
 ```java
     LocalDate date = LocalDate.of(2020, Month.JANUARY, 20);
@@ -505,7 +508,7 @@ other predefined formats involve time zones, which are not on the exam.
     System.out.println(mediumF.format(dateTime)); // Jan 20, 2020 11:12:34 AM
 ```
 
-If you don’t want to use one of the predefined formats, you can create your own. For example, this code spells out the month:
+Si no desea utilizar uno de los formatos predefinidos, puede crear uno propio. Por ejemplo, este código detalla el mes:
 
 ```java
     DateTimeFormatter f = DateTimeFormatter.ofPattern("MMMM dd, yyyy, hh:mm");
@@ -513,16 +516,310 @@ If you don’t want to use one of the predefined formats, you can create your ow
 ```
 
 
-Before we look at the syntax, know that you are not expected to memorize what the different numbers of each symbol mean. The most you will need to do is to recognize the date and time parts.
-MMMM M represents the month. The more Ms you have, the more verbose the Java output. For example, M outputs 1, MM outputs 01, MMM outputs Jan, and MMMM outputs January. dd d represents the day in the month. As with month, the more ds you have, the more verbose the Java output. dd means to include the leading zero for a single-digit day. , 
+Lo máximo que tendrá que hacer es reconocer las partes de fecha y hora. `MMMM` M representa el mes. Cuantas más Ms tenga, más detallada será la salida de Java. Por ejemplo, `M` genera 1, `MM` genera 01, `MMM` genera Jan y `MMMM` genera January. dd d representa el día del mes. Al igual que con el mes, cuantos más ds tenga, más detallado será el resultado de Java. `dd` significa incluir el cero inicial para un día de un solo dígito. 
 
-Use , if you want to output a comma (this also appears after the year).
+Utilice `,` si desea generar una coma (esto también aparece después del año).
 
-yyyy y represents the year. yy outputs a two-digit year and yyyy outputs a four-digit year.
-hh h represents the hour. Use hh to include the leading zero if you’re outputting a single-digit hour.
-: Use : if you want to output a colon.
-mm m represents the minute omitting the leading zero if present. mm is more common and
-represents the minutes using two digits.
+`yyyy` y representa el año. yy genera un año de dos dígitos y yyyy genera un año de cuatro dígitos.
 
+`hh` h representa la hora. Use hh para incluir el cero inicial si está generando una hora de un solo dígito.
+
+`:` Utilice : si desea generar dos puntos.
+
+`mm` --> m representa el minuto omitiendo el cero inicial si está presente. mm es más común y representa los minutos usando dos dígitos.
+
+
+Adición de internacionalización y localización
+Muchas aplicaciones necesitan funcionar para diferentes países y con diferentes idiomas. Por ejemplo, considere la oración "El zoológico realizará un evento especial el 1/4/15 para ver animales".
+malas conductas.”
+¿Cuándo es el evento? En los Estados Unidos, es el 1 de abril. Sin embargo, un lector británico interpretaría esto como el 4 de enero. Un lector británico también podría preguntarse por qué no escribimos "comportamientos". Si estamos creando un sitio web o un programa que se ejecutará en varios países, queremos usar el idioma y el formato correctos.
+
+
+## Internazionalizacion y localización
+
+La **internacionalización** es el proceso de diseñar su programa para que pueda adaptarse a diferentes idiomas. 
+
+Esto implica colocar cadenas en un archivos de propiedades y usar clases como DateFormat para que se use el formato correcto según las preferencias del usuario. 
+
+La **localización** significa realmente admitir múltiples configuraciones regionales. Oracle define un lugar como "una región geográfica, política o cultural específica". 
+
+La configuración regional es como una combinación de idioma y país. 
+
+Puede pasar por el proceso de localización muchas veces en la misma aplicación a medida que agrega más idiomas y países.
+ 
+Dado que internacionalización y localización son palabras tan largas, a menudo se abrevian como `i18n` y `l10n`. 
+
+## Seleccionando un Locale
+
+La clase `Locale` esta en el paquete `java.util`. La forma de saber cual es el Locale actual es mediante el siguiente código:
+
+```java
+Locale locale = Locale.getDefault();
+System.out.println(locale);
+```
+Así accedemos a nuestro `Locale`, es decir la localizacion geografica y de lenguaje que esta corriendo en nuestra JVM actualmente.
+
+Si ejecutamos este cóidgo nos puede dar el siguiente resultado, en el caso de que nuestro locale sea Español y España:
+
+```html
+<!--La salida por consola es--> es_ES
+```
+
+En este caso lo primero es el lenguaje que viene en minusculas, luego el pais que es en mayúsculas separados por un underscore que es opcional.
+
+**RECUERDA** -> Para una localización es valido poner solo el lenguaje.
+
+![Descripción de la imagen](./resources/Figuere4.jpg)
+
+Los siguientes ejemplos están MAL
+
+```java
+US // Podemos tener leguaje sin pais pero no al revés.
+enUS // Falta el underscore
+US_en // Estan invertidos los oredenes.
+EN // language must be lowercase
+```
+La versión correcta es `en_US` .
+
+Tenemos tres formas de crear Locales, podemos hacer uso de las constantes que devuelven un locale, es una opción interesante porque estas constantes contienen la versión ISO del país.
+
+```java
+System.out.println(Locale.GERMAN); // de
+System.out.println(Locale.GERMANY); // de_DE
+```
+
+Otra forma es mediante constructores y escribir los literales, esta opción sera menos limpia y propensa a errores.
+
+```java
+System.out.println(new Locale("fr")); // fr
+System.out.println(new Locale("hi", "IN")); // hi_IN
+```
+El lenguaje es el Frances pero el país es India.
+
+Esta opción nos permite ser más especificos con respecto a las compinaciones, pero como hemos dicho anteriormente será mas propenso a errores.
+
+Java te permitirá crear lenguajes y paises que no existan, no hay errores en tiempo de ejecución, pero no se comportarán claro, de la forma esperada.
+
+
+La tercera forma es mediante un constructor, en este caso, no aporta mayor legibilidad que el constructor y son mas lineas.
+
+```java
+Locale l1 = new Locale.Builder()
+    .setLanguage("en")
+    .setRegion("US")
+    .build();
+Locale l2 = new Locale.Builder()
+    .setRegion("US")
+    .setLanguage("en")
+    .build();
+```
+Para cambiar el locale simplemente los establecemos en el sistema.
+```java
+System.out.println(Locale.getDefault()); // en_US
+Locale locale = new Locale("fr");
+Locale.setDefault(locale); // cambiamos el Locale por defecto
+System.out.println(Locale.getDefault()); // fr
+```
+
+Esto solo tiene efecto en tiempo de ejecución para tu programa, el Locale depende de la localizacion de tu sistema operativo, por tanto cuando acaba el programa en la siguiente ejecución volverá a aparecer el Locale por defecto.
+
+
+## Creando el archivo de propiedades.
+
+Sintaxis del archivo propiedades
+
+Formas de mostrar clave valor:
+```properties
+! La normal
+    animal=dolphin 
+! Raras pero validas
+    animal:dolphin
+    animal dolphin
+```
+
+Quizás se pregunte cómo expresar algunas otras ideas en un archivo de propiedades. Los comunes son estos:
+
+- Si una línea comienza con # o !, es un comentario.
+- Se ignoran los espacios antes o después del carácter separador.
+- Se ignoran los espacios al principio de una línea.
+- Los espacios al final de una línea no se ignoran.
+- Finalice una línea con una barra invertida si desea dividir la línea para mejorar la legibilidad.
+- Puede utilizar caracteres de escape normales de Java, como \t y \n.
+Poniendo estos juntos, podemos escribir lo siguiente:
+```properties
+
+    #un comentario
+    ! otro comentario
+    key = value\tafter tab
+    ling= abcdefghijklm\
+    nopqrstuvwxyz
+
+!Imprimir estas dos propiedades en un programa nos da esto:
+
+    value → after tab
+    abcdefghijklmnopqrstuvwxyz
+```
+
+Ejemplo de como usar los .properties y mostrar en pantalla:
+
+- Dados los siguientes archivos de propiedades apuntando al classpath
+
+```properties
+
+Zoo_en.properties
+    hello=Hello
+    open=The zoo is open.
+Zoo_fr.properties
+    hello=Bonjour
+    open=Le zoo est ouvert
+```
+
+```java
+public class ZooOpen {
+	
+	public static void main(String ...args) {
+		Locale us = Locale.US;
+		Locale france = Locale.FRANCE;
+
+		System.out.println(us);
+
+		System.out.println(france);
+		System.out.println();
+		
+		printProperties(france);
+
+		System.out.println();
+		printProperties(us);
+		
+
+		// Podemos Iterar con Java 8
+		System.out.println("----------- Iterando en Java 8 -----");
+		var resource = ResourceBundle.getBundle("Zoo", us);
+		var conjunto =  resource.keySet();
+		conjunto.stream().map(k -> resource.getString(k)).forEach(System.out::println);;
+	}
+	
+	public static void printProperties(Locale locale) {
+		var resource = ResourceBundle.getBundle("Zoo", locale);
+		System.out.println(resource.getString("hello"));
+		System.out.println(resource.getString("open"));
+	}
+
+}
+```
+Imprime
+
+```console
+    en_US
+    fr_FR
+
+    Bonjour
+    Le zoo est ouvert
+
+    Hello
+    The zoo is open.
+    ----------- Iterando en Java 8 -----
+    Hello
+    The zoo is open.
+
+```
+
+
+Por ultimo decir que tambien podemos usar la clase Properties, pasar lo anterior a propiedades es sencillo:
+
+
+```java
+Properties props = new Properties();
+rb.keySet().stream()
+.forEach(k -> props.put(k, rb.getString(k)));
+
+```
+
+![Descripción de la imagen](./resources/Figure7.jpg)
+
+
+## Creando la clase Java Resource Bundle
+
+Además de usar un archivo de propiedades podemos usar una clase Java para representar nuestros recursos.
+
+Para eso tenemos que extender de la clase abstracta `ListResourceBundle` 
+
+
+```java
+    public class Zoo_en extends ListResourceBundle {
+        protected Object[][] getContents() {
+            return new Object[][] {
+                { "hello", "Hello" },
+                { "open", "The zoo is open" } 
+            };
+        }
+    }    
+```
+
+La diferencia entre tener una valor en un archivo a tenerlo en una clase es que en la clase podemos asociar el valor a un objeto.
+
+
+```java
+    protected Object[][] getContents() {
+        return new Object[][] { { "tax", new UsTaxCode() } 
+    };
+
+```
+
+## Determinando que Resource Bundle usar.
+
+Esta clase se utiliza en aplicaciones de proucción para tener textos en distintos lenguajes. Vamos, que su mas habitual uso es para la Internacionalización, por ejemplo, de una web. En este caso los literales a mostrar dependeran del lenguaje seleccionado por el usuario. 
+
+![Descripción de la imagen](./resources/Figure5.jpg)
+
+En este caso, la web de una conocida aerolinea, esta internacionalizada.
+
+### Jerarquia de clases ResourceBundle.
+
+![Descripción de la imagen](./resources/resource-bundle.png)
+
+
+Tenemos dos formas de recuperar el los resource-bundle(paquete de recursos)
+
+```java 
+    ResourceBundle.getBundle("name");
+    ResourceBundle.getBundle("name", locale);
+```
+
+La Tabla 5.7 muestra como Java encuentra el recurso cuando se le solicita el Resource-Bundle con el nombre Zoo con la configuración regional new Locale("fr", "FR") y la configuración regional predeterminada es inglés estadounidense.
+
+
+![Descripción de la imagen](./resources/Figure6.jpg)
+
+Como regla los archivos `.java` tienen preferencia sobre los archivos `.properties`.
+
+Siempre trata de buscar el locale exacto con lenguaje y pais, si no lo localiza coge el del lenguaje solamente.
+
+Si no localizase ningun reecurso para la configuruación pasada, trata de buscar la configuracion  locale por defecto.
+
+Si no lo localiza para el por defecto lenguaje usa el nombre del recurso exacto Zoo.java y depues Zoo.properties, es decir sin extensiones.
+
+Si ya despúes de eso no lo localiza se lanza excepción.
+
+¿Cuántos archivos cree que necesitaría buscar Java para encontrar el paquete de recursos con el código?
+```java 
+Locale.setDefault(nueva Locale("hi"));
+ResourceBundle rb = ResourceBundle.getBundle("Zoo", new Locale("en"));
+```
+
+La respuesta es seis. Se enumeran aquí:
+1. Zoo_hi.java
+2. Zoo_hi.propiedades
+3. Zoo_en.java
+4. Zoo_es.propiedades
+5. Zoo.java
+6. Zoo.propiedades.
+
+Esta vez, no especificamos ningún código de país, por lo que Java se saltó la búsqueda. Si solicitamos la configuración regional predeterminada, Java comenzará a buscar los paquetes a partir del paso 6 en Tabla 5.7 y yendo hasta el final (o hasta que encuentre una coincidencia).
+
+¿Lo pillas? Guay, porque hay un giro. Los pasos que hemos discutido hasta ahora son para encontrar el paquete de recursos correspondiente para usarlo como base. No se requiere Java para obtener todas las claves del mismo paquete de recursos. Puede obtenerlos de cualquier paquete de recursos padre correspondiente. 
+
+
+![Descripción de la imagen](./resources/Figure8.jpg)
 
 
