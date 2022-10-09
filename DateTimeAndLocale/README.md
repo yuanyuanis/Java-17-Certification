@@ -885,35 +885,34 @@ Con el parse del Currency ocurre exactamente lo mismo:
     NumberFormat cf = NumberFormat.getCurrencyInstance();
     double value = (Double) cf.parse(amt);
     System.out.println(value); // 92807.99
-````
+```
 
 ## Formateando Dates y Times
 
 Las clases de date y time soportan muchos métodos para extraer información de el:
 
 ```java
-LocalDate date = LocalDate.of(2020, Month.JANUARY, 20);
-System.out.println(date.getDayOfWeek()); // MONDAY
-System.out.println(date.getMonth()); // JANUARY
-System.out.println(date.getYear()); // 2020
-System.out.println(date.getDayOfYear()); // 20
+    LocalDate date = LocalDate.of(2020, Month.JANUARY, 20);
+    System.out.println(date.getDayOfWeek()); // MONDAY
+    System.out.println(date.getMonth()); // JANUARY
+    System.out.println(date.getYear()); // 2020
+    System.out.println(date.getDayOfYear()); // 20
 ```
 
-Podemos usar esa informacion para mostrar acerca de la fecha. De todos modos, puede haber mas trabajo del necesario. 
-La clase DateTimeFormater nos ayuda con esto, podemos usarla para cambair el formato de culquier date o time
+La clase `DateTimeFormater` nos ayuda con el formateo cuando los métodos no son suficiente, podemos usarla para cambair el formato de culquier date o time
 
-DateTimeFormatter esta en el paquete java.time.format.
+`DateTimeFormater` esta en el paquete `java.time.format`.
 
 ```java
-LocalDate date = LocalDate.of(2020, Month.JANUARY, 20);
-LocalTime time = LocalTime.of(11, 12, 34);
-LocalDateTime dateTime = LocalDateTime.of(date, time);
-System.out.println(date.format(DateTimeFormatter.ISO_LOCAL_DATE));
-System.out.println(time.format(DateTimeFormatter.ISO_LOCAL_TIME));
-System.out.println(dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+    LocalDate date = LocalDate.of(2020, Month.JANUARY, 20);
+    LocalTime time = LocalTime.of(11, 12, 34);
+    LocalDateTime dateTime = LocalDateTime.of(date, time);
+    System.out.println(date.format(DateTimeFormatter.ISO_LOCAL_DATE));
+    System.out.println(time.format(DateTimeFormatter.ISO_LOCAL_TIME));
+    System.out.println(dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 ```
 
-ISO es un "STANDAR"  para fechas. La salida se pinta de la siguiente forma.
+ISO es un *"ESTANDAR"* para fechas. La salida se pinta de la siguiente forma.
 
 ```
 2020–01–20
@@ -924,6 +923,7 @@ ISO es un "STANDAR"  para fechas. La salida se pinta de la siguiente forma.
 Tener un standar es una forma razonable de comunicarlse entre computadoras, pero probablemente no es lo que tu quieres pintar en tu programa, que puede estar en Español, Italiano. Indio, etc.
 
 Hay algunos formatos predefinidos:
+
 ```java
     DateTimeFormatter shortDateTime =
     DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
@@ -933,7 +933,7 @@ Hay algunos formatos predefinidos:
     shortDateTime.format(time)); // UnsupportedTemporalTypeException
 ```
 
-Aquí decimos que queremos un formateador localizado en el formato corto predefinido. La última línea arroja una excepción porque una hora no se puede formatear como una fecha. El método format() se declara tanto en los objetos del formateador como en los objetos de fecha/hora, lo que le permite hacer referencia a los objetos en cualquier orden. Las siguientes declaraciones imprimen exactamente lo mismo que el código anterior:
+Aquí decimos que queremos un formateador localizado en el formato corto predefinido. La última línea arroja una excepción porque una hora(localTime) no se puede formatear como una fecha(localDate). El método format() se declara tanto en los objetos del formateador como en los objetos de `date/time`, lo que le permite hacer referencia a los objetos en cualquier orden. Las siguientes declaraciones imprimen exactamente lo mismo que el código anterior:
 
 ```java
     DateTimeFormatter shortDateTime =
@@ -943,8 +943,7 @@ Aquí decimos que queremos un formateador localizado en el formato corto predefi
     System.out.println(time.format(shortDateTime));
 ```
 
-In this book, we’ll change around the orders to get you used to seeing it both ways.
-Table 5.10 shows the legal and illegal localized formatting methods.
+
 
 Hay dos formatos predefinidos que pueden aparecer en el examen: SHORT y MEDIUM. Los otros formatos predefinidos involucran zonas horarias, que no están en el examen.
 
@@ -960,7 +959,7 @@ Hay dos formatos predefinidos que pueden aparecer en el examen: SHORT y MEDIUM. 
     System.out.println(mediumF.format(dateTime)); // Jan 20, 2020 11:12:34 AM
 ```
 
-Si no desea utilizar uno de los formatos predefinidos, puede crear uno propio. Por ejemplo, este código detalla el mes:
+Si no deseas utilizar uno de los formatos predefinidos, puedes crear uno propio. Por ejemplo, este código detalla el mes:
 
 ```java
     DateTimeFormatter f = DateTimeFormatter.ofPattern("MMMM dd, yyyy, hh:mm");
@@ -968,21 +967,19 @@ Si no desea utilizar uno de los formatos predefinidos, puede crear uno propio. P
 ```
 
 
-Lo máximo que tendrá que hacer es reconocer las partes de fecha y hora. `MMMM` M representa el mes. Cuantas más Ms tenga, más detallada será la salida de Java. Por ejemplo, `M` genera 1, `MM` genera 01, `MMM` genera Jan y `MMMM` genera January. dd d representa el día del mes. Al igual que con el mes, cuantos más ds tenga, más detallado será el resultado de Java. `dd` significa incluir el cero inicial para un día de un solo dígito. 
+De cara al examen, lo máximo que tendrás que hacer es reconocer las partes de fecha y hora. 
 
-Utilice `,` si desea generar una coma (esto también aparece después del año).
+`MMMM` M representa el mes. Cuantas más Ms tenga, más detallada será la salida de Java. Por ejemplo, `M` genera 1, `MM` genera 01, `MMM` genera Jan y `MMMM` genera January. dd d representa el día del mes. Al igual que con el mes, cuantos más ds tenga, más detallado será el resultado de Java. 
 
-`yyyy` y representa el año. yy genera un año de dos dígitos y yyyy genera un año de cuatro dígitos.
+`dd` significa incluir el cero inicial para un día de un solo dígito. 
 
-`hh` h representa la hora. Use hh para incluir el cero inicial si está generando una hora de un solo dígito.
+`,` si desea generar una coma (esto también aparece después del año).
+
+`yyyy` representa el añ.o con cuatro digitos. `yy` genera un año de dos dígitos 
+
+`hh`  representa la hora. Use `hh` para incluir el cero inicial si está generando una hora de un solo dígito.
 
 `:` Utilice : si desea generar dos puntos.
 
 `mm` --> m representa el minuto omitiendo el cero inicial si está presente. mm es más común y representa los minutos usando dos dígitos.
-
-
-Adición de internacionalización y localización
-Muchas aplicaciones necesitan funcionar para diferentes países y con diferentes idiomas. Por ejemplo, considere la oración "El zoológico realizará un evento especial el 1/4/15 para ver animales".
-malas conductas.”
-¿Cuándo es el evento? En los Estados Unidos, es el 1 de abril. Sin embargo, un lector británico interpretaría esto como el 4 de enero. Un lector británico también podría preguntarse por qué no escribimos "comportamientos". Si estamos creando un sitio web o un programa que se ejecutará en varios países, queremos usar el idioma y el formato correctos.
 
