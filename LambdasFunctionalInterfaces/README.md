@@ -358,6 +358,8 @@ o así:
 Luego, el compilador se da cuenta de que la expresión a1 > a2 es el valor de retorno de la expresión lambda (de ahí el nombre de expresiones lambda, ya que las expresiones devuelven un valor de algún tipo).
 
 
+
+
 ## Lambdas como Objetos
 
 Una expresión Java lambda es esencialmente un objeto. Puedes asignar una expresión lambda a una variable y pasarla, como lo haces con cualquier otro objeto. Ejemplo:
@@ -372,6 +374,266 @@ MyComparator myComparator = (a1, a2) -> a1 > a2;
 
 boolean result = myComparator.compare(2, 5);
 ```
+
+## Valid lambdas?
+
+Las siguientes son expresiones lambda validas
+
+```java
+() -> true;
+x -> x.startswith("eco");
+(String x) -> x.startswith("eco");
+(x, y) -> {return x.startWith("eco");}
+(String x, String y) -> return x.startWith("eco");
+``` 
+
+Todos estos valores retornan un boolean, el 1 coge cero parámetros y devuelve boolean. El 2 coge uno y devuelve el resultado de la expresion. El tercero hace lo mismo pero define explicitamente el tipo.
+El cuarto coge dos y solo usa uno, lo que es perfectamente valido y el quinto hace lo mismo definiendo los tipos entre parentesis.
+
+
+```java 
+1:  x, y -> x.startWith("perro") // Faltan parentesis a la izquierda.
+2:  x -> {x.startWith("gato");} // Falta el return
+3:  x -> {return x.startWith("gato")} // Falta el ;
+4:  String x -> x.startWith("gato")  // Faltan parentesis a la izquierda.
+```
+- 1 y 4 Los parentesis son opcionales solo cuando hay un parametro y no tiene un tipo declarado.
+
+```java
+var invalid = (Animal a) -> a.canHoop(); // DOES NOT COMPILE 
+```
+
+- Recuerda que cuando hablamos de Java inferiedo informacion de Java por el contexto, pues bien aquí no hay contexto suficiente y por tanto java no puede determinar el tipo por lo que no compilará.
+
+## Escribir expresiones lambda
+
+Sintaxis lambda normal
+
+```java
+a -> a.canHop()
+```
+
+Sintaxis lambda completa
+
+```java
+(Animal a) -> { return a.canHop(); }
+```
+
+Los paréntesis se pueden omitir, solo si hay un solo parámetro y su tipo no se indica explícitamente. También podemos omitir las llaves cuando solo tenemos una declaración. Java no requiere que escriba `return` use un `;` cuando no se usan llaves.
+
+Todas las siguientes son expresiones lambda válidas, suponiendo que haya interfaces funcionales que puedan consumirlas.
+
+```java
+() -> new Duck();
+d -> { return d.quack(); }
+(Duck d) -> d.quack()
+(Animal a, Duck d) -> d.quack()
+```
+
+- El primero puede ser utilizado por una interfaz que contiene un método que no acepta argumentos y devuelve un Duck.
+- El segundo y el tercero, ambos pueden ser utilizados por una interfaz que toma Duck como entrada y devuelve cualquiera que sea el tipo quack().
+- El último puede ser utilizado por una interfaz que toma como entrada Animaly Duckobjetos y devuelve el tipo de quack().
+
+Ahora vamos a comprobar si hay una sintaxis no válida.
+
+```java
+a, b -> a.startsWith("test");        // DOES NOT COMPILE
+Duck d -> d.canQuack();              // DOES NOT COMPILE
+a -> { a.startsWith("test"); }       // DOES NOT COMPILE
+a -> { return a.startsWith("test") } // DOES NOT COMPILE
+(Swan s, t) -> s.compareTo(t) != 0   // DOES NOT COMPILE
+```
+
+- Las líneas 1 y 2 requieren cada paréntesis alrededor de cada lista de parámetros. Los parámetros son opcionales solo cuando hay un parámetro y no tiene un tipo declarado.
+- A la línea 3 le falta la returnpalabra clave, que es obligatoria ya que dijimos que la lambda debe devolver un boolean.
+- A la línea 4 le falta el punto y coma ;dentro de las llaves.
+- A la línea 5 le falta el tipo de parámetro para t. Si el tipo de parámetro se especifica para un parámetro, debe especificarse para todos ellos.
+
+## Trabajar con variables lambda
+
+Lista de parámetros
+Especificar el tipo de parámetros es opcional. Ahora varse puede usar en una lista de parámetros lambda. Esto significa que todos estos 3 son válidos.
+
+```java
+Predicate<String> p = x -> true;
+Predicate<String> p = (var x) -> true;
+Predicate<String> p = (String x) -> true;
+
+```
+
+### Restricciones sobre el uso de var en la lista de parámetros
+
+Si `var` se usa para uno de los tipos en la lista de parámetros, entonces debe usarse para todos los parámetros en la lista.
+
+```java
+(var num) -> 1
+(var a, var b) -> "Hello"
+(var b, var k, var m) -> 3.14159
+```
+
+```java
+var w -> 99 // DOES NOT COMPILE
+(var a, Integer b) -> true // DOES NOT COMPILE
+(String x, var y, Integer z) -> true // DOES NOT COMPILE
+```
+
+- La línea 6 no se compila porque se requieren paréntesis cuando se usa el nombre del parámetro. 
+- Las líneas 7 y 8 no se compilan porque los tipos de parámetros incluyen una combinación de vary nombres de tipos.
+
+### Variables locales dentro del cuerpo Lambda
+
+Es legal definir una lambda como un bloque.
+
+```java
+(a, b) -> {
+	int c = 0;
+	return 5;
+}
+```
+Sin embargo, no está permitido volver a declarar una variable.
+
+
+```java
+(a, b) -> {
+	int a = 0; // DOES NOT COMPILE
+	return 5;
+}
+```
+(!) ¡ Los bloques Lambda deben terminar con un punto y coma! (!)
+
+```java
+public void variables(int a) {
+	int b = 1;
+
+	Predicate<Integer> p1 = a -> {
+		int c = 0;
+		return b == c; } // DOES NOT COMPILE. MISSING ;
+}
+```
+
+Variables a las que se hace referencia desde el cuerpo de Lambda
+Los cuerpos lambda pueden usar `static` variables, variables de instancia y variables locales si son efectivamente finales.
+
+public class Crow {
+	private String color;
+
+	public void caw(String name) {
+		String volume = "loudly";
+		Predicate<String> p = s -> (name+volume+color).length() == 10;
+	}
+}
+
+(!) Si la variable local no es  efectivamente final, entonces el código no  compila. (!)
+
+```java
+public class Crow {
+	private String color;
+
+	public void caw(String name) {
+		String volume = "loudly";
+		color = "allowed";
+		name = "not allowed";
+		volume = "not allowed";
+
+		Predicate<String> p =
+			s -> (name+volume+color).length()==9; // DOES NOT COMPILE
+	}
+}
+```
+
+## Interfaces funcionales.
+
+
+Una interfaz funcional es una interfaz que contiene un solo método abstracto (SAM)
+
+```java 
+@FunctionalInterface
+public interface Spring {
+	public void sprint(int speed);
+}
+
+public class Tiger implements Sprint {
+	public void sprint(int speed) {
+		...
+	}
+}
+```
+Es una interfaz funcional
+
+```java 
+public interface Dash extends Sprint {}
+```
+
+Esta es una interfaz funcional, porque contiene exactamente un método abstracto heredado.
+
+```java 
+public interface Skip extends Sprint {
+	void skip();
+}
+```
+Esto no se debe a que tenga dos métodos abstractos. El heredado y skip()
+
+```java 
+public interface Sleep {
+	private void snore() {}
+	default int getZZZ() { return 1; }
+}
+```
+Esto no es así porque ningún método coincide con los criterios.
+
+```java 
+public interface Climb {
+	void reach();
+	default void fall() {}
+	static int getBackUp() { return 100; }
+	private static boolean checkHeight() { return true; }
+}
+```
+
+Esta es una interfaz funcional. A pesar de definir una gran cantidad de métodos, contiene un método abstracto: reach().
+
+Todas las clases heredan ciertos métodos de Object. Para el examen debe estar familiarizado con
+
+```java
+String toString();
+
+boolean equals(Object);
+
+int hashCode();
+```
+
+Hay una excepción a la regla del método abstracto único. Si una interfaz funcional incluye un método abstracto con la misma firma que un publicmétodo que se encuentra en Object, esos métodos no cuentan para el método abstracto único.
+
+```java
+public interface Soar {
+	abstract String toString();
+}
+```
+Esta no es una interfaz funcional, ya que` toString()`es un método `public` implementado dentro de `Object`.
+
+Por otro lado, esta es una interfaz funcional.
+
+
+```java
+public interface Dive {
+	String toString();
+	public boolean equals(Object o);
+	public abstract int hashCode();
+	public void dive();
+}
+```
+
+(!) Ten cuidado con los ejemplos que se parecen a los métodos de la clase `Object` . (!)
+
+```java
+public interface Hibernate {
+	String toString();
+	public boolean equals(Hibernate o);
+	public abstract int hashCode();
+	public void rest();
+}
+```
+Hibernate no es una interfaz válida.
 
 ## Capturar o usar variables externas
 
@@ -412,6 +674,24 @@ La línea 8 usa una variable de instancia en lambda.
 La línea 9 usa un parámetro de método. Sabemos que es efectivamente final ya que no hay reasignaciones a esa variable. 
 La línea 10 utiliza una variable local efectivamente final. Si descomentamos la línea 6, habrá una reasignación y la variable ya no será efectivamente final. Esto provocaría un error del compilador en la línea 10 cuando intenta acceder a una variable final no efectiva.
 
+## Interfaces funcionales
+
+La unica regla que tiene que tener una interfaz funcional es que no puede tener mas que método public abstract.
+
+La anotacion `@FunctionalInterfaz` es una interfaz de marcado explicitamente, cuya unica labor es informativa y preventiva, por lo tanto si nos saltamos la regla nos avisa con error de compilación.
+
+```java 
+@FunctionalInterface
+public interface Dance { // NO COMPILA
+    void  one();
+    void two();
+}
+```
+
+Considerando Sprint una interface funcional. Cual de las siguientes son interfaces funcionales?
+
+
+
 ## 1.3	Trabajando con interfaces funcionales preconstruidas.
 
 vienen del paquete `java.util.function`
@@ -425,25 +705,38 @@ Una interfaz funcional puede tener multiples default methods pero solo uno abstr
 
 ## Function
 
+Una Function es la base de las interfaces funcionales la declaracion es:
+
+```java
+    /**
+     * Applies this function to the given argument.
+     *
+     * @param t Argumento de entrada
+     * @return argumento de salidad
+     */
+    R apply(T t);
+´´´ 
+
+
 ```java
 public class _Funcion {
 
 	public static void main(String[] args) {
 
 		
-		// LLamada a un método.
+		// 1)  Llamada a un método.
 		int increment = increment(1);
 		System.out.println(increment);
 		
-		// Llamada a una función.
+		// 2) Llamada a una función.
 		int increment2 = incrementByOneFunction.apply(1);
 		System.out.println(increment2);
 		
-		// Llamada a una función.
+		// 3) Llamada a una segunda función.
 		int multiply = multiplyBy10Function.apply(increment2);
 		System.out.println(multiply);
 		
-		// Encadenando funciones
+		// Encadenando funciones con andThen que es un default method
 		Function<Integer, Integer> addByOneAndThenMultiplyBy10 = incrementByOneFunction.andThen(multiplyBy10Function);
 		System.out.println(addByOneAndThenMultiplyBy10.apply(5));
 		
