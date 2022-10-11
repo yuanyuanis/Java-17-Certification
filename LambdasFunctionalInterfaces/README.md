@@ -254,13 +254,12 @@ En la expresión lambda, los tipos de parámetros a menudo también se pueden in
 
 ## Lambda Parameters
 
-Since Java lambda expressions are effectively just methods, lambda expressions can take parameters just like methods. The (oldState, newState) part of the lambda expression shown earlier specifies the parameters the lambda expression takes. These parameters have to match the parameters of the method on the single method interface. In this case, these parameters have to match the parameters of the onStateChange() method of the StateChangeListener interface:
-
 Dado que las expresiones lambda de Java son efectivamente solo métodos, las expresiones lambda pueden tomar parámetros como los métodos. La parte (oldState, newState) de la expresión lambda mostrada anteriormente especifica los parámetros que toma la expresión lambda. Estos parámetros tienen que coincidir con los parámetros del método en la interfaz de método único. En este caso, estos parámetros deben coincidir con los parámetros del método `onStateChange()` de la interfaz `StateChangeListener`:
 
 ```java
 public void onStateChange(State oldState, State newState);
 ```
+
 Como mínimo, la cantidad de parámetros en la expresión lambda y el método deben coincidir.
 
 En segundo lugar, si ha especificado algún tipo de parámetro en la expresión lambda, estos tipos también deben coincidir. Todavía no le he mostrado cómo poner tipos en los parámetros de expresión lambda (se muestra más adelante), pero simplemente en muchos casos no los necesita.
@@ -1176,3 +1175,47 @@ Consumer<String> c2 = x -> System.out.print(",2: " + x);
 Consumer<String> combined = c1.andThen(c2);
 combined.accept("Annie");  // 1: Annie,2: Annie
 ```
+
+## Functional Interfaces for Primitives
+
+Hay una tabla BooleanSupplier es un caso especial
+
+## Functional Interfaces for boolean
+
+BooleanSupplier es un tipo separado. Tiene un método para implementar:
+
+```java
+@FunctionalInterface
+public interface BooleanSupplier {
+   boolean getAsBoolean();
+}
+```
+
+
+```java
+
+12: BooleanSupplier b1 = () -> true;
+13: BooleanSupplier b2 = () -> Math.random()> .5;
+14: System.out.println(b1.getAsBoolean()); // true
+15: System.out.println(b2.getAsBoolean()); // false
+
+```
+Las líneas 12 y 13 crean cada una un BooleanSupplier, que es la única interfaz funcional para boolean. La línea 14 se imprime verdadera, ya que es el resultado de b1. La línea 15 imprime verdadero o falso, según el valor aleatorio generado.
+
+### Estudiar tabla Funcional interfaces for primitives.
+
+![Descripción de la imagen](./resources/Figure4.jpg)
+
+## Trabajar con variables en Lambdas
+
+Ahora que hemos aprendido acerca de las interfaces funcionales, las usaremos para mostrar diferentes enfoques para las variables. 
+
+Pueden aparecer en tres lugares con respecto a las lambdas: la lista de parámetros, las variables locales declaradas dentro del cuerpo de lambda y las variables a las que se hace referencia desde el cuerpo de lambda. Las tres son oportunidades para que el examen te engañe. ¡Exploramos cada uno para que estés alerta cuando aparezcan trucos!
+
+![Descripción de la imagen](./resources/Figure5.jpg)
+
+## Resumen
+
+### Lambda Expressions vs. implementaciones Anonymous Interface
+
+- Diferencia una implementación de interfaz anónima puede tener estado (variables miembro) la expresión lambda no.
