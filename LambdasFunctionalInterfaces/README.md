@@ -7,7 +7,7 @@ Tabla de contenidos:
 
 Es un tipo especial de clase con unas caracteristicas determinadas, que se hace para simplificar.
 Un `record` especifica es su cabecera la descripcion de su contenido(campos). A partir de estos simplemente se generan los getters y setters automaticamente. Viene hacer lo que hace loombook pero con restricciones.
-
+git status
 Aqui un ejemplo de `record`
 
 ```java 
@@ -1219,3 +1219,51 @@ Pueden aparecer en tres lugares con respecto a las lambdas: la lista de parámet
 ### Lambda Expressions vs. implementaciones Anonymous Interface
 
 - Diferencia una implementación de interfaz anónima puede tener estado (variables miembro) la expresión lambda no.
+
+
+```java
+// Esto compila ya que: 
+//Lambda variables and method names are allowed to be the same. The x lambda parameter is scoped to within each lambda, so it is allowed to be reused. The type is inferred by the method it calls. The first lambda maps x to a String and the second to a Boolean.
+public void method() {
+   x((var x) -> {}, (var x, var y) -> false);
+}
+
+public void x(Consumer<String> x, BinaryOperator<Boolean> y) {}
+```
+
+```java
+// Estas expresiones son equivalentes ya que:
+// The question starts with a UnaryOperator<Integer>, which takes one parameter and returns a value of the same type. 
+// La funcion hace lo mismo pero coge dos parametros el primero es la salida y el otro la entrada
+UnaryOperator<Integer> u = x -> x * x;
+Function<Integer, Integer> f = x -> x*x;
+
+/*
+* @since 1.8
+ */
+@FunctionalInterface
+public interface UnaryOperator<T> extends Function<T, T> {
+
+    /**
+     * Returns a unary operator that always returns its input argument.
+     *
+     * @param <T> the type of the input and output of the operator
+     * @return a unary operator that always returns its input argument
+     */
+    static <T> UnaryOperator<T> identity() {
+        return t -> t;
+    }
+}
+
+```
+
+```java
+
+    // El codigo no compila porque la expresion lambda esta asignada a un var y el compilador no tiene informacion suficionte para determinar si compila.
+  public static void scary(String animal) {
+      var dino = s -> "dino".equals(animal);
+      var dragon = s -> "dragon".equals(animal);
+      var combined = dino.or(dragon);
+      System.out.println(combined.test(animal));
+   }
+```
