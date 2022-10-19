@@ -22,14 +22,13 @@ public class WorkingWithStreams {
             .limit(2)
         	.count();
         
-        String cambio = "";
         assertThat(count.equals(2));
         
         String[] arraysNames = {};
         
         Arrays.stream(arraysNames);
         
-        
+       
         
     }
     
