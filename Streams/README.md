@@ -1,8 +1,8 @@
 ## Optional
-### ¿Opcional es lo mismo que nulo?
-Una alternativa a Opcional es devolver nulo. Hay algunas deficiencias con este enfoque. Una es que no hay una forma clara de expresar que nulo podría ser un valor especial. Por el contrario, devolver un Opcional es una declaración clara en la API de que es posible que no haya un valor.
+### ¿`Optional` es lo mismo que nulo?
+Una alternativa a `Optional` es devolver nulo. Hay algunas deficiencias con este enfoque. Una es que no hay una forma clara de expresar que nulo podría ser un valor especial. Por el contrario, devolver un ``Optional`` es una declaración clara en la API de que es posible que no haya un valor.
 
-Otra ventaja de Optional es que puede usar un estilo de programación funcional con ifPresent() y los otros métodos en lugar de necesitar una instrucción if. Finalmente, verá hacia el final del capítulo que puede encadenar llamadas opcionales.
+Otra ventaja de `Optional` es que puede usar un estilo de programación funcional con ifPresent() y los otros métodos en lugar de necesitar una instrucción if. Finalmente, verá hacia el final del capítulo que puede encadenar llamadas opcionales.
 
 
 ```java
@@ -33,11 +33,11 @@ Otra ventaja de Optional es que puede usar un estilo de programación funcional 
 		}
 		
 		
-		// Al crear un Opcional, es común querer usar vacío() cuando el valor es nulo. Puede hacer esto con una instrucción 
+		// Al crear un Optional, es común querer usar vacío() cuando el valor es nulo. Puede hacer esto con una instrucción 
 		
 		String value = null;
 		Optional op1 = (value == null) ? Optional.empty() : Optional.of(value);
-		// Si el valor es nulo, a o se le asigna el Opcional vacío. De lo contrario, envolvemos el valor. 
+		// Si el valor es nulo, a o se le asigna el Optional vacío. De lo contrario, envolvemos el valor. 
 		// Dado que este es un patrón tan común, Java proporciona un método de fábrica para hacer lo mismo.
 
 		Optional<String> op2 =Optional.ofNullable(value);
@@ -328,9 +328,9 @@ Observe cómo todavía tenemos la cadena vacía como identidad. También seguimo
 	System.out.println(stream.reduce(1, (a, b) -> a*b)); // 90
 ```
 
-Aquí ponemos la identidad a 1 y el acumulador a la multiplicación. En muchos casos, la identidad no es realmente necesaria, por lo que Java nos permite omitirla. Cuando no especifica una identidad, se devuelve un Opcional porque es posible que no haya ningún dato. Hay tres opciones para lo que está en el Opcional:
+Aquí ponemos la identidad a 1 y el acumulador a la multiplicación. En muchos casos, la identidad no es realmente necesaria, por lo que Java nos permite omitirla. Cuando no especifica una identidad, se devuelve un `Optional` porque es posible que no haya ningún dato. Hay tres opciones para lo que está en el `Optional`:
 
-- Si el stream  está vacío, se devuelve un Opcional empty .
+- Si el stream  está vacío, se devuelve un `Optional` empty .
 - Si el stream  tiene un elemento, se devuelve.
 - Si el stream  tiene varios elementos, se aplica el acumulador para combinarlos.
 
@@ -528,7 +528,7 @@ Llamar a la primera firma utiliza el orden de clasificación predeterminado.
 		s.sorted()
 		.forEach(System.out::print); // bear-brown-
 ```
-Opcionalmente, podemos usar una implementación de Comparator a través de un método o una lambda. En este ejemplo, estamos usando un método:
+Optionalmente, podemos usar una implementación de Comparator a través de un método o una lambda. En este ejemplo, estamos usando un método:
 
 ```java
 
@@ -854,10 +854,44 @@ private static void threeDigit(Optional<Integer> optional) {
 ```
 Esto es mucho más corto y más expresivo. Con las lambdas, al examen le gusta dividir una sola declaración e identificar las piezas con un comentario. Lo hemos hecho aquí para mostrar lo que sucede con los enfoques de programación funcional y programación no funcional.
 
-Supongamos que se nos da un Opcional vacío. El primer enfoque devuelve false para la declaración if externa. El segundo enfoque ve un Opcional vacío y hace que map() y filter() lo pasen. Luego, ifPresent() ve un Opcional vacío y no llama al parámetro Consumidor.
+Supongamos que se nos da un `Optional` vacío. El primer enfoque devuelve false para la declaración if externa. El segundo enfoque ve un `Optional` vacío y hace que map() y filter() lo pasen. Luego, ifPresent() ve un `Optional` vacío y no llama al parámetro Consumidor.
 
-El siguiente caso es donde se nos da un Optional.of(4). El primer enfoque devuelve falso para la instrucción if interna. El segundo enfoque asigna el número 4 a "4". El filter() luego devuelve un Optional vacío ya que el filtro no coincide, y ifPresent() no llama al parámetro Consumer.
+El siguiente caso es donde se nos da un `Optional`.of(4)`. El primer enfoque devuelve falso para la instrucción if interna. El segundo enfoque asigna el número 4 a "4". El filter() luego devuelve un `Optional` vacío ya que el filtro no coincide, y ifPresent() no llama al parámetro Consumer.
 
-El caso final es donde se nos da un Optional.of(123). El primer enfoque devuelve verdadero para ambas declaraciones if. El segundo enfoque asigna el número 123 a "123". El filter() luego devuelve el mismo Optional, y ifPresent() ahora llama al parámetro Consumer.
+El caso final es donde se nos da un `Optional.of(123)`. El primer enfoque devuelve verdadero para ambas declaraciones if. El segundo enfoque asigna el número 123 a "123". El filter() luego devuelve el mismo `Optional`, y ifPresent() ahora llama al parámetro Consumer.
 
-Ahora supongamos que queremos obtener un Optional<Integer> que represente la longitud de la Cadena contenida en otro Optional. Suficientemente fácil:
+Ahora supongamos que queremos obtener un `Optional<Integer>` que represente la longitud de la Cadena contenida en otro `Optional`. Suficientemente fácil:
+
+```java
+	Optional<Integer> result = optional.map(String::length);
+```
+¿Qué pasaría si tuviéramos un método auxiliar que hiciera la lógica de calcular algo por nosotros que devuelve Optional<Integer>? Usar el mapa no funciona:
+
+```java
+	Optional<Integer> result = optional
+	.map(ChainingOptionals::calculator); // DOES NOT COMPILE
+```
+El problema es que la calculadora devuelve Optional<Integer>. El método `map`() agrega otro `Optional`, dándonos `Optional<Optional<Integer>>`. Bueno, eso no es bueno. La solución es llamar a `flatMap()`, en su lugar:
+
+```java
+	Optional<Integer> result = optional
+	.flatMap(ChainingOptionals::calculator);
+```
+Este funciona porque `flatMap` elimina la capa innecesaria. En otras palabras, aplana el resultado. Encadenar llamadas a `flatMap()` es útil cuando desea transformar un tipo `Optional` en otro.
+
+# Using SplitIterator
+
+Suponga que compra una bolsa de comida para que dos niños puedan alimentar a los animales en el zoológico interactivo. Para evitar discusiones, has venido preparado con una bolsa extra vacía. Saca aproximadamente la mitad de la comida de la bolsa principal y la pone en la bolsa que trajo de casa. La bolsa original todavía existe con la otra mitad de la comida.
+
+Un `Spliterator` proporciona este nivel de control sobre el procesamiento. Comienza con una `Collection` o un stream, esa es tu bolsa de comida. Llamas a `trySplit()` para sacar algo de comida de la bolsa. El resto de la comida se queda en el objeto `Spliterator` original.
+
+Las caracteristicas de un `SplitIterator` dependen del origen de datos. Una `Collection` data source es un `Spliterator` básico. Por el contrario, cuando se usa una fuente de datos `Stream`, el `Spliterator` puede ser paralelo o incluso infinito. El `Stream` en sí se ejecuta lazy en lugar de cuando se crea el `Spliterator`.
+
+You do need to know how to work with some of the common methods declared on this interface. The simplified methods you need to know are in Table 10.9.
+
+# Collecting Results
+
+## Using Basic Collectors
+## Collecting into Maps
+## Grouping, Partitioning, and Mapping
+## Teeing Collectors
