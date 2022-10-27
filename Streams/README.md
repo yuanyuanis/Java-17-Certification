@@ -1,8 +1,8 @@
 ## Optional
 ### ¿`Optional` es lo mismo que nulo?
-Una alternativa a `Optional` es devolver nulo. Hay algunas deficiencias con este enfoque. Una es que no hay una forma clara de expresar que nulo podría ser un valor especial. Por el contrario, devolver un ``Optional`` es una declaración clara en la API de que es posible que no haya un valor.
+Una alternativa a `Optional` es devolver nulo. Hay algunas deficiencias con este enfoque. Una es que no hay una forma clara de expresar que nulo podría ser un valor especial. Por el contrario, devolver un `Optional` es una declaración clara en la API de que es posible que no haya un valor.
 
-Otra ventaja de `Optional` es que puede usar un estilo de programación funcional con ifPresent() y los otros métodos en lugar de necesitar una instrucción if. Finalmente, verá hacia el final del capítulo que puede encadenar llamadas opcionales.
+Otra ventaja de `Optional` es que puede usar un estilo de programación funcional con `ifPresent()` y los otros métodos en lugar de necesitar una instrucción if. Finalmente, verá hacia el final del capítulo que puede encadenar llamadas opcionales.
 
 
 ```java
@@ -116,6 +116,9 @@ Otra ventaja de `Optional` es que puede usar un estilo de programación funciona
 
 
 ![Descripción de la imagen](./resources/Figure1.jpg)
+
+- static <T> Optional<T>	ofNullable​(T value)	
+Returns an Optional describing the given value, if non-null, otherwise returns an empty Optional.
 
 ## Streams
 
@@ -804,11 +807,11 @@ Aquí le pedimos a Java que realizara muchos cálculos sobre la transmisión. La
 
 `SummaryStatistics`:
 
--	getCount(): Returns a long representing the number of values.
--	getAverage(): Returns a double representing the average. If the stream is empty, returns 0.
--	getSum(): Returns the sum as a double for DoubleSummaryStream and long for IntSummaryStream and LongSummaryStream.
--	getMin(): Returns the smallest number (minimum) as a double, int, or long, depending on the type of the stream. If the stream is empty, returns the largest numeric value based on the type.
--	getMax(): Returns the largest number (maximum) as a double, int, or long depending on the type of the stream. If the stream is empty, returns the smallest numeric value based on the type.
+-	`getCount()` : Returns a long representing the number of values.
+-	`getAverage()`: Returns a double representing the average. If the stream is empty, returns 0.
+-	`getSum()`: Returns the sum as a double for DoubleSummaryStream and long for IntSummaryStream and LongSummaryStream.
+-	`getMin()`: Returns the smallest number (minimum) as a double, int, or long, depending on the type of the stream. If the stream is empty, returns the largest numeric value based on the type.
+-	`getMax()`: Returns the largest number (maximum) as a double, int, or long depending on the type of the stream. If the stream is empty, returns the smallest numeric value based on the type.
 
 
 # Trabajando con conceptos de Stream Pipeline avanzados
@@ -889,9 +892,201 @@ Las caracteristicas de un `SplitIterator` dependen del origen de datos. Una `Col
 
 You do need to know how to work with some of the common methods declared on this interface. The simplified methods you need to know are in Table 10.9.
 
+| Método | Descripción |
+| Spliterator<T> trySplit() | Devuelve `Spliterator` que contiene idealmente la mitad de los datos, que se eliminan del `Spliterator` actual. Este método se puede llamar varias veces y eventualmente devolverá un valor nulo cuando los datos ya no se puedan dividir. | 
+| void forEachRemaining(Consumer<T> c) | Procesa los elementos restantes en Spl`iterator. | 
+| boolean tryAdvance(Consumer<T> c) | Procesa un solo elemento de `Spliterator` si queda alguno. Devuelve si el elemento fue procesado. | 
+
+```java
+	12: var stream = List.of("bird-", "bunny-", "cat-", "dog-", "fish-", "lamb-", 
+	13:    "mouse-");
+	14: Spliterator<String> originalBagOfFood = stream.spliterator();
+	15: Spliterator<String> emmasBag = originalBagOfFood.trySplit();
+	16: emmasBag.forEachRemaining(System.out::print);  // bird-bunny-cat-
+	17:
+	18: Spliterator<String> jillsBag = originalBagOfFood.trySplit();
+	19: jillsBag.tryAdvance(System.out::print);        // dog-
+	20: jillsBag.forEachRemaining(System.out::print);  // fish-
+	21: 
+	22: originalBagOfFood.forEachRemaining(System.out::print); // lamb-mouse-
+```
+
+En las líneas 12 y 13, definimos una Lista. Las líneas 14 y 15 crean dos referencias Spliterator. La primera es la bolsa original, que contiene los siete elementos. El segundo es nuestra división de la bolsa original, colocando aproximadamente la mitad de los elementos en el frente en la bolsa de Emma. Luego imprimimos los tres contenidos de la bolsa de Emma en la línea 16.
+
+Nuestra bolsa de comida original ahora contiene cuatro elementos. Creamos un nuevo Spliterator en la línea 18 y colocamos los dos primeros elementos en la bolsa de Jill. Usamos tryAdvance() en la línea 19 para generar un solo elemento, y luego la línea 20 imprime todos los elementos restantes (¡solo queda uno!).
+
+Comenzamos con siete elementos, eliminamos tres y luego eliminamos dos más. Esto nos deja con dos elementos en la bolsa original creada en la línea 14. Estos dos elementos se generan en la línea 22.
+
+Ahora probemos un ejemplo con un Stream. Esta es una forma complicada de imprimir 123:
+```java
+
+   Spliterator<Integer> newBag = originalBag.trySplit();
+
+        newBag.tryAdvance(System.out::print); // 1
+        newBag.tryAdvance(System.out::print); // 2
+        newBag.tryAdvance(System.out::print); // 3
+```
+
+Es posible que haya notado que se trata de una stream infinita. ¡No hay problema! El Spliterator reconoce que la stream es infinita y no intenta darte la mitad. En cambio, newBag contiene una gran cantidad de elementos. Obtenemos los tres primeros ya que llamamos a tryAdvance() tres veces. ¡Sería una mala idea llamar a forEachRemaining() en un stream infinito!
+
+Tenga en cuenta que un Spliterator puede tener una serie de características, como CONCURRENTE, ORDENADO, TAMAÑO y ORDENADO. Solo verá un Spliterator sencillo en el examen. Por ejemplo, nuestro stream infinito no fue TAMAÑO.
+
 # Collecting Results
 
+
+
+
 ## Using Basic Collectors
+
+![Descripción de la imagen](./resources/Figure8.jpg)
+
+```java
+		// joining
+        var ohMy = Stream.of("lions", "tigers", "bears");
+        String result = ohMy.collect(Collectors.joining(", "));
+        System.out.println(result); // lions, tigers, bears
+
+        // Average
+        var simpleSteram = Stream.of("test1", "palabra67", "palabramuylarga");
+        Double dresult = simpleSteram.collect(Collectors.averagingInt(String::length));
+        System.out.println(dresult);// 9.666666666666666
+
+        // Count
+        var stream = Stream.of(2, 2, 4, 4, 4, 4, 4, 65, 67, 7, 3455, 234, 234, 234, 234, 23, 234);
+        Long nElements = stream.collect(Collectors.counting());
+        System.out.println(nElements);// 17
+
+        // toCollection
+        var names = Stream.of("Juan", "Laura", "Arturo", "Ita");
+
+        TreeSet<String> simpleTree = names
+                .filter((p) -> p.contains("t"))
+                .collect(Collectors.toCollection(TreeSet::new));
+
+        simpleTree.forEach(System.out::print);
+```
 ## Collecting into Maps
+
+El código que usa recopiladores que involucran mapas puede ser bastante largo. Lo construiremos lentamente. Asegúrese de comprender cada ejemplo antes de pasar al siguiente. Comencemos con un ejemplo sencillo para crear un mapa a partir de una transmisión:
+
+```java
+	var ohMy = Stream.of("lions", "tigers", "bears");
+	Map<String, Integer> map = ohMy.collect(
+		Collectors.toMap(s -> s, String::length));
+		System.out.println(map); // {lions=5, bears=5, tigers=6}
+```
+```java
+		// Una pregunta con truco, ahora vamos a hacer el reverso de la prueba anterior, de forma qie el Map se contenga de 
+        // Integer  como clave y String valor.
+        try {
+            var test = Stream.of("lions", "tigers", "bears");
+            Map<Integer, String> someMap = test.collect(Collectors.toMap(
+                    String::length,
+                    k -> k)); // BAD
+           
+            
+        } catch (Exception e) {
+            System.out.println(e.getCause());
+            /*
+             * Running this gives an exception similar to the following:
+             * 
+             * Exception in thread "main"
+             * java.lang.IllegalStateException: Duplicate key 5
+             */
+        }
+```
+
+```java
+	var ohMy = Stream.of("lions", "tigers", "bears");
+	TreeMap<Integer, String> map = ohMy.collect(Collectors.toMap(
+	String::length,
+	k -> k,
+	(s1, s2) -> s1 + "," + s2,
+	TreeMap::new));
+	System.out.println(map); //         // {5=lions,bears, 6=tigers}
+	System.out.println(map.getClass()); // class java.util.TreeMap
+```
 ## Grouping, Partitioning, and Mapping
+
+```java
+	// Prueba de goupingBy
+	var prueba = List.of("Perro", "Gato", "Oso", "Cisne", "Pato", "Liebre", "Conejo"); 
+	
+	Map<Integer, List<String>> cosas = prueba.stream().collect(Collectors.groupingBy(String::length));
+	System.out.println(cosas); // {3=[Oso], 4=[Gato, Pato], 5=[Perro, Cisne], 6=[Liebre, Conejo]}
+```
+
+El recopilador `groupingBy()` le dice a `collect()` que debe agrupar todos los elementos de la secuencia en un mapa. La función determina las claves en el Mapa. Cada valor en el Mapa es una Lista de todas las entradas que coinciden con esa clave.
+
+```java
+// Prueba de goupingBy con Collectors para pasar a set
+        var conjunto = List.of("Perro", "Gato", "Oso", "Cisne", "Pato", "Liebre", "Conejo");
+        
+        Map<Integer, Set<String>> grouping = conjunto.stream().collect
+                (Collectors.groupingBy(String::length, 
+                        TreeMap::new, 
+                        Collectors.toSet()));
+        
+        System.out.println(grouping);
+```
+        
+Lo mismo ocurre con List
+
+```java
+	var ohMy = Stream.of("lions", "tigers", "bears");
+	TreeMap<Integer, List<String>> map = ohMy.collect(
+	Collectors.groupingBy(
+		String::length,
+		TreeMap::new,
+		Collectors.toList()));
+	System.out.println(map);
+```
+Partitioning  es un caso especial de agrupación. Con Partitioning , solo hay dos grupos posibles: true y false. Particionar es como dividir una lista en dos partes.
+
+Supongamos que estamos haciendo un letrero para colocarlo afuera de la exhibición de cada animal. Disponemos de dos tamaños de carteles. Uno puede acomodar nombres con cinco o menos caracteres. El otro es necesario para nombres más largos. Podemos dividir la lista según el signo que necesitemos.
+
+   ```java
+     // Prueba de Partitioning 
+        var listilla = List.of("Perro", "Gato", "Oso", "Cisne", "Pato", "Liebre", "Conejo");
+        Map<Boolean, List<String>> kkk = listilla.stream().collect(Collectors.partitioningBy((s) -> s.length() <= 5));
+        System.out.println(kkk); //{false=[], true=[Perro, Gato, Oso, Cisne, Pato, Liebre, Conejo]}
+
+```
+A diferencia de `groupingBy()`, no podemos cambiar el tipo de Mapa que se devuelve. Sin embargo, solo hay dos claves en el mapa, ¿realmente importa qué tipo de mapa usamos?
+
+En lugar de usar el colector descendente para especificar el tipo, podemos usar cualquiera de los colectores que ya hemos mostrado. Por ejemplo, podemos agrupar por la longitud del nombre del animal para ver cuántos de cada longitud tenemos.
+
+```java
+	var ohMy = Stream.of("lions", "tigers", "bears");
+	Map<Integer, Long> map = ohMy.collect(
+	Collectors.groupingBy(
+		String::length,
+		Collectors.counting()));
+	System.out.println(map);    // {5=2, 6=1}
+```
+```java
+	var ohMy = Stream.of("lions", "tigers", "bears");
+	Map<Integer, Optional<Character>> map = ohMy.collect(
+	Collectors.groupingBy(
+		String::length,
+		Collectors.mapping(
+			s -> s.charAt(0),
+			Collectors.minBy((a, b) -> a - b))));
+	System.out.println(map);    // {5=Optional[b], 6=Optional[t]}
+```
 ## Teeing Collectors
+
+```java
+	var list = List.of("x", "y", "z");
+	Separations result = list.stream()
+	.collect(Collectors.teeing(
+				Collectors.joining(" "),
+				Collectors.joining(","),
+				(s, c) -> new Separations(s, c)));
+	System.out.println(result);
+```
+Cuando se ejecuta, el código imprime lo siguiente:
+
+```java
+Separations[spaceSeparated=x y z, commaSeparated=x,y,z]
+```
