@@ -121,13 +121,8 @@ Esto genera los resultados en el orden en que se definen en el `Stream`:
     Time: 5 seconds
 ```
 
-While we’ve lost some of the performance gains of using a parallel stream, our map() operation can still take 
 
 ## Processing Parallel Reductions
-
-A parallel reduction is a reduction operation applied to a parallel stream. The results for parallel reductions can
-differ from what you expect when working with serial streams.
-
 
 Un `parallel reduction` es una operación de reducción aplicada a una `parallel stream`. Los resultados de las `parallel reduction` pueden diferir de lo que espera cuando trabaja con `serial streams`.
 
@@ -170,14 +165,14 @@ Aunque las streams desordenados no están en el examen, si estás desarrollando 
 
 ## Combining Results with reduce()
 
-Recall that the first parameter to the reduce() method is called the identity, the second parameter is called the
-accumulator, and the third parameter is called the combiner. The following is the signature for the method:
+Recuerde que el primer parámetro del método reduce() se llama identity, el segundo parámetro se llama accumulator y el tercer parámetro se llama combiner. 
+La siguiente es la firma del método:
 
     <U> U reduce(U identity, 
         BiFunction<U,? super T,U> accumulator, 
         BinaryOperator<U> combiner)
-
-We can concatenate a list of char values using the reduce() method, as shown in the following example:
+        
+Podemos concatenar una lista de valores char usando el método reduce(), como se muestra en el siguiente ejemplo:
 
     System.out.println(List.of('w', 'o', 'l', 'f') 
     .parallelStream()
@@ -185,53 +180,41 @@ We can concatenate a list of char values using the reduce() method, as shown in 
         (s1,c) -> s1 + c,
         (s2,s3) -> s2 + s3)); // wolf
 
-With parallel streams, we now have to be concerned about order. What if the elements of a string are combined in the
-wrong order to produce wlfo or flwo? The Stream API prevents this problem while still allowing streams to be processed
-in parallel, as long as you follow one simple rule: make sure that the accumulator and combiner produce the same result
-regardless of the order they are called in.
 
-While this is not in scope for the exam, the accumulator and combiner must be associative, non-interfering, and
-stateless. Don’t panic; you don’t need to know advanced math terms for the exam!
+Con ´parallel streams´, ahora tenemos que preocuparnos por el orden. ¿Qué pasa si los elementos de una cadena se combinan en el 
+orden incorrecto para producir wlfo o flowo? La API Stream evita este problema al mismo tiempo que permite que las transmisiones
+se procesen en paralelo, siempre que siga una regla simple: asegúrese de que el acumulador y el combinador 
+produzcan el mismo resultado, independientemente del orden en que se llamen.
 
-Let’s take a look at an example using a problematic accumulator. In particular, order mat- ters when subtracting
-numbers; therefore, the following code can output different values depending on whether you use a serial or parallel
-stream. We can omit a combiner parameter in these examples, as the accumulator can be used when the intermediate data
-types are the same.
+Si bien esto no está dentro del alcance del examen, el acumulador y el combinador deben ser asociativos, sin interferencias y sin estado.
+
+Echemos un vistazo a un ejemplo usando un acumulador problemático. En particular, el orden importa cuando se restan números; por lo tanto, el siguiente código puede generar diferentes valores dependiendo de si use streams en serie o en paralelo. Podemos omitir un parámetro combinador en estos ejemplos, ya que el acumulador se puede usar cuando los tipos de datos intermedios son los mismos.
 
     System.out.println(List.of(1,2,3,4,5,6)
     .parallelStream()
     .reduce(0, (a, b) -> (a - b))); // PROBLEMATIC ACCUMULATOR
 
-It may output -21, 3, or some other value.
+Puede generar -21, 3 o algún otro valor.
 
-You can see other problems if we use an identity parameter that is not truly an identity value. For example, what do you
-expect the following code to output?
+Puedes ver otros problemas si usamos un parámetro de identidad que no es realmente un valor de identidad. Por ejemplo, ¿qué esperas que genere el siguiente código?
 
     System.out.println(List.of("w","o","l","f") 
     .parallelStream()
     .reduce("X", String::concat)); // XwXoXlXf
 
-On a serial stream, it prints Xwolf, but on a parallel stream, the result is XwXoXlXf. As part of the parallel process,
-the identity is applied to multiple elements in the stream, result- ing in very unexpected data.
+En una transmisión en serie, imprime Xwolf, pero en una transmisión en paralelo, el resultado es XwXoXlXf. Como parte del proceso paralelo, la identidad se aplica a varios elementos de la secuencia, lo que da como resultado datos muy inesperados.
 
-**Selecting a reduce() Method**
-
-Although the one- and two-argument versions of reduce() support parallel processing, it is recommended that you use the
-three-argument version of reduce() when working with parallel streams. Providing an explicit combiner method allows the
-JVM to partition the operations in the stream more efficiently.
 
 ### Combining Results with collect()
 
-Like reduce(), the Stream API includes a three-argument version of collect() that takes accumulator and combiner
-operators along with a supplier operator instead of an identity.
+Al igual que `reduce()`, Stream API incluye una versión de tres argumentos de `collect()` que toma operadores de acumulador y combinador junto con un operador de proveedor en lugar de una identidad.
 
     <R> R collect(Supplier<R> supplier, 
     BiConsumer<R, ? super T> accumulator, 
     BiConsumer<R, R> combiner)
 
-Also, like reduce(), the accumulator and combiner operations must be able to process results in any order. In this
-manner, the three-argument version of collect() can be per- formed as a parallel reduction, as shown in the following
-example:
+Además, como reduce(), las operaciones de acumulador y combinador deben poder procesar los resultados en cualquier orden. 
+De esta manera, la versión de tres argumentos de collect() se puede realizar como una reducción paralela, como se muestra en el siguiente ejemplo:
 
     Stream<String> stream = Stream.of("w", "o", "l", "f").parallel(); 
     SortedSet<String> set = stream.collect(ConcurrentSkipListSet::new,
@@ -239,14 +222,9 @@ example:
         Set::addAll);
     System.out.println(set); // [f, l, o, w]
 
-Recall that elements in a ConcurrentSkipListSet are sorted according to their natural ordering. You should use a
-concurrent collection to combine the results, ensuring that the results of concurrent threads do not cause a
-ConcurrentModificationException.
+Recuerde que los elementos de un ConcurrentSkipListSet se ordenan según su orden natural. Debe usar una colección concurrente para combinar los resultados, asegurándose de que los resultados de subprocesos concurrentes no provoquen una ConcurrentModificationException.
 
-Performing parallel reductions with a collector requires additional considerations. For example, if the collection into
-which you are inserting is an ordered data set, such as a List, the elements in the resulting collection must be in the
-same order, regardless of whether you use a serial or parallel stream. This may reduce performance, though, as some
-operations cannot be completed in parallel.
+Realizar reducciones paralelas con un colector requiere consideraciones adicionales. Por ejemplo, si la colección en la que está insertando es un conjunto de datos ordenados, como una Lista, los elementos de la colección resultante deben estar en el mismo orden, independientemente de si usa una transmisión en serie o paralela. Sin embargo, esto puede reducir el rendimiento, ya que algunas operaciones no se pueden completar en paralelo.
 
 ## Performing a Parallel Reduction on a Collector
 
