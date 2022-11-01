@@ -1088,5 +1088,5 @@ En lugar de usar el colector descendente para especificar el tipo, podemos usar 
 Cuando se ejecuta, el código imprime lo siguiente:
 
 ```java
-Separations[spaceSeparated=x y z, commaSeparated=x,y,z]
+	Separations[spaceSeparated=x y z, commaSeparated=x,y,z]
 ```

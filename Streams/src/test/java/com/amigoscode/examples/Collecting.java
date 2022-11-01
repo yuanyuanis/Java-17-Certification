@@ -29,12 +29,14 @@ public class Collecting {
      */
     @Test
     public void streamToStringBuilder() {
-        
+
         Stream<String> stream = Stream.of("w", "o", "l", "f");
-        stream.collect(
+        StringBuilder builder = stream.collect(
                 StringBuilder::new,
                 StringBuilder::append,
                 StringBuilder::append);
+
+        assertThat(builder.toString()).isEqualToIgnoringWhitespace("wolf");
     }
 
     /**
@@ -65,7 +67,8 @@ public class Collecting {
     @Test
     public void streamToTreeSetUsingCollectors() {
 
-        TreeSet<String> result = stream.collect(Collectors.toCollection(TreeSet::new));
+        TreeSet<String> result = stream.collect(
+                Collectors.toCollection(TreeSet::new));
         System.out.println(result); // [f, l, o, w]
 
     }
@@ -91,7 +94,6 @@ public class Collecting {
     public void streamToSetUsingCollectors() {
 
         var list = List.of("aa", "bb", "zz", "bb", "asd", "1");
-
         var conjunto = list.stream().collect(Collectors.toSet());
 
         assertThat(conjunto).isExactlyInstanceOf(HashSet.class).hasSize(5);
@@ -118,32 +120,33 @@ public class Collecting {
 
         assertThatThrownBy(() -> result.add("test")).isInstanceOf(UnsupportedOperationException.class);
     }
-    
+
     @Test
     public void collectorsToMap() {
 
-            givenList.stream()
-            .collect(Collectors.toMap(Function.identity(), p -> p.length()));
-        
+        givenList.stream()
+                .collect(Collectors.toMap(Function.identity(), p -> p.length()));
+
         List<String> listWithDuplicates = Arrays.asList("a", "bb", "c", "d", "bb");
-        
+
         assertThatThrownBy(() -> listWithDuplicates.stream()
                 .collect(Collectors.toMap(Function.identity(), String::length)))
                 .isInstanceOf(IllegalStateException.class);
-          
+
     }
+
     @Test
     public void collectorsJoining() {
         String result = givenList.stream().collect(Collectors.joining());
-        System.out.println("!collectorsJoining: "+ result);
-        
+        System.out.println("!collectorsJoining: " + result);
+
         String result2 = givenList.stream().collect(Collectors.joining(" "));
-        System.out.println("!collectorsJoining: "+ result2);
-        
+        System.out.println("!collectorsJoining: " + result2);
+
         String result3 = givenList.stream()
                 .collect(Collectors.joining(" ", "PRE-", "-POST"));
-        System.out.println("!collectorsJoining: "+ result3);
-        
+        System.out.println("!collectorsJoining: " + result3);
+
     }
 
 }

@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -13,6 +14,8 @@ public class BasicCollectors {
     public static void main(String[] args) {
 
         // joining
+        
+        AtomicInteger as;
         var ohMy = Stream.of("lions", "tigers", "bears");
         String result = ohMy.collect(Collectors.joining(", "));
         System.out.println(result); // lions, tigers, bears
@@ -91,9 +94,7 @@ public class BasicCollectors {
         // Prueba de Partitioning 
         var listilla = List.of("Perro", "Gato", "Oso", "Cisne", "Pato", "Liebre", "Conejo");
         Map<Boolean, List<String>> kkk = listilla.stream().collect(Collectors.partitioningBy((s) -> s.length() <= 5));
-        System.out.println(kkk); //{false=[], true=[Perro, Gato, Oso, Cisne, Pato, Liebre, Conejo]}
-
-;        
+        System.out.println(kkk); // {false=[], true=[Perro, Gato, Oso, Cisne, Pato, Liebre, Conejo]}
 
     }
 
