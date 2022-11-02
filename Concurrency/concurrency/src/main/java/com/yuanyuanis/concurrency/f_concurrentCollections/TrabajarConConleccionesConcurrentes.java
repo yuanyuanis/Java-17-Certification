@@ -14,9 +14,10 @@ public class TrabajarConConleccionesConcurrentes {
 	    }
 
 	    System.out.println();
-	    System.out.println("Size: " + numerosFavoritos.size()); // Size: 6
+	    System.out.println("Tamaño: " + numerosFavoritos.size()); // Size: 6
 	    System.out.println(numerosFavoritos); // [4, 3, 42, 5, 4, 43]
 
+	    
 	}
 
 }

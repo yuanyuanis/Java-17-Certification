@@ -14,19 +14,20 @@ public class ConcurrencyCollectionProblems {
 		mapNumAnimales.put("Gatos", 2);
 
 		try {
-			for (Map.Entry<String, Integer> entry : mapNumAnimales.entrySet()) {
-				mapNumAnimales.remove("Perros");
-			}
+			for (Map.Entry<String, Integer> entry : mapNumAnimales.entrySet()) 
+				mapNumAnimales.remove("Perros"); // java.util.ConcurrentModificationException
+			
 		} catch (ConcurrentModificationException e) {
 			System.err.println("Error al remover: "+e);
 		}
 		
 		
 		var mapNumAnimalesConcurrent = new ConcurrentHashMap<>(mapNumAnimales);
-		for (Map.Entry<String, Integer> entry : mapNumAnimales.entrySet()) {
+		for (Map.Entry<String, Integer> entry : mapNumAnimales.entrySet()) 
 			mapNumAnimales.remove("Perros");
-		}
-		System.out.println(mapNumAnimalesConcurrent);
+		
+		System.out.println(mapNumAnimalesConcurrent); // {Gatos=2}
+
 	}
 
 }
