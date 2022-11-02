@@ -4,12 +4,12 @@ My very own exercises as a preparation for the [Java SE 11 Developer Certificati
 The goal is to earn a digital badge
 ![badge](app/src/main/resources/images/java-certification-1z0-819-exam.png)
 
-![GitHub last commit](https://img.shields.io/github/last-commit/dbubenheim/advent-of-code-2020?style=for-the-badge)
-![Travis (.org)](https://img.shields.io/travis/dbubenheim/advent-of-code-2020?style=for-the-badge)
-![GitHub](https://img.shields.io/github/license/dbubenheim/advent-of-code-2020?label=license&style=for-the-badge)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/dbubenheim/advent-of-code-2020?style=for-the-badge)
-![GitHub top language](https://img.shields.io/github/languages/top/dbubenheim/advent-of-code-2020?style=for-the-badge)
-![GitHub search hit counter](https://img.shields.io/github/search/dbubenheim/advent-of-code-2020/goto?style=for-the-badge)
+![GitHub last commit](https://img.shields.io/github/last-commit/yuanyuanis/advent-of-code-2020?style=for-the-badge)
+![Travis (.org)](https://img.shields.io/travis/yuanyuanis/advent-of-code-2020?style=for-the-badge)
+![GitHub](https://img.shields.io/github/license/yuanyuanis/advent-of-code-2020?label=license&style=for-the-badge)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/yuanyuanis/advent-of-code-2020?style=for-the-badge)
+![GitHub top language](https://img.shields.io/github/languages/top/yuanyuanis/advent-of-code-2020?style=for-the-badge)
+![GitHub search hit counter](https://img.shields.io/github/search/yuanyuanis/advent-of-code-2020/goto?style=for-the-badge)
 
 ## Sources, tools and study material which I use
 - [The Java™ Tutorials](https://docs.oracle.com/javase/tutorial)
