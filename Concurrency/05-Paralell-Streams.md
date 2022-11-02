@@ -93,7 +93,7 @@ Es verdad, hemos perdido parte del rendimiento al ordenar pero aun podemos hacer
 
 Un `parallel reduction` es una operación de reducción aplicada a una `parallel stream`. Los resultados de las `parallel reduction` pueden diferir de lo que espera cuando trabaja con `serial streams`.
 
-### Realizando tareas Order-Based 
+## Realizando tareas Order-Based 
 
 Dado que el orden no está garantizado con `parallel stream`, los métodos como `findAny()` en `parallel stream` pueden generar un comportamiento inesperado. 
 
@@ -156,7 +156,7 @@ Con ´parallel streams´, ahora tenemos que preocuparnos por el orden. ¿Qué pa
 
 La API Stream evita este problema al mismo tiempo que permite que los streams  se procesen en paralelo, siempre que siga una regla simple: 
 
-    - Asegúrete de que el *accumulator* y el *combinator* produzcan el mismo resultado, independientemente del orden en que se llamen.
+- Asegúrete de que el *accumulator* y el *combinator* produzcan el mismo resultado, independientemente del orden en que se llamen.
 
 Si bien esto no está dentro del alcance del examen, el *accumulator* y el *combinator* deben ser asociativos, sin interferencias y sin estado.
 
@@ -183,7 +183,7 @@ Por ejemplo, ¿qué esperas que genere el siguiente código?
 ```
 En un stream en serie, imprime `Xwolf`, pero en un stream en paralelo, el resultado es `XwXoXlXf`. Como parte del proceso paralelo, la *identity* se aplica a todos los elementos de la secuencia, lo que da como resultado datos muy inesperados.
 
-### Combinando Results with collect()
+## Combinando Results with collect()
 
 Al igual que `reduce()`, **Stream API** incluye una versión de tres argumentos de `collect()` que toma operadores de *accumulator* y *combinator* junto con un operador `Supplier` en lugar de una *identity*.
 
