@@ -28,7 +28,7 @@ Cuanto más concurrente sea una descomposición, mayor será la mejora del rendi
 Probémoslo. Primero, definamos una función reutilizable que simule realizar una trabajo y que tarda 5 segundos en realizarla.
 
 ```java
-   private static int hacerTrabajo(final int input) {
+    private static int hacerTrabajo(final int input) {
 		
 		try {
 			Thread.currentThread();
@@ -71,7 +71,7 @@ La siguiente es una salida de muestra:
 
 Como puedes ver, los resultados ya no estan ordenados, ni son predecibles. Las operaciones `map()` y `forEach()` en `stream parallel` son equivalentes a enviar varias expresiones lambda Runnable a un Thread Pool Executor y luego esperar los resultados.
 
-**Ordering Results**
+## Ordering Results 
 
 Si la operación `Stream` necesita garantizar el orden y no estás seguro de si es en serie o en paralelo, puedes reemplazar la línea con una que use `forEachOrdered()`:
 
@@ -112,7 +112,7 @@ La JVM asigna una cantidad de threads y devuelve el valor del primero para devol
 
 En el lado positivo, los resultados de las operaciones ordenadas en un `parallel stream ` serán consistentes con `stream serial`. Por ejemplo, llamar a `skip(5).limit(2).findFirst()` devolverá el mismo resultado en streams ordenados en serie y en paralelo.
 
-**Creando Unordered Streams**
+## Creando Unordered Streams
 
 Todas las streams con las que ha estado trabajando se consideran ordenadas de forma predeterminada. Es posible crear una streams desordenados a partir de una streams ordenados, de forma similar a como se crea una `parallel stream` a partir de `serial steram`.
 
@@ -130,7 +130,7 @@ Para `serial streams`, usar la versión desordenada no tiene ningún efecto. Per
 
 Aunque las streams desordenados no están en el examen, si estás desarrollando aplicaciones con streams paralelos, debes saber cuándo aplicar una secuencia desordenada para mejorar el rendimiento.
 
-## Combining Results with reduce()
+## Combinando resultados con reduce()
 
 Recuerda que el primer parámetro del método `reduce()` se llama *identity*, 
 el segundo parámetro se llama *accumulator* y el tercer parámetro se llama *combiner*. 
@@ -166,8 +166,8 @@ En particular, el orden importa cuando se restan números; por lo tanto, el sigu
 
 ```java
     System.out.println(List.of(1,2,3,4,5,6)
-    .parallelStream()
-    .reduce(0, (a, b) -> (a - b))); // Acumulador Problematico
+        .parallelStream()
+        .reduce(0, (a, b) -> (a - b))); // Acumulador Problematico
 ```
 
 Puede generar -21, 3 o algún otro valor.
@@ -189,8 +189,8 @@ Al igual que `reduce()`, **Stream API** incluye una versión de tres argumentos 
 
 ```java
     <R> R collect(Supplier<R> supplier, 
-    BiConsumer<R, ? super T> accumulator, 
-    BiConsumer<R, R> combiner)
+        BiConsumer<R, ? super T> accumulator, 
+        BiConsumer<R, R> combiner)
 ```
 Además, como  en el método `reduce()`, las operaciones de *accumulator* y *combinator* deben poder procesar los resultados en cualquier orden. 
 De esta manera, la versión de tres argumentos de `collect()` se puede realizar como una reducción paralela, como se muestra en el siguiente ejemplo:
@@ -206,7 +206,7 @@ Recuerde que los elementos de un `ConcurrentSkipListSet` se ordenan según su or
 
 Realizar reducciones paralelas con un `Collector` requiere consideraciones adicionales. Por ejemplo, si la colección en la que está insertando es un conjunto de datos ordenados, como una Lista, los elementos de la colección resultante deben estar en el mismo orden, independientemente de si usa una stream en serie o paralelo. Sin embargo, esto puede reducir el rendimiento, ya que algunas operaciones no se pueden completar en paralelo.
 
-## Performing a Parallel Reduction on a Collector
+## Realizando Reducciones paralelas con Collector
 
 Cada instancia de `Collector` define un método `characteristics()` que retorna un `Set`de atributos `Collector.Characteristics`
 Cuando usamos `Collector` para realizar reduccion paralela, un número de propiedades deben permanecer como true. De otro modo, la operación 
@@ -253,7 +253,7 @@ Finalmente, podemos reescribir nuestro ejemplo `groupingBy()` del Capítulo 10 p
     System.out.println(map); // {5=[lions, bears], 6=[tigers]}
 ```
 
-**Evitando Stateful Streams**
+## Evitando Stateful Streams
 
 Los efectos secundarios pueden aparecer en streams paralelos si sus expresiones lambda tienen estado. 
 Una expresión lambda con estado es aquella donde el resultado depende de cualquier estado que pueda cambiar durante la ejecución del pipeline. 
