@@ -9,18 +9,21 @@ Concurrency API. Threads and concurrency are challenging topics for many program
 can be frustrating even for veteran developers. In practice, concurrency issues are among the most difficult problems to
 diagnose and resolve.
 
-# Introducing Threads
+# Introducción Threads
 
-A thread is the smallest unit of execution that can be scheduled by the operating system.
-A process is a group of associated threads that execute in the same shared environment.
-It follows, then, that a single-threaded process is one that contains exactly one thread, whereas a multi- threaded
-process supports more than one thread.
+Comenzamos este capítulo revisando la terminología común asociada con los subprocesos. Un subproceso es la unidad de ejecución más pequeña que puede programar el sistema operativo. Un proceso es un grupo de subprocesos asociados que se ejecutan en el mismo entorno compartido. De ello se deduce, entonces, que un proceso de subproceso único es aquel que contiene exactamente un subproceso, mientras que un proceso de subprocesos múltiples admite más de un subproceso.
 
-By shared environment, we mean that the threads in the same process share the same memory space and can communicate
-directly with one another.
+Por entorno compartido, queremos decir que los subprocesos en el mismo proceso comparten el mismo espacio de memoria y pueden comunicarse directamente entre sí. Consulte la Figura 13.1 para obtener una descripción general de los subprocesos y su entorno compartido dentro de un proceso.
 
-A task is a single unit of work performed by a thread. Throughout this chapter, a task will commonly be implemented as a
-lambda expression. A thread can complete multiple independent tasks but only one task at a time.
+Esta figura muestra un solo proceso con tres subprocesos. También muestra cómo se asignan a un número arbitrario de n CPU disponibles en el sistema. Tenga en cuenta este diagrama cuando analicemos los programadores de tareas más adelante en esta sección.
+
+En este capítulo, hablamos mucho sobre las tareas y sus relaciones con los hilos. Una tarea es una sola unidad de trabajo realizada por un subproceso. A lo largo de este capítulo, una tarea se implementará comúnmente como una expresión lambda. Un subproceso puede completar varias tareas independientes, pero solo una tarea a la vez.
+
+# Callable
+
+Desde los primeros días de Java, los subprocesos múltiples han sido un aspecto importante del lenguaje. Runnable es la interfaz principal provista para representar tareas multiproceso, y Java 1.5 proporcionó Callable como una versión mejorada de Runnable .
+
+En este tutorial, exploraremos las diferencias y las aplicaciones de ambas interfaces.
 
 ## Understanding Thread Concurrency
 
