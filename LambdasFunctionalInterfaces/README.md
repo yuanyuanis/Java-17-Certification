@@ -5,12 +5,12 @@ programar interfaces funionales, asi como trabajar con las interfaces funionales
 
 Para hacerlo he subdivido el tema en los siguientes archivos:
 
-1.  [Nueva clase record presente en ejemplos](00-Nueva Clase record.md)
-2.  [Escribir lambdas simples](01-Escribir Simples Lambdas.md)
-3.  [Aprender a codificar Interfaces Funcionales](02-Codificando Interfaces Funcionales.md)
-4.  [Trabajar con method References](03-Method references.md)
-5.  [Trabajar con las Interfaces Funcionales estandar de Java 8](04-Trabajar con las Interfaces Funcionales estandar.md)
-6.  [Usar correctamente las variables lambda](05-Trabajar con variables Lambdas.md)
+1.  [Nueva clase record presente en ejemplos](00-Nueva-Clase-record.md)
+2.  [Escribir lambdas simples](01-Escribir-Simples-Lambdas.md)
+3.  [Aprender a codificar Interfaces Funcionales](02-Codificando-Interfaces-Funcionales.md)
+4.  [Trabajar con method References](03-Method-references.md)
+5.  [Trabajar con las Interfaces Funcionales estandar de Java 8](04-Trabajar-con-las-Interfaces-Funcionales-estandar.md)
+6.  [Usar correctamente las variables lambda](05-Trabajar-con-variables-Lambdas.md)
 
 # Fundamentos del examen
 __Escribe expresiones lambda simples.__
