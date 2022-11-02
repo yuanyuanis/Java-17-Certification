@@ -1,9 +1,9 @@
-# Using Concurrent Collections
+# Usando Concurrent Collections
 
 Ademas de usar threads, la `Concurrency API` incluye colecciones concurrentes que nos ayudan a gestionar tareas
 multihilo con colecciones compartidas.
 
-## Understanding Memory Consistency Errors
+## Entendiendo los errores de consistencia en Memoria
 
 El propósito de las collecciones del paquete `java.util.concurrent` es resolver errores comunes de consistencia de memoria. Se produce un error de coherencia en memoria cuando dos threads tienen vistas incoherentes de lo que deberían ser los mismos datos. Conceptualmente, queremos al escribir en un threads la colección esté disponible para otro threads.
 
@@ -42,7 +42,7 @@ Aunque normalmente no modificamos una variable de bucle, este ejemplo destaca el
 
 Las clases concurrentes se crearon para ayudar a evitar problemas comunes en los que varios threads agregan y eliminan objetos de las mismas colecciones. En cualquier instancia dada, todos los threads deben tener la misma vista coherente de la estructura de la colección.
 
-## Working with Concurrent Classes
+## Trabajar con Concurrent Classes
 
 Debes usar una coleccion concurrente cada vez que tenga varios threads que modifiquen una colección fuera de un bloque o método sincronizado, incluso si no espera un problema de concurrencia. Sin en las colecciones concurrentes, los threads que acceden a una colección podrían generar una excepción o, lo que es peor, datos corruptos.
 
@@ -76,7 +76,7 @@ Una instancia de `CopyOnWrite` es similar a un objeto **inmutable**, ya que se c
 
 `LinkedBlockingQueue`, que implementa la interfaz `BlockingQueue` concurrente. Esta clase es como una `Queue` regular, excepto que incluye versiones sobrecargadas de `offer()` y `poll()` que toman un tiempo de espera. Estos métodos esperan (o bloquean) hasta una cantidad específica de tiempo para completar una operación.
 
-## Obtaining Synchronized Collections
+## Obtener Synchronized Collections
 
 Además de las clases de colección concurrentes que hemos cubierto, la API de concurrencia también incluye métodos para obtener versiones sincronizadas de objetos de colección no concurrentes existentes. Estos métodos sincronizados se definen en la clase Collections. Operan en la colección ingresada y devuelven una referencia que es del mismo tipo que la colección subyacente.
 
