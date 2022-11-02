@@ -166,6 +166,7 @@ tiene un metodo por defecto
 ```java
     default Consumer<T> andThen(Consumer<? super T> after) 
 ```
+
 Ejemplo con `andThen` con el que podemos concatenar consumers
 
 ```java
@@ -175,10 +176,9 @@ Ejemplo con `andThen` con el que podemos concatenar consumers
     Consumer<String> result = first.andThen(second);
 ```
 
-
 ## Implementing Supplier
 
-Un `Supplier` se utiliza cuando desea generar o suministrar valores sin tener datos de entrada. 
+Un `Supplier` se utiliza cuando desea generar valores sin tener datos de entrada. 
 
 ```java
     @FunctionalInterface
@@ -186,7 +186,7 @@ Un `Supplier` se utiliza cuando desea generar o suministrar valores sin tener da
         T get();
     }
 ```
-You can create a LocalDate object using the factory method `now()`. This example shows how to use a Supplier to call this factory:
+Por ejemplo puedes usar el `LocalDate` object con el factory method `now()` para devolver un `Supplier`
 
 ```java
     Supplier<LocalDate> s1 = LocalDate::now;
@@ -198,8 +198,11 @@ You can create a LocalDate object using the factory method `now()`. This example
     System.out.println(d2);  // 2022-02-20
 ```
  
+Este ejemplo imprime una fecha dos veces. También es una buena oportunidad para revisar las referencias de métodos estáticos. La referencia del método `LocalDate::now` se utiliza para crear un `Supplier` para asignar a una variable intermedia s1. 
 
-Este ejemplo imprime una fecha dos veces. También es una buena oportunidad para revisar las referencias de métodos estáticos. La referencia del método ``LocalDate::now`` se utiliza para crear un `Supplier` para asignar a una variable intermedia s1. Un `Supplier` se usa a menudo cuando se construyen nuevos objetos. Por ejemplo, podemos imprimir dos objetos `StringBuilder` vacíos:
+Un `Supplier` se usa a menudo cuando se construyen nuevos objetos. 
+
+Por ejemplo, podemos imprimir dos objetos `StringBuilder` vacíos:
 
 ```java
     Supplier<StringBuilder> s1 = StringBuilder::new;
@@ -217,9 +220,10 @@ Esta vez, usamos una referencia de constructor para crear el objeto. Hemos estad
     System.out.println(a1);  // []
 ```
 
-Tenemos un `Supplier` de cierto tipo. Ese tipo resulta ser `ArrayList<String>`. Luego, llamar a get() crea una nueva instancia de `ArrayList<String>`, que es el tipo genérico del Proveedor; en otras palabras, un genérico que contiene otro genérico. Asegúrese de mirar el código cuidadosamente cuando surja este tipo de cosas.
+Tenemos un `Supplier` de cierto tipo. 
+Ese tipo resulta ser `ArrayList<String>`. Luego, llamar a get() crea una nueva instancia de `ArrayList<String>`, que es el tipo genérico del Proveedor(Supplier); en otras palabras, un genérico que contiene otro genérico. Asegúratee de mirar el código cuidadosamente cuando surja este tipo de cosas.
 
-Observe cómo llamamos a get() en la interfaz funcional. ¿Qué pasaría si tratáramos de imprimir el `s3` mismo?
+Observe cómo llamamos a `get()` en la interfaz funcional. ¿Qué pasaría si tratáramos de imprimir el `s3` mismo?
 
 ```java
     System.out.println(s3);
@@ -228,25 +232,27 @@ Que se imprime algo como esto:
 
 
 ```console
-functionalinterface.BuiltIns$$Lambda$1/0x0000000800066840@4909b8da
+    functionalinterface.BuiltIns$$Lambda$1/0x0000000800066840@4909b8da
 ```
-Ese es el resultado de llamar a `toString()` en una lambda. Qué asco. Esto realmente significa algo. Nuestra clase de prueba se llama BuiltIns y está en un paquete que creamos con el nombre de *functionalinterface*. Luego viene *$$*, lo que significa que la clase no existe como `.class` en el sistema de archivos. Sólo existe en la memoria. No tienes que preocuparte por el resto.
+Ese es el resultado de llamar a `toString()` en una lambda. Qué asco. 
+
+Esto realmente significa algo. Nuestra clase de prueba se llama BuiltIns y está en un paquete que creamos con el nombre de *functionalinterface*. Luego viene *$$*, lo que significa que la clase no existe como `.class` en el sistema de archivos. Sólo existe en la memoria. No tienes que preocuparte por el resto.
 
 
-## Implementing UnaryOperator and BinaryOperator
+## Implementado UnaryOperator y BinaryOperator
 
 `UnaryOperator` y `BinaryOperator` son casos especiales de una función. Requieren que todos los parámetros de tipo sean del mismo tipo. Un `UnaryOperator` transforma su valor en uno del mismo tipo. Por ejemplo, incrementar en uno es una operación unaria. De hecho, `UnaryOperator` extiende `Function`. Un `BinaryOperator` fusiona dos valores en uno del mismo tipo. Sumar dos números es una operación binaria. Del mismo modo, `BinaryOperator` amplía `BiFunction`. Las interfaces se definen de la siguiente manera:
 
 ```java
-@FunctionalInterface
-public interface UnaryOperator<T> extends Function<T, T> { 
-   // omitted static method
-}
+    @FunctionalInterface
+    public interface UnaryOperator<T> extends Function<T, T> { 
+    // omitted static method
+    }
  
-@FunctionalInterface
-public interface BinaryOperator<T> extends BiFunction<T, T, T> {
-   // omitted static methods 
-}
+    @FunctionalInterface
+    public interface BinaryOperator<T> extends BiFunction<T, T, T> {
+    // omitted static methods 
+    }
 ```
 Esto significa que las firmas del método se ven así:
 
@@ -275,9 +281,9 @@ Esto imprime CHIRP dos veces. No necesitamos especificar el tipo de devolución 
     System.out.println(b1.apply("bebé", "pollito")); // bebe pollito
     System.out.println(b2.apply("bebé", "pollito")); // bebe pollito
 ```
-## Using Convenience Methods on Functional Interfaces
+## Usando metodos convenientes en interfaces funcionales
 
-Hay una serie de métodos que son convenientes:
+Hay una serie de métodos convenientes:
 
 ![Descripción de la imagen](./resources/Figure3.jpg)
 
@@ -285,10 +291,10 @@ Mira este codigo
 
 ```java
 
-// El código funciona, pero no es muy limpio
+    // El código funciona, pero no es muy limpio
 
-Predicate<String> brownEggs = s -> s.contains("egg") && s.contains("brown");
-Predicate<String> otherEggs = s -> s.contains("egg") && !s.contains("brown");
+    Predicate<String> brownEggs = s -> s.contains("egg") && s.contains("brown");
+    Predicate<String> otherEggs = s -> s.contains("egg") && !s.contains("brown");
 ```
 
 Podemos usar los métodos *default* de predicate.
@@ -296,22 +302,22 @@ Podemos usar los métodos *default* de predicate.
 
 ```java
 
-// Clean code
+    // Clean code
 
-Predicate<String> brownEggs = egg.and(brown);
-Predicate<String> otherEggs = egg.and(brown.negate());
+    Predicate<String> brownEggs = egg.and(brown);
+    Predicate<String> otherEggs = egg.and(brown.negate());
 ```
 
 En  `Consumer`, echa un vistazo a `andThen()` method, Que hace correr dos interfaces funcionales en secuencia.
 
 ```java
 `
-Consumer<String> c1 = x -> System.out.print("1: " + x);
-Consumer<String> c2 = x -> System.out.print(",2: " + x);
+    Consumer<String> c1 = x -> System.out.print("1: " + x);
+    Consumer<String> c2 = x -> System.out.print(",2: " + x);
  
 
-Consumer<String> combined = c1.andThen(c2);
-combined.accept("Annie");  // 1: Annie,2: Annie
+    Consumer<String> combined = c1.andThen(c2);
+    combined.accept("Annie");  // 1: Annie,2: Annie
 ```
 
 ## Functional Interfaces for Primitives
@@ -323,22 +329,22 @@ Hay una tabla BooleanSupplier es un caso especial
 BooleanSupplier es un tipo separado. Tiene un método para implementar:
 
 ```java
-@FunctionalInterface
-public interface BooleanSupplier {
-   boolean getAsBoolean();
-}
+    @FunctionalInterface
+    public interface BooleanSupplier {
+    boolean getAsBoolean();
+    }
 ```
 
 
 ```java
 
-12: BooleanSupplier b1 = () -> true;
-13: BooleanSupplier b2 = () -> Math.random()> .5;
-14: System.out.println(b1.getAsBoolean()); // true
-15: System.out.println(b2.getAsBoolean()); // false
+    12: BooleanSupplier b1 = () -> true;
+    13: BooleanSupplier b2 = () -> Math.random()> .5;
+    14: System.out.println(b1.getAsBoolean()); // true
+    15: System.out.println(b2.getAsBoolean()); // false
 
 ```
-Las líneas 12 y 13 crean cada una un BooleanSupplier, que es la única interfaz funcional para boolean. La línea 14 se imprime verdadera, ya que es el resultado de b1. La línea 15 imprime verdadero o falso, según el valor aleatorio generado.
+Las líneas 12 y 13 crean cada una un `BooleanSupplier`, que es la única interfaz funcional para boolean. La línea 14 se imprime verdadera, ya que es el resultado de b1. La línea 15 imprime verdadero o falso, según el valor aleatorio generado.
 
 ### Estudiar tabla Funcional interfaces for primitives.
 

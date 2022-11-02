@@ -1,7 +1,5 @@
 
-Tabla de contenidos:
 
-    // TODO reubicar la clase record
 
 ## Nuevas clases record
 
