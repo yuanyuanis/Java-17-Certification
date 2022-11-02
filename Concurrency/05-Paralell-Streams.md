@@ -206,7 +206,7 @@ Recuerde que los elementos de un `ConcurrentSkipListSet` se ordenan según su or
 
 Realizar reducciones paralelas con un `Collector` requiere consideraciones adicionales. Por ejemplo, si la colección en la que está insertando es un conjunto de datos ordenados, como una Lista, los elementos de la colección resultante deben estar en el mismo orden, independientemente de si usa una stream en serie o paralelo. Sin embargo, esto puede reducir el rendimiento, ya que algunas operaciones no se pueden completar en paralelo.
 
-## Realizando Reducciones paralelas con Collector
+## Realizando Reducciones paralelas en un Collector
 
 Cada instancia de `Collector` define un método `characteristics()` que retorna un `Set`de atributos `Collector.Characteristics`
 Cuando usamos `Collector` para realizar reduccion paralela, un número de propiedades deben permanecer como true. De otro modo, la operación 
