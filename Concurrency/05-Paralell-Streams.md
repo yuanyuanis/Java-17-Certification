@@ -28,26 +28,28 @@ Cuanto más concurrente sea una descomposición, mayor será la mejora del rendi
 Probémoslo. Primero, definamos una función reutilizable que simule realizar una trabajo y que tarda 5 segundos en realizarla.
 
 ```java
-    private static int doWork(int input) { 
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {}
-        return input; 
-    }
+   private static int hacerTrabajo(final int input) {
+		
+		try {
+			Thread.currentThread();
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {}
+		return input;
+	}
 ```
 
 Podemos simular que estamos en una aplicación real, este trabajo podría implicar llamar a una BBDD o leer de un archivo. Ahora usemos este método con *Serial Streams*.
 
 ```java
-    long start = System.currentTimeMillis(); 
-    List.of(1,2,3,4,5)
+    Instant start = Instant.now();
+		
+    List.of(1,2,3,4,5,6,7,8)
         .stream()
-        .map(w -> doWork(w))
-        .forEach(s -> System.out.print(s + " "));
-
-    System.out.println();
-    var timeTaken = (System.currentTimeMillis()-start)/1000; 
-    System.out.println("Time: "+timeTaken+" seconds");
+        .map(x -> hacerTrabajo(x))
+        .forEach(s -> System.out.print(s+" "));
+    
+    Instant end = Instant.now();
+    System.out.println("\nTiempo transcurrido: " + Duration.between(start, end));
 ```
 
 ¿Qué crees que escupe este código cuando se ejecute como parte de un método main()? 
@@ -87,32 +89,32 @@ Esto genera los resultados en el orden en que se definen en el `Stream`:
 Es verdad, hemos perdido parte del rendimiento al ordenar pero aun podemos hacer operaciones en paralelo.
 
 
-## Processing Parallel Reductions
+## Procesando Parallel Reductions
 
 Un `parallel reduction` es una operación de reducción aplicada a una `parallel stream`. Los resultados de las `parallel reduction` pueden diferir de lo que espera cuando trabaja con `serial streams`.
 
-### Performing Order-Based Tasks
+### Realizando tareas Order-Based 
 
 Dado que el orden no está garantizado con `parallel stream`, los métodos como `findAny()` en `parallel stream` pueden generar un comportamiento inesperado. 
 
 Mira siguiente ejemplo:
 
 ```java
-    System.out.print(List.of(1,2,3,4,5,6)
+    System.out.print(List.of("a","b","c","d","e","f")
     .parallelStream() 
     .findAny() 
     .get());
 ```
 
-La JVM asigna una cantidad de threads y devuelve el valor del primero para devolver un resultado, que podría ser 4, 2, etc. Si bien no se garantiza que la `serial` o `parallel stream `devuelva el primer valor, la `stream serial` a menudo lo hace. Con `parallel stream`, es probable que los resultados sean más aleatorios.
+La JVM asigna una cantidad de threads y devuelve el valor del primero para devolver un resultado, que podría ser d, b, etc. Si bien no se garantiza que la `serial` o `parallel stream `devuelva el primer valor, la `stream serial` a menudo lo hace. Con `parallel stream`, es probable que los resultados sean más aleatorios.
 
 ¿Qué sucede con las operaciones que consideran el orden, como `findFirst()`, `limit()` y `skip()`? El orden aún se conserva, pero el rendimiento puede verse afectado en `parallel stream` como resultado de que una tarea de procesamiento paralelo se ve obligada a coordinar todos sus `threads` de forma sincronizada.
 
 En el lado positivo, los resultados de las operaciones ordenadas en un `parallel stream ` serán consistentes con `stream serial`. Por ejemplo, llamar a `skip(5).limit(2).findFirst()` devolverá el mismo resultado en streams ordenados en serie y en paralelo.
 
-**Creating Unordered Streams**
+**Creando Unordered Streams**
 
-Todas las streams con las que ha estado trabajando se consideran ordenadas de forma predeterminada. Es posible crear una streams desordenados a partir de una streams ordenados, de forma similar a como se crea una `parallel stream ` a partir de `serial steram`.
+Todas las streams con las que ha estado trabajando se consideran ordenadas de forma predeterminada. Es posible crear una streams desordenados a partir de una streams ordenados, de forma similar a como se crea una `parallel stream` a partir de `serial steram`.
 
 ```java
     List.of(1,2,3,4,5,6).stream().unordered();
@@ -163,7 +165,7 @@ En particular, el orden importa cuando se restan números; por lo tanto, el sigu
 ```java
     System.out.println(List.of(1,2,3,4,5,6)
     .parallelStream()
-    .reduce(0, (a, b) -> (a - b))); // PROBLEMATIC ACCUMULATOR
+    .reduce(0, (a, b) -> (a - b))); // Acumulador Problematico
 ```
 
 Puede generar -21, 3 o algún otro valor.
