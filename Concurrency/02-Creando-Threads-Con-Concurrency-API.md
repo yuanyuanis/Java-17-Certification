@@ -1,89 +1,83 @@
-# Creating Threads with the Concurrency API
+# Creando Threads con la Concurrency API
 
-Java includes the java.util.concurrent package, which we refer to as the Concurrency API, to handle the complicated
-work of managing threads for you. The Concurrency API includes the ExecutorService interface, which defines services
-that create and manage threads.
+Java incluye el paquete `java.util.concurrent`, al que nos referimos como Concurrency API, para manejar el complicado trabajo de administrar threads de forma manual. La API de concurrencia incluye la interfaz `ExecutorService`, que define los servicios que crean y administran threads.
 
-When writing multithreaded programs in practice, it is often better to use the Concurrency API (or some other
-multithreaded SDK) rather than work with Thread objects directly. The libraries are much more robust, and it is easier
-to handle complex interactions.
+Al escribir programas de threads múltiples en la práctica, a menudo es mejor usar la Concurrency API (o algún otro SDK de threads múltiples) en lugar de trabajar con objetos de threads directamente. Las bibliotecas son mucho más robustas y es más fácil manejar interacciones complejas.
 
-## Introducing the Single-Thread Executor
+## Introduciendo Single-Thread Executor
 
-Since ExecutorService is an interface, how do you obtain an instance of it? The Concurrency API includes the Executors
-factory class that can be used to create instances of the ExecutorService object. Let’s rewrite our earlier example with
-the two Runnable instances to using an ExecutorService.
+Dado que `ExecutorService` es una interfaz, ¿cómo se obtiene una instancia de la misma? La API de concurrencia incluye la clase factory `Executors` 
+que se puede usar para crear instancias del objeto `ExecutorService`. 
 
-    Runnable printInventory = () -> System.out.println("Printing zoo inventory");
-    Runnable printRecords = () -> {
-        for (int i = 0; i < 3; i++)
-            System.out.println("Printing record: " + i);
+```java
+    
+    Runnable imprimeInventario = () -> System.out.println("imprimiendo inventario ZOO");
+    Runnable imprimirRegistro = () -> {
+        for (int i = 0; i <= 3; i++) {
+            System.out.println("Imprimiendo Registro: "+i);
+        }
     };
-
-
+    
     ExecutorService service = Executors.newSingleThreadExecutor();
+    
     try {
-        System.out.println("begin");
-        service.execute(printInventory);
-        service.execute(printRecords);
-        service.execute(printInventory);
-        System.out.println("end");
-    } finally {
+        System.out.println("Comienza ...");
+        
+        service.execute(imprimeInventario);
+        service.execute(imprimirRegistro);
+        service.execute(imprimeInventario);
+        
+        System.out.println("Fin ...");
+
+    }finally {
         service.shutdown();
     }
+```
 
-Notice that the printRecords loop is no longer interrupted by other Runnable tasks sent to the thread executor. With a
-single-thread executor, tasks are guaranteed to be executed sequentially. Notice that the end text is output while our
-thread executor tasks are still running. This is because the main() method is still an independent thread from the
-ExecutorService.
+Tenga en cuenta que el bucle printRecords ya no se interrumpe por otras tareas ejecutables enviadas al ejecutor del Hilo. Con un ejecutor de un solo Hilo(`newSingleThreadExecutor()`), se garantiza que las tareas se ejecuten secuencialmente. Tenga en cuenta que el texto final se emite mientras nuestras tareas del ejecutor de Hilo aún se están ejecutando. Esto se debe a que el método main() sigue siendo un Hilo independiente del ExecutorService.
 
 ## Shutting Down a Thread Executor
 
-Once you have finished using a thread executor, it is important that you call the shutdown() method. A thread executor
-creates a non-daemon thread on the first task that is executed, so failing to call shutdown() will result in your
-application never terminating.
+Una vez que haya terminado de usar un ExecutorService , es importante que llame al método shutdown(). Un ExecutorService  crea un threads que no es un demonio en la primera tarea que se ejecuta, por lo que si no llama a shutdown(), su aplicación nunca terminará.
 
-The shutdown process for a thread executor involves first rejecting any new tasks submitted to the thread executor
-while continuing to execute any previously submitted tasks. During this time, calling isShutdown() will return true,
-while isTerminated() will return false.
 
-If a new task is submitted to the thread executor while it is shutting down, a RejectedExecutionException will be
-thrown. Once all active tasks have been completed, isShutdown() and isTerminated() will both return true.
+Si llamas a shutdown Durante este tiempo, llamar a isShutdown() devolverá true, mientras que isTerminated() devolverá falso.
 
-![](creatingthreadswiththeconcurrencyapi/ExecutorService-life-cycle.png)
+Si se envía una nueva tarea al ejecutor del threads mientras se está cerrando, se lanzará una RejectedExecutionException. Una vez que se hayan completado todas las tareas activas, isShutdown() e isTerminated() devolverán true.
 
-For the exam, you should be aware that shutdown() does not stop any tasks that have already been submitted to the thread
-executor.
+![](resources/FigureCon3.jpg)
 
-What if you want to cancel all running and upcoming tasks? The ExecutorService provides a method called shutdownNow(),
-which attempts to stop all running tasks and discards any that have not been started yet. It is not guaranteed to
-succeed because it is possible to create a thread that will never terminate, so any attempt to interrupt it may be
-ignored.
 
-As you learned in Chapter 11, “Exceptions and Localization,” resources such as thread executors should be properly
-closed to prevent memory leaks. Unfortunately, the ExecutorService interface does not extend the AutoCloseable
-interface, so you cannot use a try-with-resources statement. You can still use a finally block, as we do throughout this
-chapter. While you are not required to use a finally block, it is considered a good practice to do so.
+Para el examen, debe tener en cuenta que shutdown() no detiene ninguna tarea que ya se haya enviado al ejecutor del threads.
+
+¿Qué sucede si desea cancelar todas las tareas en ejecución y próximas? ExecutorService proporciona un método llamado shutdownNow(), que intenta detener todas las tareas en ejecución y descarta las que aún no se han iniciado. No se garantiza que tenga éxito porque es posible crear un threads que nunca terminará, con lo que cualquier intento de interrumpirlo puede ser ignorado.
+
+Los recursos ExecutorService deben cerrarse correctamente para evitar pérdidas de memoria. Desafortunadamente, la interfaz ExecutorService no implentaAutoCloseable, por lo que no puede usar try-with-resources 
 
 ## Submitting Tasks
 
-You can submit tasks to an ExecutorService instance multiple ways. The first method we presented, execute(), is
-inherited from the Executor interface, which the ExecutorService interface extends.
+Puede enviar tareas a una instancia de ExecutorService de varias maneras. 
 
-The execute() method takes a Runnable instance and completes the task asynchronously.
-Because the return type of the method is void, it does not tell us anything about the result of the task. It is
-considered a “fire-and-forget” method, as once it is submitted, the results are not directly available to the calling
-thread.
+El primer método que presentamos, execute(), se hereda de la interfaz Executor, que se amplía con la interfaz ExecutorService.
 
-Fortunately, the writers of Java added submit() methods to the ExecutorService interface, which, like execute(), can be
-used to complete tasks asynchronously. Unlike execute(), though, submit() returns a Future instance that can be used to
-determine whether the task is complete. It can also be used to return a generic result object after the task has been
-completed.
+El método execute() toma una instancia de Runnable y completa la tarea de forma asíncrona. Debido a que el tipo de devolución del método es nulo, no nos dice nada sobre el resultado de la tarea. Se considera un método de "dispara y olvida", ya que una vez que se envía, los resultados no están disponibles directamente para el hilo que llama.
 
-In practice, using the submit() method is quite similar to using the execute() method, except that the submit() method
-returns a Future instance that can be used to determine whether the task has completed execution.
+Afortunadamente, los escritores de Java agregaron métodos de submit () a la interfaz ExecutorService, que, al igual que execute(), se pueden usar para completar tareas de forma asíncrona. Sin embargo, a diferencia de execute(), submit() devuelve una instancia de Future que se puede usar para determinar si la tarea está completa. También se puede usar para devolver un objeto de resultado genérico después de que se haya completado la tarea.
 
-![](creatingthreadswiththeconcurrencyapi/ExecutorService-methods.png)
+En la práctica, usar el método de submit() es bastante similar al método de execute(), excepto que el método de submit() devuelve una instancia de Future que se puede usar para determinar si la tarea ha completado la ejecución..
+
+
+Métodos de la clase ExecuteService 
+
+| Nombre método   |      Descripcion      |
+|----------|:-------------:|
+| boolean	awaitTermination(long timeout, TimeUnit unit) | Bloquea hasta que todas las tareas hayan completado la ejecución después de una solicitud de cierre, se agote el tiempo de espera o se interrumpa el hilo actual, lo que ocurra primero. | 
+| void execute(Runnable c) | Ejecuta la tarea en algun momento del futuro | 
+| Future<?>	submit(Runnable task) |Envía una tarea ejecutable para su ejecución y devuelve un futuro que representa esa tarea.|
+|<T> Future<T> submit(Callable<T> task)|Envía una tarea que devuelve valor para su ejecución y devuelve un futuro que representa los resultados pendientes de la tarea.|
+|<T> T	invokeAny(Collection<? extends Callable<T>> tasks)|Ejecuta las tareas dadas, devolviendo el resultado de una que se completó con éxito (es decir, sin lanzar una excepción), si alguna lo hace.|
+|<T> List<Future<T>>	invokeAll(Collection<? extends Callable<T>> tasks) |    Ejecuta las tareas dadas, devolviendo una lista de Futuros que mantienen su estado y resultados cuando todo se completa.   |   
+
 
 **Submitting Tasks: execute() vs. submit()**
 
@@ -291,24 +285,14 @@ throughout the day. The process can take 20 minutes or more, since it requires t
 items from the back room. Once the worker has filled the salad bar with fresh food, they don’t need to check at some
 specific time, just after enough time has passed for it to become low on stock again.
 
-## Increasing Concurrency with Pools
+## Incrementando Concurrency with Pools
 
-All of our examples up until now have been with a single-thread executor, which, while interesting, weren’t particularly
-useful. After all, the name of this chapter is “Concurrency,” and you can’t do a lot of that with a single-thread
-executor!
+Todos nuestros ejemplos hasta ahora han sido con un ejecutor de un solo subproceso que, aunque interesante, no fue particularmente útil. Después de todo, el nombre de este capítulo es "Concurrencia", ¡y no puedes hacer mucho de eso con un ejecutor de un solo subproceso!
 
-We now present three additional factory methods in the Executors class that act on a pool of threads rather than on a
-single thread. A thread pool is a group of pre-instantiated reusable threads that are available to perform a set of
-arbitrary tasks. Table 13.5 includes our two previous single-thread executor methods, along with the new ones that you
-should know for the exam.
+Ahora presentamos tres métodos de fábrica adicionales en la clase Executors que actúan en un conjunto de subprocesos en lugar de en un único subproceso. Un grupo de subprocesos es un grupo de subprocesos reutilizables instanciados previamente que están disponibles para realizar un conjunto de tareas arbitrarias. La Tabla 13.5 incluye nuestros dos métodos ejecutores de subproceso único anteriores, junto con los nuevos que debe conocer para el examen.
 
-![](creatingthreadswiththeconcurrencyapi/Executors-factory-methods.png)
+![](resources/FigureCon2.JPG)
 
-As shown in Table 13.5, these methods return the same instance types, ExecutorService and ScheduledExecutorService, that
-we used earlier in this chapter. In other words, all of our previous examples are compatible with these new
-pooled-thread executors!
+Como se muestra en la Tabla, estos métodos devuelven los mismos tipos de instancia, ExecutorService y ScheduledExecutorService, que usamos anteriormente en este capítulo. En otras palabras, ¡todos nuestros ejemplos anteriores son compatibles con estos nuevos ejecutores de threads agrupados!
 
-The difference between a single-thread and a pooled-thread executor is what happens when a task is already running.
-While a single-thread executor will wait for the thread to become available before running the next task, a
-pooled-thread executor can execute the next task concurrently. If the pool runs out of available threads, the task will
-be queued by the thread executor and wait to be completed.
+La diferencia entre un ejecutor de threads único y uno de threads agrupados es lo que sucede cuando una tarea ya se está ejecutando. Mientras que un ejecutor de threads único esperará a que el threads esté disponible antes de ejecutar la siguiente tarea, un ejecutor de threads agrupados puede ejecutar la siguiente tarea al mismo tiempo. Si el grupo se queda sin threads disponibles, el ejecutor del threads pondrá en cola la tarea y esperará a que se complete.
