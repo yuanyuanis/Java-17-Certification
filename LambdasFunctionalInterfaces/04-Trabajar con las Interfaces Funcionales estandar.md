@@ -1,8 +1,8 @@
-## 1.3	Trabajando con interfaces funcionales preconstruidas.
+## 	Trabajando con interfaces funcionales preconstruidas.
 
-vienen del paquete `java.util.function`
+Vienen del paquete `java.util.function`
 
-Este paquete contiene interfaces funcionales que proveen objetivos para usar lambda expresions y method reference
+Este paquete contiene interfaces funcionales que proveen objetivos para usar lambda expresions y method references
 
 Una interfaz funcional puede tener multiples `default methods` pero solo uno abstracto.
 
@@ -20,7 +20,10 @@ Una `Function` es la base de las interfaces funcionales la declaracion es:
      * @return argumento de salidad
      */
     R apply(T t);
-´´´ 
+
+```
+
+Ejemplo:
 
 
 ```java
@@ -66,7 +69,18 @@ En este ejemplo podemos ver la igualdad entre llamar a un metodo y llamar a una 
 
 ## BiFunction
 
-Una BiFunction es una Function que coge dos parametros como argumento de entrada.
+Una `BiFunction` es una `Function` que coge dos parametros como argumento de entrada.
+
+```java
+   /**
+     * Applies this function to the given arguments.
+     *
+     * @param t the first function argument
+     * @param u the second function argument
+     * @return the function result
+     */
+    R apply(T t, U u);
+```
 
 ```java
 BiFunction<String, String, String> b1 = String::concat;
@@ -77,57 +91,57 @@ System.out.println(b1.apply("baby ", "chick")); // baby chick
 System.out.println(b2.apply("baby ", "chick")); // baby chick
 ```
 
-## Predicate 
+## Predicate y BiPredicate
 
 ![Descripción de la imagen](./resources/Figuere2.jpg)
 
 Esta interfaz funcional coge un parametros de cualquier tipo y devuelve un condicional.
 
-Dispone de tres métodos default and, negate, or y uno static isEqual para comparar con otro elmento
+Dispone de tres métodos default `and`, `negate`, or y uno static `isEqual` para comparar con otro elmento
 
 ```java
-/**
-    * DECLARATIVE APROACH
+    /**
+    * DECLARATIVE APROACH 
     */
-System.out.println("//2) Declarative aproach");
-Predicate<? super Person> predicate = p -> p.gender.equals(FEMALE);
+    Predicate<? super Person> predicate = p -> p.gender.equals(FEMALE);
 
-List<Person> female2 = persons.stream()
-    .filter(predicate)
-    .collect(Collectors.toList());
+    List<Person> female2 = persons.stream()
+        .filter(predicate)
+        .collect(Collectors.toList());
 
-System.out.println(female2);
+    System.out.println(female2);
 ```
 
-Esto es el equivalente a
+Esto es el equivalente a:
 
 ```java
-List<Person> female2 = persons.stream()interfaz`    .filter( p.gender.equals(FEMALE);)
+    List<Person> female2 = persons.stream()
+    .filter( p.gender.equals(FEMALE);)
     .collect(Collectors.toList());
 ```
+Ejemplo usando `BiPredicate`
 
 ```java
-/**
-**                    BiPredicate
-*/
-BiPredicate<String, String> b1 = String::startsWith;
-BiPredicate<String, String> b2 =
-   (string, prefix) -> string.startsWith(prefix);
- 
-System.out.println(b1.test("chicken", "chick")); // true
-System.out.println(b2.test("chicken", "chick")); // true
+    /**
+    **                    BiPredicate
+    */
+    BiPredicate<String, String> b1 = String::startsWith;
+    BiPredicate<String, String> b2 = (string, prefix) -> string.startsWith(prefix);
+    
+    System.out.println(b1.test("chicken", "chick")); // true
+    System.out.println(b2.test("chicken", "chick")); // true
 ```
 
-## Implementing Consumer
+## Implementado Consumer
 
-Un Consumer serepresenta un argumento simple y no retorna  resultado. Simplemente consume el resultado.
+Un Consumer serepresenta un argumento simple y no retorna nada, simplemente consume el resultado.
 
-El metodo de la einterfaz es
+El metodo de la interfaz es:
 
 ```java
     void accept(T t)
 ```
-
+Ejemplo
 
 ```java
 public static void  main (String ...args) {
@@ -148,15 +162,14 @@ public static void  main (String ...args) {
 	}
 ```
 tiene un metodo por defecto
-```java
 
-default Consumer<T> andThen(Consumer<? super T> after) 
+```java
+    default Consumer<T> andThen(Consumer<? super T> after) 
 ```
-
-Ejemplo con andThen
+Ejemplo con `andThen` con el que podemos concatenar consumers
 
 ```java
-   Consumer<String> first = x -> System.out.println(x.toLowerCase());
+    Consumer<String> first = x -> System.out.println(x.toLowerCase());
     Consumer<String> second = y -> System.out.println("aaa " + y);
 
     Consumer<String> result = first.andThen(second);
