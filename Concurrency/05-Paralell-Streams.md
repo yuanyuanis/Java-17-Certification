@@ -1,6 +1,5 @@
 # Trabajando con Parallel Streams
 
-
 Hasta ahora, todas los streams con los que has trabajado han sido *Serial Streams*. Los *Serial Streams* son streams en los que se ordenan los resultados y solo se procesa un elemento cada vez.
 
 Los *Paralell Streams* son capaces de procesar los resultados **simultáneamente**, utilizando varios subprocesos. Por ejemplo, puedes usar *Paralell Streams* y la operación `map()` para operar **simultáneamente** sobre los elementos del `Stream`, lo que mejora enormemente el rendimiento con respecto al procesamiento de un  elemento cada vez.
@@ -23,6 +22,7 @@ Algunas operaciones en stream conservan el atributo **parallel**, mientras que o
 ## Realizando Parallel Decomposition
 
 Una descomposición paralela es el proceso de tomar una tarea, dividirla en pequeñas partes que se puedan realizar **simultáneamente** y luego volver a ensamblar los resultados. 
+
 Cuanto más concurrente sea una descomposición, mayor será la mejora del rendimiento del uso de sterams paralelos.
 
 Probémoslo. Primero, definamos una función reutilizable que simule realizar una trabajo y que tarda 5 segundos en realizarla.
@@ -152,14 +152,16 @@ Podemos concatenar una lista de valores char usando el método reduce(), como se
         (s2,s3) -> s2 + s3)); // wolf
 ```
 
-Con ´parallel streams´, ahora tenemos que preocuparnos por el orden. ¿Qué pasa si los elementos de una cadena se combinan en el orden incorrecto para producir `*wlfo* o *flowo*`? 
-La API Stream evita este problema al mismo tiempo que permite que los streams 
-se procesen en paralelo, siempre que siga una regla simple: 
-- Asegúrete de que el *accumulator* y el *combinator* produzcan el mismo resultado, independientemente del orden en que se llamen.
+Con ´parallel streams´, ahora tenemos que preocuparnos por el orden. ¿Qué pasa si los elementos de una cadena se combinan en el orden incorrecto para producir `*wlfo* o *flowo*`?.
+
+La API Stream evita este problema al mismo tiempo que permite que los streams  se procesen en paralelo, siempre que siga una regla simple: 
+
+    - Asegúrete de que el *accumulator* y el *combinator* produzcan el mismo resultado, independientemente del orden en que se llamen.
 
 Si bien esto no está dentro del alcance del examen, el *accumulator* y el *combinator* deben ser asociativos, sin interferencias y sin estado.
 
 Echemos un vistazo a un ejemplo usando un *accumulator* problemático. 
+
 En particular, el orden importa cuando se restan números; por lo tanto, el siguiente código puede generar diferentes valores dependiendo de si use streams en serie o en paralelo. Podemos omitir el parámetro *combinator* en estos ejemplos, ya que el *accumulator* se puede usar cuando los tipos de datos intermedios son los mismos.
 
 ```java
@@ -171,16 +173,17 @@ En particular, el orden importa cuando se restan números; por lo tanto, el sigu
 Puede generar -21, 3 o algún otro valor.
 
 Puedes ver otros problemas si usamos un parámetro *identity* que tiene realmente un valor de tipo *identity*. 
+
 Por ejemplo, ¿qué esperas que genere el siguiente código?
 
 ```java
     System.out.println(List.of("w","o","l","f") 
-    .parallelStream()
-    .reduce("X", String::concat)); // XwXoXlXf
+        .parallelStream()
+        .reduce("X", String::concat)); // XwXoXlXf
 ```
 En un stream en serie, imprime `Xwolf`, pero en un stream en paralelo, el resultado es `XwXoXlXf`. Como parte del proceso paralelo, la *identity* se aplica a todos los elementos de la secuencia, lo que da como resultado datos muy inesperados.
 
-### Combining Results with collect()
+### Combinando Results with collect()
 
 Al igual que `reduce()`, **Stream API** incluye una versión de tres argumentos de `collect()` que toma operadores de *accumulator* y *combinator* junto con un operador `Supplier` en lugar de una *identity*.
 
