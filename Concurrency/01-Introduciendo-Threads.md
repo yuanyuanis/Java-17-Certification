@@ -1,130 +1,136 @@
-# Concurrency
+# Concurrencia
 
-Luckily, all operating systems support what is known as multithreaded processing. The idea behind multithreaded
-processing is to allow an application or group of applications to execute multiple tasks at the same time. This allows
-tasks waiting for other resources to give way to other processing requests.
+Desde hace ya bastantes años, los sistemas operativos son multitarea, lo que les permite ejecutar diversos procesos de forma simultánea. Esta capacidad ha permitido optimizar la programación para transitar hacia modelos multiproceso o multihilo.
 
-In this chapter, we introduce you to the concept of threads and provide numerous ways to manage threads using the
-Concurrency API. Threads and concurrency are challenging topics for many programmers to grasp, as problems with threads
-can be frustrating even for veteran developers. In practice, concurrency issues are among the most difficult problems to
-diagnose and resolve.
+En este capítulo, le presentamos el concepto de threads o hilos, y proporcionamos numerosas formas de administrar estos utilizando el API de concurrency. Los threads y la concurrencia son temas difíciles de comprender para muchos programadores, ya que los problemas con los threads pueden ser complejos y frustrantes incluso para los desarrolladores veteranos. En la práctica, los problemas de concurrencia se encuentran entre los más difíciles de diagnosticar y resolver.
 
-# Introducción Threads
+# Introducción Threads(Hilos)
 
-Comenzamos este capítulo revisando la terminología común asociada con los subprocesos. Un subproceso es la unidad de ejecución más pequeña que puede programar el sistema operativo. Un proceso es un grupo de subprocesos asociados que se ejecutan en el mismo entorno compartido. De ello se deduce, entonces, que un proceso de subproceso único es aquel que contiene exactamente un subproceso, mientras que un proceso de subprocesos múltiples admite más de un subproceso.
+Comenzamos este capítulo revisando la terminología común asociada con los threads. 
 
-Por entorno compartido, queremos decir que los subprocesos en el mismo proceso comparten el mismo espacio de memoria y pueden comunicarse directamente entre sí. Consulte la Figura 13.1 para obtener una descripción general de los subprocesos y su entorno compartido dentro de un proceso.
+- Un ***Thread (Hilo)*** es la unidad de ejecución más pequeña que puede programar el sistema operativo. 
+- Un ***Proceso*** es un grupo de threads asociados que se ejecutan en el mismo entorno compartido. De ello se deduce, entonces, que un proceso de un thread es aquel que contiene exactamente un thread, mientras que un proceso de multithreaded(MiltiHilos) múltiples admite más de un thread.
 
-Esta figura muestra un solo proceso con tres subprocesos. También muestra cómo se asignan a un número arbitrario de n CPU disponibles en el sistema. Tenga en cuenta este diagrama cuando analicemos los programadores de tareas más adelante en esta sección.
+- ***Entorno compartido(Shared memory)***, queremos decir que los threads en el mismo proceso comparten el mismo espacio de memoria y pueden comunicarse directamente entre sí. 
 
-En este capítulo, hablamos mucho sobre las tareas y sus relaciones con los hilos. Una tarea es una sola unidad de trabajo realizada por un subproceso. A lo largo de este capítulo, una tarea se implementará comúnmente como una expresión lambda. Un subproceso puede completar varias tareas independientes, pero solo una tarea a la vez.
+![](resources/FigureTh1.jpg)
+
+Esta figura muestra un solo proceso con tres threads. También muestra cómo se asignan a un número arbitrario de n CPU disponibles en el sistema. Tenga en cuenta este diagrama cuando analicemos los programadores de tareas más adelante en esta sección.
+
+En este documento, hablamos mucho sobre las tareas y sus relaciones con los hilos. 
+
+- Una ***tarea(Task o Job)*** es una sola unidad de trabajo realizada por un thread. A lo largo del tema, una tarea se implementará comúnmente como una expresión lambda. 
+  
+- Un thread puede completar varias tareas independientes, pero solo una tarea a la vez.
 
 # Callable
 
-Desde los primeros días de Java, los subprocesos múltiples han sido un aspecto importante del lenguaje. Runnable es la interfaz principal provista para representar tareas multiproceso, y Java 1.5 proporcionó Callable como una versión mejorada de Runnable .
+Desde los primeros días de Java, los threads múltiples han sido un aspecto importante del lenguaje. Runnable es la interfaz principal provista para representar tareas multiproceso, y Java 1.5 proporcionó Callable como una versión mejorada de Runnable .
 
 En este tutorial, exploraremos las diferencias y las aplicaciones de ambas interfaces.
 
 ## Understanding Thread Concurrency
 
-The property of executing multiple threads and processes at the same time is referred to as concurrency.
-How does the system decide what to execute when there are more threads available than CPUs? Operating systems use a
-thread scheduler to determine which threads should be currently executing.
-For example, a thread scheduler may employ a round-robin schedule in which each available thread receives an equal
-number of CPU cycles with which to execute, with threads visited in a circular order.
+La propiedad de ejecutar múltiples hilos(Multithreading) y procesos al mismo tiempo se conoce como **concurrencia**. 
 
-When a thread’s allotted time is complete but the thread has not finished processing, a context switch occurs. A context
-switch is the process of storing a thread’s current state and later restoring the state of the thread to continue
-execution. Be aware that a cost is often associated with a context switch due to lost time and having to reload a
-thread’s state. Intelligent thread schedulers do their best to minimize the number of context switches while keeping
-an application running smoothly.
+¿Cómo decide el sistema operativo qué ejecutar cuando hay más hilos disponibles que CPUs? 
 
-Finally, a thread can interrupt or supersede another thread if it has a higher thread priority than the other thread.
-A thread priority is a numeric value associated with a thread that is taken into consideration by the thread scheduler
-when determining which threads should currently be executing. In Java, thread priorities are specified as integer
-values.
+- Los sistemas operativos utilizan un **Administrador de hilos o thread scheduler** para determinar qué threads deben estar ejecutándose actualmente.
+
+Por ejemplo, un **thread scheduler** puede emplear round-robin schedule en el que cada thread disponible recibe el mismo número de ciclos de CPU para ejecutarse. Lo que se infiere de esto es que, como programadores poco podemos hacer para priorizar unos hilos sobre otros, esa es una tarea del administrador de tareas del SO, de echo tratar de programar hilos en base a prioridades es un error conceptual.
+
+Cuando se completa el tiempo asignado de un hilo pero el hilo no ha terminado de procesarse, se produce un **cambio de contexto(context swicth)**. 
+- Un **cambio de contexto(context swicth)** es el proceso de almacenar el estado actual de un hilo y luego restaurar el estado del hilo para continuar la ejecución. Vamos, para continuar por donde iba. 
+  
+- Tenga en cuenta que a menudo se asocia un costo con un cambio de contexto debido a la pérdida de tiempo y la necesidad de recargar el estado del hilo. Los programadores de hilos inteligentes hacen todo lo posible para minimizar la cantidad de cambios de contexto mientras mantienen una aplicación funcionando sin problemas.
+
+Finalmente, un thread puede interrumpir o reemplazar a otro thread si tiene una prioridad de thread más alta que el otro thread.
+
+Una prioridad de thread es un valor numérico asociado con un thread que el planificador de thread tiene en cuenta al determinar qué thread deben ejecutarse actualmente. En Java, las prioridades de thread se especifican como valores enteros.
 
 ## Creating a Thread
 
-One of the most common ways to define a task for a thread is by using the Runnable instance. Runnable is a functional
-interface that takes no arguments and returns no data.
+Una de las formas más comunes de definir una tarea para un thread es mediante la instancia de Runnable. 
+Runnable es un funcional
 
+```java
     @FunctionalInterface 
     public interface Runnable { 
         void run();
     }
+```
 
-With this, it’s easy to create and start a thread. In fact, you can do so in one line of code using the Thread class:
+Con esto, es fácil crear e iniciar un hilo. De hecho, puedes hacerlo en una línea de código usando la clase Thread:
 
+```java
     new Thread(() -> System.out.print("Hello")).start(); 
     System.out.print("World");
+```
 
-The first line creates a new Thread object and then starts it with the start() method. Does this code print HelloWorld
-or WorldHello? The answer is that we don’t know. Depending on the thread priority/scheduler, either is possible.
-Remember that order of thread execution is not often guaranteed. The exam commonly presents questions in which multiple
-tasks are started at the same time, and you must determine the result.
+La primera línea crea un nuevo objeto Thread y luego lo inicia con el método start(). 
+Y ... ¿Este código imprime *HelloWorld* o *WorldHello*? 
+La respuesta es que no lo sabemos. Dependiendo del *thread priority/scheduler*, cualquiera de los dos es posible.
+- Recuerda que el orden de ejecución de los threads, a menudo, no está garantizado. 
 
-Let’s take a look at a more complex example:
+Compliquemoslo un poco, con este ejemplo:
 
-        Runnable printInventory = () -> System.out.println("Printing zoo inventory");
-        Runnable printRecords = () -> {
-            for (int i = 0; i < 3; i++)
-                System.out.println("Printing record: " + i);
-        };
+ ```java
+    Runnable printInventory = () -> System.out.println("Printing zoo inventory");
+    Runnable printRecords = () -> {
+        for (int i = 0; i < 3; i++)
+            System.out.println("Printing record: " + i);
+    };
 
-        System.out.println("begin");
-        new Thread(printInventory).start();
-        new Thread(printRecords).start();
-        new Thread(printInventory).start();
-        System.out.println("end");
+    System.out.println("begin");
+    new Thread(printInventory).start();
+    new Thread(printRecords).start();
+    new Thread(printInventory).start();
+    System.out.println("end");
+```
+¿Que imprime esto y en que orden? ¿Cuantos Threads hay en es este ejemplo?
 
-The answer is that it is unknown until runtime.
-This sample uses a total of four threads: the main() user thread and three additional threads created.
+- La respuesta de que imprime es desconocida hasta que se ejecute. El ejemplo usa 4 hilos. Los tres que creamos en el ejemplo y el main() que se este ejecutando, que es otro thread, por supuesto ;-).
 
-Each thread created on these lines is executed as an asynchronous task. By asynchronous, we mean that the thread
-executing the main() method does not wait for the results of each newly created thread before continuing.
+Cada hilo creado en estas líneas se ejecuta como una tarea asíncrona. Por asincrónico, queremos decir que el hilo que ejecuta el método main() no espera los resultados de cada hilo para continuar, recuerda, ya no es secuencial exactamente.
 
-While the order of thread execution is indeterminate once the threads have been started, the order within a single
-thread is still linear. In particular, the for() loop is still ordered. Also, begin always appears before end.
+Si bien el orden de ejecución de los hilos es indeterminado una vez que se han iniciado, el orden dentro de un solo hilo sigue siendo secuencial. Vamos, que el bucle for se seguirá imprimiendo de forma secuencial, obviamente ... ;-)
 
 **Calling run() Instead of start()**
 
-On the exam, be mindful of code that attempts to start a thread by calling run() instead of start(). Calling run() on a
-Thread or a Runnable does not start a new thread. While the following code snippets will compile, none will execute a
-task on a separate thread:
+En el examen, tenga en cuenta el código que intenta iniciar un `Thread` llamando a `run()` en lugar de start(). Llamar a `run()` en un Thread o un Runnable no inicia un nuevo hilo. 
 
+El siguiente codigo, compila pero no ejecuta una tarea en un hilo separado:
+
+```java
     System.out.println("begin");
     new Thread(printInventory).run();
     new Thread(printRecords).run();
     new Thread(printInventory).run();
     System.out.println("end");
+```
 
-Unlike the previous example, each line of this code will wait until the run() method is complete before moving on to the
-next line. Also unlike the previous program, the output for this code sample will be the same every time it is executed.
+A diferencia del ejemplo anterior, cada línea de este código es sincrona, esperará hasta que se complete el método run() antes de pasar a la siguiente línea. 
 
-More generally, we can create a Thread and its associated task one of two ways in Java:
+Podemos crear un `Thread` de dos formas posibles:
 
-- Provide a Runnable object or lambda expression to the Thread constructor.
-- Create a class that extends Thread and overrides the run() method.
+- Proveer de un objeto Runnable o una lambda expresion al constructor de un `Thread` .
+- Crear una clase que herede de `Thread` y sobreescriba el método run.
 
 ## Distinguishing Thread Types
 
-It might surprise you that all Java applications, including all of the ones that we have presented in this book, are
-multithreaded because they include system threads.
+A lo mejor te sorprede que todas las aplicaciones Java, incluidas todas las que se presentan como ejemplos en cualquier parte, hasta las mas simples como un "Hello Word" son multihilo, porque incluyes *system threads*.
 
-A system thread is created by the Java Virtual Machine (JVM) and runs in the background of the application.
-For example, garbage collection is managed by a system thread created by the JVM.
+- Los ***system threads*** en Java son creados por la *Java Virtual Machine* (JVM) y corren de forma subyacente en tu aplicación. Por ejemplo, el *garbage collector* de Java es gestionado por un *system thread* y creado por la *Java Virtual Machine*
 
-Alternatively, a user-defined thread is one created by the application developer to accomplish a specific task.
-The majority of the programs we’ve presented so far have contained only one user-defined thread, which calls the main()
-method. For simplicity, we commonly refer to programs that contain only a single user-defined thread as
-single-threaded applications.
+- Los ***user-threads*** son aquellos creados pro los programadores para completar una tarea.
 
-System and user-defined threads can both be created as daemon threads. A daemon thread is one that will not prevent the
-JVM from exiting when the program finishes. A Java application terminates when the only threads that are running are
-daemon threads. For example, if garbage collection is the only thread left running, the JVM will automatically shut
-down.
+La mayoría de los programas que vemos en ejemplos de internet contienen solo un thread definido por el usuario, que llaman al método main(). Para simplificar, comúnmente nos referimos a los programas que contienen un solo hilo definido por el usuario como *single-threaded applications*.
 
+Los *System* y *user-defined thread* se pueden crear como hilos daemon. 
+
+- Un ***thread daemon*** es aquel que no evitará que la JVM se cierre cuando finalice el programa. Una aplicación Java finaliza cuando los únicos hilos que se ejecutan son hilos daemon. Por ejemplo, si el *garbage collector* es el único hilo que queda en ejecución, la JVM se cerrará automáticamente.
+
+```java
     public class Zoo {
     
         public static void pause() { // Defines the thread task
@@ -141,55 +147,52 @@ down.
             System.out.println("Main method finished!");
         }
     }
+```
 
-The program will output two statements roughly 10 seconds apart:
+El programa generará dos salidas con aproximadamente 10 segundos de diferencia:
 
+```json
     Main method finished!
     --- 10 second wait ---
     Thread finished!
+```
 
-That’s right. Even though the main() method is done, the JVM will wait for the user thread to be done before ending the
-program. What if we change job to be a daemon thread
+Así es. Aunque el método main() esté terminado, la JVM esperará a que termine el  user-thread antes de finalizar el programa. Esto plantea una pregunta interesante:
+Mmmmmm ... ¿ Y qué pasaría si cambiamos job para ser un Thread tipo *daemon*?
 
+```java
     job.setDaemon(true);
+```
 
-The program will print the first statement and terminate without ever printing the second line.
+El programa imprimirá la primera frase y terminará sin imprimir la segunda...
 
+```css
     Main method finished!
-
-For the exam, just remember that by default, user-defined threads are not daemons, and the program will wait for them to
-finish.
+```
+Recuerda que por defecto todo `Thread` creado es de tipo *user-thread* ,lo que tiene todo el sentido, ya que la clase fue creada para permitir que los desarrolladores podamos programar cosas con MultiThreading ¿No crees?. 
 
 ## Managing a Thread’s Life Cycle
 
-After a thread has been created, it is in one of six states, shown in Figure 13.2. You can query a thread’s state by
-calling getState() on the thread object.
+Una vez que se ha creado un `Thread`, se encuentra en uno de los seis estados, que se muestran en la siguiente figura. Puedes consultar el estado de un hilo llamando a `getState()` sobre la instancia del `Thread`.
 
-![](introducingthreads/Thread-states.png)
+Aquí viene un poco el lio:
+![](resources/FigureTh2.jpg)
 
-Every thread is initialized with a NEW state. As soon as start() is called, the thread is moved to a RUNNABLE state.
-Does that mean it is actually running? Not exactly: it may be running, or it may not be. The RUNNABLE state just means
-the thread is able to be run. Once the work for the thread is completed or an uncaught exception is thrown, the thread
-state becomes TERMINATED, and no more work is performed.
+- ***New*** Este es el estado después de que el hilo instanciado se haya creado, pero el método start() no ha sido invocado todavía Es un objeto Thread vivo, pero aún sin ejecutar. En este punto el hilo se considera “not alive”. 
 
-While in a RUNNABLE state, the thread may transition to one of three states where it pauses its work: BLOCKED, WAITING,
-or TIMED_WAITING. This figure includes common transitions between thread states, but there are other possibilities.
-For example, a thread in a WAITING state might be triggered by notifyAll(). Likewise, a thread that is interrupted by
-another thread will exit TIMED_WAITING and go straight back into RUNNABLE.
+- ***Runnable*** En este estado, el hilo puede estar ejecutandose o ser elegido para ser ejecutado por el administrador de tareas(scheduler). El hilo entra en el estado de runnable por primera vez cuando el método start(). 
+  
+- El hilo una vez este en ejecucion puede cambiar de estado y que bloqueado a la espera de que se libere un recurso ***BLOCKED***, esperar para ser notificado ***WAITING***, ponerse a dormir si ejecuta el metodo sleep ***TIMED_WAITING*** o pasar a ***TERMINATED*** si completa su tarea.
 
-We cover some (but not all) of these transitions in this chapter. Some thread-related methods—such as wait(), notify(),
-and join()—are beyond the scope of the exam and, frankly, difficult to use well. You should avoid them and use the
-Concurrency API as much as possible. It takes a large amount of skill (and some luck!) to use these methods correctly.
+Las transiciones de estados se cubren en parte, pero solo en parte, ya que estan mas haya del alcance del examen, y sinceramente, son muy difiles de usar correctamente. Usar Threads es una forma de programar a bajo nivel, que se debe evitar siempre en practica y usar las API de concurrencia (u otras APIs de alto nivel). 
 
 ## Polling with Sleep
 
-Even though multithreaded programming allows you to execute multiple tasks at the same time, one thread often needs to
-wait for the results of another thread to proceed. One solution is to use polling. Polling is the process of
-intermittently checking data at some fixed interval.
+Aunque la programación *Multithreading* te permite ejecutar varias tareas al mismo tiempo, un thread a menudo necesita esperar a que procedan los resultados de otro thread. Una solución es utilizar el sondeo. El sondeo es el proceso de verificar datos de forma intermitente en un intervalo fijo.
 
-Let’s say you have a thread that modifies a shared static counter value, and your
-main() thread is waiting for the thread to reach 1 million:
+Digamos que tiene un thread que modifica un valor de contador estático compartido, y su thread main() está esperando que el thread alcance 1 millón:
 
+```java
     public class CheckResults {
         private static int counter = 0;
     
@@ -203,14 +206,15 @@ main() thread is waiting for the thread to reach 1 million:
             System.out.println("Reached: " + counter);
         }
     }
+```
 
-How many times does this program print Not reached yet? The answer is, we don’t know! It could output 0, 10, or a
-million times. Using a while() loop to check for data without some kind of delay is considered a bad coding practice as
-it ties up CPU resources for no reason.
+¿Cuántas veces imprime este programa *"Not reached yet"*? 
 
-We can improve this result by using the Thread.sleep() method to implement polling and sleep for 1,000 milliseconds, aka
-1 second:
+La respuesta es, ***¡no lo sabemos!***. Podría imprimirse 0, 10 o un millón de veces. Usar un blucle while() para checkear por datos sin algun tipo de pausa o *delay* se considera una mala práctica, ya que estamos comiendonos recursos de la CPU sin motivo alguno.
 
+Podemos mejorar este resultado utilizando el método Thread.sleep() para suspender el proceso principal por un segundo, por ejemplo.
+
+```java
     public class CheckResultsWithSleep {
         private static int counter = 0;
     
@@ -231,24 +235,51 @@ We can improve this result by using the Thread.sleep() method to implement polli
         }
 
     }
+```
 
-While one second may seem like a small amount, we have now freed the CPU to do other work instead of checking the
-counter variable infinitely within a loop. Notice that the main() thread alternates between TIMED_WAITING and RUNNABLE
-when sleep() is entered and exited, respectively.
+Si bien un segundo puede parecer una cantidad pequeña, ahora liberamos a la CPU para que realice cualquier otro trabajo en lugar de verificar la variable del contador infinitamente dentro de un bucle. Observe tambien, que el thread main() alterna entre *TIMED_WAITING* y *RUNNABLE* cuando se ingresa y se sale de `sleep()`, respectivamente.
 
 ## Interrupting a Thread
 
-While our previous solution prevented the CPU from waiting endlessly on a while() loop, it did come at the cost of
-inserting one-second delays into our program. . If the task takes 2.1 seconds to run, the program will use the full 3
-seconds, wasting 0.9 seconds.
+Si bien nuestra solución anterior evitó que la CPU esperara interminablemente en un ciclo while(), tuvo el costo de insertar retrasos de un segundo en nuestro programa. Si la tarea tarda 2,1 segundos en ejecutarse, el programa usará los 3 segundos completos y perderá 0,9 segundos.
 
-One way to improve this program is to allow the thread to interrupt the main() thread when it’s done:
+Una forma de mejorar este programa es permitir que el subproceso interrumpa el subproceso main() cuando haya terminado:
 
-This improved version includes both sleep(), to avoid tying up the CPU, and interrupt(), so the thread’s work ends
-without delaying the program. As before, our main() thread’s state alternates between TIMED_WAITING and RUNNABLE.
-Calling interrupt() on a thread in the TIMED_WAITING or WAITING state causes the main() thread to become RUNNABLE again,
-triggering an InterruptedException. The thread may also move to a BLOCKED state if it needs to reacquire resources when
-it wakes up.
+```java
+public static void main(String[] a) {
+    
+    var mainThread = Thread.currentThread();
+    
+    new Thread(() -> {
+        for (int i = 0; i < 1_000_000; i++)
+            counter++;
+        mainThread.interrupt();
+    }).start();
+
+    while (counter < 1_000_000) {
+        
+        System.out.println("Not reached yet");
+        try {
+            Thread.sleep(1_000); // 1 SECOND
+        } catch (InterruptedException e) {
+            System.out.println("Interrupted!");
+        }
+    }
+    
+        /**
+        * Esta versión mejorada incluye tanto sleep(), para evitar sobrecargar la CPU, como interrupt(), 
+        * por lo que el trabajo del subproceso(thread work) finaliza sin retrasar el programa. 
+        * Como antes, el estado de nuestro subproceso main() alterna entre TIMED_WAITING y RUNNABLE. 
+        * Llamar a interrupt() en un subproceso en el estado TIMED_WAITING o WAITING hace que el subproceso principal() vuelva a ser RUNNABLE,
+        * lo que desencadena una InterruptedException. 
+        * El subproceso también puede pasar a un estado BLOQUEADO si necesita volver a adquirir recursos cuando se despierta.
+        */
+    System.out.println("Reached: " + counter);
+}
+
+```
+Esta versión mejorada incluye tanto sleep(), para evitar sobrecargar la CPU, como interrupt(), por lo que la tarea del hilo(thread work) finaliza sin retrasar el programa. 
+Como antes, el estado de nuestro hilo main() alterna entre TIMED_WAITING y RUNNABLE. Llamar a interrupt() en un subproceso en el estado TIMED_WAITING o WAITING hace que el subproceso principal() vuelva a ser RUNNABLE, lo que desencadena una InterruptedException. El subproceso también puede pasar a un estado BLOQUEADO si necesita volver a adquirir recursos cuando se despierta.
 
 Calling interrupt() on a thread already in a RUNNABLE state doesn’t change the state. In fact, it only changes the
 behavior if the thread is peri- odically checking the Thread.isInterrupted() value state.
