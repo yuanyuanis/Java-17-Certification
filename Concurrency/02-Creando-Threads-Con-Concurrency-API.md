@@ -1,13 +1,16 @@
 # Creando Threads con la Concurrency API
 
-Java incluye el paquete `java.util.concurrent`, al que nos referimos como Concurrency API, para manejar el complicado trabajo de administrar threads de forma manual. La API de concurrencia incluye la interfaz `ExecutorService`, que define los servicios que crean y administran threads.
+En Java 1.7 en adelante, se incluye el paquete `java.util.concurrent`, al que nos referiremos como la *Concurrency API*. Esta es una API de alto nivel que usaremos para evitar el complicado trabajo de gestionar los hilos con la clase `Thread`. La clase `Thread` es como la primera versión de Matrix, primogenita si, pero vieja y obsoleta.
 
-Al escribir programas de threads múltiples en la práctica, a menudo es mejor usar la Concurrency API (o algún otro SDK de threads múltiples) en lugar de trabajar con objetos de threads directamente. Las bibliotecas son mucho más robustas y es más fácil manejar interacciones complejas.
+La *Concurrency API* incluye la interfaz `ExecutorService`, que simplifica la ejecución de tareas en modo asíncrono. En términos generales, `ExecutorService` proporciona automáticamente *pool of threads* y una API para asignar tareas a este.
+
+Para escribir programas MultiThread en la vida real, es mejor usar la *Concurrency API* (o algún otro SDK de Multithreading) en lugar de trabajar con objetos de `Thread` directamente. Estas librerias son mucho más robustas y es fáciles de entender, y nos ayudan gestionar los desafios complejos.
 
 ## Introduciendo Single-Thread Executor
 
-Dado que `ExecutorService` es una interfaz, ¿cómo se obtiene una instancia de la misma? La API de concurrencia incluye la clase factory `Executors` 
-que se puede usar para crear instancias del objeto `ExecutorService`. 
+Dado que `ExecutorService` es una interfaz, ¿cómo obtenemos una instancia de la misma? 
+
+- La *Concurrency API* incluye la clase factory `Executors` que se puede usar para crear instancias del objeto `ExecutorService`. 
 
 ```java
     
@@ -18,12 +21,12 @@ que se puede usar para crear instancias del objeto `ExecutorService`.
         }
     };
     
-    ExecutorService service = Executors.newSingleThreadExecutor();
+    ExecutorService service = Executors.newSingleThreadExecutor(); // Aquí esta nuestra forma de instanciar Threads.
     
     try {
         System.out.println("Comienza ...");
         
-        service.execute(imprimeInventario);
+        service.execute(imprimeInventario); // Asi llamamos a Runnable, equiva a un start() en la clase Thread.
         service.execute(imprimirRegistro);
         service.execute(imprimeInventario);
         
@@ -34,68 +37,77 @@ que se puede usar para crear instancias del objeto `ExecutorService`.
     }
 ```
 
-Tenga en cuenta que el bucle printRecords ya no se interrumpe por otras tareas ejecutables enviadas al ejecutor del Hilo. Con un ejecutor de un solo Hilo(`newSingleThreadExecutor()`), se garantiza que las tareas se ejecuten secuencialmente. Tenga en cuenta que el texto final se emite mientras nuestras tareas del ejecutor de Hilo aún se están ejecutando. Esto se debe a que el método main() sigue siendo un Hilo independiente del ExecutorService.
+Tenga en cuenta que el bucle imprimeInventario ya no se interrumpe por otras tareas ejecutables enviadas al *Thread Executor*. Con un *Single-Thread-Executor* (`newSingleThreadExecutor()`), se garantiza que las tareas se ejecuten secuencialmente. Ten en cuenta que el texto final se imprime mientras nuestras tareas del *Thread Executor* se están ejecutando. Esto se debe a que el método main() sigue siendo un `Thread` independiente del `ExecutorService`.
 
 ## Shutting Down a Thread Executor
 
-Una vez que haya terminado de usar un ExecutorService , es importante que llame al método shutdown(). Un ExecutorService  crea un threads que no es un demonio en la primera tarea que se ejecuta, por lo que si no llama a shutdown(), su aplicación nunca terminará.
+Una vez que has terminado de usar un `ExecutorService`, es importante llamar al método `shutdown()`. 
 
+Un `ExecutorService` crea un *user-thread*, que no es daemon, para la primera tarea que ejecuta, por lo que si no llama a shutdown(), la aplicación nunca terminará.
 
-Si llamas a shutdown Durante este tiempo, llamar a isShutdown() devolverá true, mientras que isTerminated() devolverá falso.
+Si llamas a shutdown durante el tiempo que no se apage, al llamar a `isShutdown() `devolverá true, mientras que `isTerminated()` devolverá false.
 
-Si se envía una nueva tarea al ejecutor del threads mientras se está cerrando, se lanzará una RejectedExecutionException. Una vez que se hayan completado todas las tareas activas, isShutdown() e isTerminated() devolverán true.
+En este lapso de tiempo, si envias una nueva tarea al *Thread Executor*, se lanzará una `RejectedExecutionException`. 
+
+- Una vez que se hayan completado todas las tareas activas,` isShutdown()` e `isTerminated()` devolverán true.
 
 ![](resources/FigureCon3.jpg)
 
 
-Para el examen, debe tener en cuenta que shutdown() no detiene ninguna tarea que ya se haya enviado al ejecutor del threads.
+Para el examen, debe tener en cuenta que `shutdown()` no detiene ninguna tarea que ya se haya enviado *Thread Executor*.
 
-¿Qué sucede si desea cancelar todas las tareas en ejecución y próximas? ExecutorService proporciona un método llamado shutdownNow(), que intenta detener todas las tareas en ejecución y descarta las que aún no se han iniciado. No se garantiza que tenga éxito porque es posible crear un threads que nunca terminará, con lo que cualquier intento de interrumpirlo puede ser ignorado.
+¿Qué sucede queremos cancelar todas las tareas en ejecución y las que esten encoladas? 
 
-Los recursos ExecutorService deben cerrarse correctamente para evitar pérdidas de memoria. Desafortunadamente, la interfaz ExecutorService no implentaAutoCloseable, por lo que no puede usar try-with-resources 
+- `ExecutorService` proporciona un método llamado shutdownNow(), que intenta detener todas las tareas en ejecución y descarta las que aún no se han iniciado. No se garantiza que tenga éxito porque es posible crear un threads que nunca terminen, con lo que cualquier intento de interrumpirlo puede ser ignorado.
+
+Los recursos `ExecutorService` deben cerrarse correctamente para evitar pérdidas de memoria. Desafortunadamente, la interfaz `ExecutorService` no implentaAutoCloseable, por lo que no puede usar try-with-resources 
 
 ## Submitting Tasks
 
-Puede enviar tareas a una instancia de ExecutorService de varias maneras. 
+Puede enviar tareas a una instancia de `ExecutorService` de varias maneras. 
 
-El primer método que presentamos, execute(), se hereda de la interfaz Executor, que se amplía con la interfaz ExecutorService.
+El primer método que presentamos, execute(), se hereda de la interfaz Executor, que se amplía con la interfaz `ExecutorService`.
 
-El método execute() toma una instancia de Runnable y completa la tarea de forma asíncrona. Debido a que el tipo de devolución del método es nulo, no nos dice nada sobre el resultado de la tarea. Se considera un método de "dispara y olvida", ya que una vez que se envía, los resultados no están disponibles directamente para el hilo que llama.
+- El método execute() toma una instancia de Runnable y completa la tarea de forma asíncrona. Debido a que el tipo de devolución del método es nulo, no nos dice nada sobre el resultado de la tarea. Se considera un método de tipo *fire and forger*, ya que una vez que se envía, los resultados no están disponibles directamente para el hilo que llama.
 
-Afortunadamente, los escritores de Java agregaron métodos de submit () a la interfaz ExecutorService, que, al igual que execute(), se pueden usar para completar tareas de forma asíncrona. Sin embargo, a diferencia de execute(), submit() devuelve una instancia de Future que se puede usar para determinar si la tarea está completa. También se puede usar para devolver un objeto de resultado genérico después de que se haya completado la tarea.
+Afortunadamente, los ingenieros de Java agregaron métodos de `submit()` a la interfaz `ExecutorService`, que, al igual que execute(), se pueden usar para completar tareas de forma asíncrona. Sin embargo, a diferencia de execute(), `submit()` devuelve una instancia de `Future` que se puede usar para determinar si la tarea está completa. También se puede usar para devolver un objeto de resultado genérico después de que se haya completado la tarea.
 
-En la práctica, usar el método de submit() es bastante similar al método de execute(), excepto que el método de submit() devuelve una instancia de Future que se puede usar para determinar si la tarea ha completado la ejecución..
+En la práctica, usar el método de `submit()` es bastante similar al método de execute(), excepto que el método de `submit() `devuelve una instancia de `Future` que se puede usar para determinar si la tarea ha completado la ejecución.
 
 
-Métodos de la clase ExecuteService 
+***Métodos de la clase ExecuteService para ejecutar tareas*** 
 
 | Nombre método   |      Descripcion      |
 |----------|:-------------:|
-| boolean	awaitTermination(long timeout, TimeUnit unit) | Bloquea hasta que todas las tareas hayan completado la ejecución después de una solicitud de cierre, se agote el tiempo de espera o se interrumpa el hilo actual, lo que ocurra primero. | 
 | void execute(Runnable c) | Ejecuta la tarea en algun momento del futuro | 
 | Future<?>	submit(Runnable task) |Envía una tarea ejecutable para su ejecución y devuelve un futuro que representa esa tarea.|
 |<T> Future<T> submit(Callable<T> task)|Envía una tarea que devuelve valor para su ejecución y devuelve un futuro que representa los resultados pendientes de la tarea.|
 |<T> T	invokeAny(Collection<? extends Callable<T>> tasks)|Ejecuta las tareas dadas, devolviendo el resultado de una que se completó con éxito (es decir, sin lanzar una excepción), si alguna lo hace.|
 |<T> List<Future<T>>	invokeAll(Collection<? extends Callable<T>> tasks) |    Ejecuta las tareas dadas, devolviendo una lista de Futuros que mantienen su estado y resultados cuando todo se completa.   |   
 
+***Métodos de la clase ExecuteService para gestionar tareas*** 
+| Nombre método   |      Descripcion      |
+| boolean	awaitTermination(long timeout, TimeUnit unit) | Bloquea hasta que todas las tareas hayan completado la ejecución después de una solicitud de cierre, se agote el tiempo de espera o se interrumpa el hilo actual, lo que ocurra primero. | 
+
 
 **Submitting Tasks: execute() vs. submit()**
 
-As you might have noticed, the execute() and submit() methods are nearly identical when applied to Runnable expressions.
-The submit() method has the obvious advantage of doing the same thing execute() does, but with a return object that can
-be used to track the result. Because of this advantage and the fact that execute() does not support Callable
-expressions, we tend to prefer submit() over execute(), even if we don’t store the Future reference.
+Como habrás notado, los métodos de execute() y submit() son casi idénticos cuando se aplican a expresiones *Runnable*.
+El método submit() tiene la ventaja obvia de hacer lo mismo que execute(), pero con un objeto de retorno que se puede usar para rastrear el resultado. Debido a esta ventaja y al hecho de que execute() no admite expresiones "Callable", tendemos a preferir 
+submit() a execute().
 
-For the exam, you need to be familiar with both execute() and submit(), but in your own code we recommend submit() over
-execute() whenever possible.
+Para el examen, debes estar familiarizado con execute() y submit(), pero para trabajo recomendamos submit() sobre
+execute() siempre que sea posible.
 
 ## Waiting for Results
 
-How do we know when a task submitted to an ExecutorService is complete? As mentioned in the previous section, the
+How do we know when a task submitted to an `ExecutorService` is complete? As mentioned in the previous section, the
 submit() method returns a Future<V> instance that can be used to determine this result.
 
+```python
     Future<?> future = service.submit(() -> System.out.println("Hello"));
 
+```
 The Future type is actually an interface. For the exam, you don’t need to know any of the classes that implement Future,
 just that a Future instance is returned by various API methods.
 
@@ -293,6 +305,6 @@ Ahora presentamos tres métodos de fábrica adicionales en la clase Executors qu
 
 ![](resources/FigureCon2.JPG)
 
-Como se muestra en la Tabla, estos métodos devuelven los mismos tipos de instancia, ExecutorService y ScheduledExecutorService, que usamos anteriormente en este capítulo. En otras palabras, ¡todos nuestros ejemplos anteriores son compatibles con estos nuevos ejecutores de threads agrupados!
+Como se muestra en la Tabla, estos métodos devuelven los mismos tipos de instancia, `ExecutorService` y ScheduledExecutorService, que usamos anteriormente en este capítulo. En otras palabras, ¡todos nuestros ejemplos anteriores son compatibles con estos nuevos ejecutores de threads agrupados!
 
 La diferencia entre un ejecutor de threads único y uno de threads agrupados es lo que sucede cuando una tarea ya se está ejecutando. Mientras que un ejecutor de threads único esperará a que el threads esté disponible antes de ejecutar la siguiente tarea, un ejecutor de threads agrupados puede ejecutar la siguiente tarea al mismo tiempo. Si el grupo se queda sin threads disponibles, el ejecutor del threads pondrá en cola la tarea y esperará a que se complete.
