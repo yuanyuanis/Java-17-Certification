@@ -224,11 +224,6 @@ Por lo tanto, lo siguiente no es una reducción paralela incluso con una corrien
 ```java
     parallelStream.collect(Collectors.toSet()); // Not a parallel reduction
 ```
-The Collectors class includes two sets of static methods for retrieving collectors, toConcurrentMap() and
-groupingByConcurrent(), both of which are UNORDERED and CONCURRENT. These methods produce Collector instances capable of
-performing parallel reductions efficiently. Like their nonconcurrent counterparts, there are overloaded versions that
-take additional arguments.
-
 La clase `Collectors` incluye dos sets de métodos estáticos para recuperar collectors, `toConcurrentMap()` y `groupingByConcurrent()`, ambos *UNORDERED* y *CONCURRENT*. Estos métodos producen instancias de `Collector` capaces de realizar reducciones paralelas de manera eficiente. 
 Existen versiones sobrecargadas que toman argumentos adicionales.
 
