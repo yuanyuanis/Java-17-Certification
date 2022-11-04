@@ -99,9 +99,9 @@ En la práctica, usar el método de `submit()` es bastante similar al método de
 | boolean	awaitTermination(long timeout, TimeUnit unit) | Bloquea hasta que todas las tareas hayan completado la ejecución después de una solicitud de cierre, se agote el tiempo de espera o se interrumpa el hilo actual, lo que ocurra primero. | 
 
 
-**Enviando Tareas: execute() vs. submit()**
+## Enviando Tareas: execute() vs. submit()
 
-Como habrás notado, los métodos de execute() y submit() son casi idénticos cuando se aplican a expresiones *Runnable*.
+Como habrás notado, los métodos de execute()  y submit() son casi idénticos cuando se aplican a expresiones *Runnable*.
 El método submit() tiene la ventaja obvia de hacer lo mismo que execute(), pero con un objeto de retorno que se puede usar para rastrear el resultado. Debido a esta ventaja y al hecho de que execute() no admite expresiones "Callable", tendemos a preferir 
 submit() a execute().
 
@@ -112,14 +112,15 @@ execute() siempre que sea posible.
 
 
 ¿Cómo sabemos cuándo se completa una tarea enviada a un `ExecutorService`?
- Como se mencionó en la sección anterior, El método submit() devuelve una instancia de Future<V> que se puede usar para determinar este resultado.
+
+- Como se mencionó en la sección anterior, El método `submit()` devuelve una instancia de `Future<V>` que se puede usar para determinar este resultado.
 
 ```java
     Future<?> future = service.submit(() -> System.out.println("Hello"));
 
 ```
 
-Future, es en realidad una interfaz, con distintas implementaciones, de cara al examen hay que saber como operar con los metodos de esta interfaz. 
+`Future`, es en realidad una interfaz, con distintas implementaciones, de cara al examen hay que saber como operar con los metodos de esta interfaz. 
 
 
 ***Metodos Future***
@@ -154,14 +155,18 @@ public class CheckResults {
 ```
 
 
-Este ejemplo es similar a la *polling implementation*, pero no usa la clase `Thread` directamente. En parte, esta es la esencia de la *Concurrency API*: hacer cosas complejas con subprocesos sin tener que administrar los subprocesos directamente. También espera como máximo 10 segundos, lanzando una `TimeoutException` en la llamada a result.get() si la tarea no se realiza.
+Este ejemplo es similar a la *polling implementation*, pero no usa la clase `Thread` directamente. En parte, esta es la esencia de la *Concurrency API*: hacer cosas complejas con subprocesos sin tener que administrar los subprocesos directamente. 
 
-¿Cuál es el valor de retorno de esta tarea? Como `Future<V>` es una interfaz genérica, el tipo V está determinado por el tipo de retorno del método `Runnable`. Dado que el tipo de retorno de ***Runnable.run()*** es void, el método get() siempre devuelve un valor ***null*** cuando se trabaja con expresiones `Runnable`.
+También espera como máximo 10 segundos, lanzando una `TimeoutException` en la llamada a result.get() si la tarea no se realiza.
+
+¿Cuál es el valor de retorno de esta tarea? 
+
+- Como `Future<V>` es una interfaz genérica, el tipo V está determinado por el tipo de retorno del método `Runnable`. Dado que el tipo de retorno de ***Runnable.run()*** es void, el método get() siempre devuelve un valor ***null*** cuando se trabaja con expresiones `Runnable`. Lo que ves en la lambda expression es un Runnable ya que no retorna nada.
 
 
-## Introducing Callable
+## Introduccion a Callable
 
-La interfaz functional `java.util.concurrent.Callable`  es similar a Runnable execpto que su método `call()` devuelve un valor y puesde arrojar excepciones controladas.
+La interfaz functional `java.util.concurrent.Callable`  es similar a Runnable execpto que su método `call()` devuelve un valor y puede arrojar excepciones controladas.
 
 ```java
     @FunctionalInterface 
@@ -174,7 +179,7 @@ La interfaz `Callable` a menudo es preferible a Runnable, ya que permite recuper
 
 Afortunadamente, `ExecutorService` incluye una versión sobrecargada del método `submit()` que toma un objeto `Callable` y devuelve una instancia genérica de `Future<T>`.
 
-A diferencia de Runnable, en el que los métodos get() siempre devuelven null, los métodos get() de Future devuelven el tipo genérico  (aunque también podría ser un valor nulo).
+A diferencia de Runnable, en el que los métodos get() siempre devuelven null, los métodos get() devuelven tipo genérico Del Future (aunque también podría ser un valor nulo).
 
 ```java
 var service = Executors.newSingleThreadExecutor();
@@ -190,15 +195,17 @@ try {
 
 Después de enviar un conjunto de tareas a un *Thread Executor*, es común esperar los resultados. Como has visto anteriormentew, una solución es llamar a `get()` en el `Future` devuelto por el método submit(). Si no necesitamos los resultados de las tareas y hemos terminado de usar nuestro  *Thread Executor*, hay un enfoque más simple.
 
-Primero, apagamos el  *Thread Executor* usando el método `shutdown()`. A continuación, usamos el método `awaitTermination()`disponible para todos los *Threads Executor*. El método espera el tiempo especificado para completar todas las tareas y retorna antes cuando todas las tareas finalizan, o si se detecta una `InterruptedException`. Puede ver un ejemplo de esto en el siguiente fragmento de código:
+Primero, apagamos el  *Thread Executor* usando el método `shutdown()`. A continuación, usamos el método `awaitTermination()`disponible para todos los *Threads Executor*. El método espera el tiempo especificado para completar todas las tareas y retorna antes cuando todas las tareas finalizan, o si se detecta una `InterruptedException`. 
+
+Estos conceptos los podemos ver programados en el siguiente ejemplo
 
 ```java
 public static void main(String[] args) throws InterruptedException {
 
-    Runnable printInventory = () -> System.out.println("Printing zoo inventory");
-    Runnable printRecords = () -> {
+    Runnable imprimirInventario = () -> System.out.println("Imprimiendo el inventario del ZOO");
+    Runnable ImprmirRegistros = () -> {
         for (int i = 0; i < 3; i++) {
-            System.out.println("Printing record: " + i);
+            System.out.println("Mostrando el refistro: " + i);
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
@@ -211,9 +218,9 @@ public static void main(String[] args) throws InterruptedException {
     try {
 
         System.out.println("begin");
-        service.execute(printInventory);
-        service.execute(printRecords);
-        service.execute(printInventory);
+        service.execute(imprimirInventario);
+        service.execute(ImprmirRegistros);
+        service.execute(imprimirInventario);
         System.out.println("end");
 
 
@@ -223,9 +230,9 @@ public static void main(String[] args) throws InterruptedException {
     service.awaitTermination(1, TimeUnit.SECONDS);  // Esperamos un determindao tiempo a que se complete
 
     if (service.isTerminated())
-        System.out.println("Finished!");
+        System.out.println("Finalizado!");
     else
-        System.out.println("At least one task is still running");
+        System.out.println("Al menos una tarea esta aun corriendo");
 }
 ```
 
@@ -285,7 +292,7 @@ Por ejemplo, si una tarea se ejecuta a las 12:00 y tarda cinco minutos en finali
 El método scheduleWithFixedDelay() es útil para los procesos que desea que sucedan repetidamente pero cuyo tiempo específico no es importante. 
 - Por ejemplo, imagine que tenemos un trabajador de la cafetería del zoológico que reabastece periódicamente la barra de ensaladas a lo largo del día. El proceso puede demorar 20 minutos o más, ya que requiere que el trabajador transporte una gran cantidad de artículos desde la trastienda. Una vez que el trabajador ha llenado la barra de ensaladas con alimentos frescos, no necesita verificar en un momento específico, solo después de que haya pasado suficiente tiempo para que se quede sin existencias nuevamente.
 
-## Incrementando Concurrency with Pools
+## Incrementando la concurrencia con Pools
 
 Todos nuestros ejemplos hasta ahora han sido con un ejecutor de un solo subproceso que, aunque interesante, no fue particularmente útil. Después de todo, el nombre de este capítulo es "Concurrencia", ¡y no puedes hacer mucho de eso con un ejecutor de un solo subproceso!
 
