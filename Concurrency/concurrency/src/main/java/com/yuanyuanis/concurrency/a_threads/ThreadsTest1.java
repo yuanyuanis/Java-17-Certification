@@ -1,8 +1,6 @@
 package com.yuanyuanis.concurrency.a_threads;
 /**
  * 
- * @author Juan Ibañez
- *
  */
 public class ThreadsTest1 {
 
