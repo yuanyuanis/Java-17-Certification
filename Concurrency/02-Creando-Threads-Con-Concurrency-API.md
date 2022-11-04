@@ -77,12 +77,11 @@ Puedes enviar tareas a una instancia de `ExecutorService` de distinras formas.
 
 El primer método que presentamos, execute(), se hereda de la interfaz Executor, que se amplía con la interfaz `ExecutorService`.
 
-- El método execute() toma una instancia de Runnable y completa la tarea de forma asíncrona. Debido a que el tipo de devolución del método es nulo, no nos dice nada sobre el resultado de la tarea. Se considera un método de tipo *fire and forger*, ya que una vez que se envía, los resultados no están disponibles directamente para el hilo que llama.
+- El método execute() toma una instancia de `Runnable` y completa la tarea de forma asíncrona. Debido a que el tipo de devolución del método es nulo, no nos dice nada sobre el resultado de la tarea. Se considera un método de tipo *"fire and forget"*, ya que una vez que se envía, los resultados no están disponibles directamente para el hilo que llama.
 
-Afortunadamente, los ingenieros de Java agregaron métodos de `submit()` a la interfaz `ExecutorService`, que, al igual que execute(), se pueden usar para completar tareas de forma asíncrona. Sin embargo, a diferencia de execute(), `submit()` devuelve una instancia de `Future` que se puede usar para determinar si la tarea está completa. También se puede usar para devolver un objeto de resultado genérico después de que se haya completado la tarea.
+Afortunadamente, los ingenieros de Java agregaron métodos de `submit()` a la interfaz `ExecutorService`, que, al igual que execute(), se pueden usar para completar tareas de forma asíncrona. Sin embargo, a diferencia de execute(), `submit()` devuelve una instancia de `Future` que se puede usar para determinar si la tarea está completada. También se puede usar para devolver un *? Objetodo generico* como resultado después de que se haya completado la tarea.
 
 En la práctica, usar el método de `submit()` es bastante similar al método de execute(), excepto que el método de `submit() `devuelve una instancia de `Future` que se puede usar para determinar si la tarea ha completado la ejecución.
-
 
 ***Métodos de la clase ExecuteService para ejecutar tareas*** 
 
@@ -96,6 +95,7 @@ En la práctica, usar el método de `submit()` es bastante similar al método de
 
 ***Métodos de la clase ExecuteService para gestionar tareas*** 
 | Nombre método   |      Descripcion      |
+|----------|:-------------:|
 | boolean	awaitTermination(long timeout, TimeUnit unit) | Bloquea hasta que todas las tareas hayan completado la ejecución después de una solicitud de cierre, se agote el tiempo de espera o se interrumpa el hilo actual, lo que ocurra primero. | 
 
 
