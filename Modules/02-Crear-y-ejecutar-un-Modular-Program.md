@@ -42,22 +42,26 @@ Antes de que podamos ejecutar el código modular, debemos compilarlo. Aparte de 
 
 
 ```console
-    javac --module-path mods -d feeding feeding/zoo/animal/feeding/*.java feeding/`module-info.java` 
+    javac --module-path mods -d feeding feeding/zoo/animal/feeding/*.java feeding/module-info.java 
 ```
 
- Si desea utilizar varias líneas em consola, el enfoque varía según el sistema operativo. Linux usa una barra invertida (\) para escapar del salto de línea.
+ 
 
-Como revisión, la opción `-d` especifica el directorio donde esta la clase. El final del comando es una lista de los ficheros .java para compilar. Puedes listar los ficheros individualmente o usar un wildcard para todos los ficheros .java del subdirectorio.
+Como revisión, la opción `-d` especifica el directorio donde está la clase. El final del comando es una lista de los ficheros .java para compilar. Puedes listar los ficheros individualmente o usar un *wildcard* para todos los ficheros .java del subdirectorio.
 
-La nueva parte es `module-path`. Esta opción indica la ubicación de cualquier fichero `module` personalizado. En este ejemplo, la ruta del módulo podría haberse omitido ya que no hay dependencias. Puede pensar en `module-path` como un reemplazo de la opción classpath cuando está trabajando en un programa modular.
+La nueva parte es `module-path`. Esta opción indica la ubicación de cualquier fichero `module` personalizado. En este ejemplo, la ruta del módulo podría haberse omitido, ya que no hay dependencias. Puede pensar en `module-path` como un reemplazo de la opción *classpath* cuando está trabajando en un programa modular.
+
 ![](creatingandrunningamodularprogram/Figure1.png)
 
-**Y ... ¿ Ahora que pasa con el classpath ?**
+**Y ... ¿Ahora que pasa con el classpath?**
+
+
 La opción `classpath` tiene tres posibles formas: 
-- -cp, --class-path, and -classpath. Aun puedes usar estas opcione.
+- -cp, --class-path, and -classpath. Aín puedes usar estas opciones.
 
 Al igual que `classpath`, puede usar una abreviatura en el comando. La sintaxis` --module-path` y -p son equivalentes. Eso significa que podríamos haber escrito muchos otros comandos en lugar del comando anterior.
 
+ ```console
     javac -p mods -d feeding feeding/zoo/animal/feeding/*.java feeding/*.java
 
     javac -p mods -d feeding feeding/zoo/animal/feeding/*.java feeding/`module-info.java` 
@@ -65,7 +69,7 @@ Al igual que `classpath`, puede usar una abreviatura en el comando. La sintaxis`
     javac -p mods -d feeding feeding/zoo/animal/feeding/Task.java feeding/`module-info.java` 
 
     javac -p mods -d feeding feeding/zoo/animal/feeding/Task.java feeding/*.java
-
+ ```
 ![](creatingandrunningamodularprogram/Figure3.png)
 
 **Construyendo Modules(Build)**
@@ -87,24 +91,24 @@ Preste especial atención a la parte book.module/com.sybex.OCP. Es importante re
 ![](creatingandrunningamodularprogram/Figure4.png)
 
 Ahora que hemos visto la sintaxis, podemos escribir el comando para ejecutar la clase Task en el paquete zoo.animal.feeding. En el siguiente ejemplo, el nombre del paquete y el nombre del módulo son los mismos. Es común que el nombre del módulo coincida con el nombre completo del paquete o con el comienzo del mismo.
-
+ ```console
     java --module-path feeding  --module zoo.animal.feeding/zoo.animal.feeding.Task
-
+```
 Como ya viste que --module-path usa la forma abreviada de -p, apostamos a que no te sorprenderá saber que también hay una forma abreviada de --module. La opción corta es -m. Eso significa que el siguiente comando es equivalente:
-
+ ```console
     java -p feeding -m zoo.animal.feeding/zoo.animal.feeding.Task
-
+```
 En estos ejemplos, usamos feeding como la ruta del módulo porque ahí es donde compilamos el código. Esto cambiará una vez que empaquetemos el módulo y lo ejecutemos.
 
 ## Enpaquetar el primer Module
 
 Un módulo no sirve de mucho si solo podemos ejecutarlo en la carpeta en la que se creó. Nuestro siguiente paso es empaquetarlo. Asegúrese de crear un directorio de mods antes de ejecutar este comando:
-
+ ```console
     jar -cvf mods/zoo.animal.feeding.jar -C feeding/ .
-
+```
 No hay nada específico del módulo aquí. Estamos empaquetando todo en el directorio de feeding y almacenándolo en un archivo JAR llamado zoo.animal.feeding.jar en la carpeta mods. Esto representa cómo se verá el módulo JAR para otro código que quiera usarlo. Ahora ejecutemos el programa nuevamente, pero esta vez usando el directorio mods en lugar de las clases sueltas:
 
- ```python
+ ```console
    java -p mods  -m zoo.animal.feeding/zoo.animal.feeding.Task
 ```
 
