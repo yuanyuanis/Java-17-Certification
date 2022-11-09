@@ -2,8 +2,7 @@
 
 ## Crear los ficheros
 
-
-1. Creamos una clase simple
+Creamos una clase simple
 
 
 ```java
@@ -15,7 +14,7 @@ public class Task {
     }
 }
 ```
-Despues viene el module-info.java, Este es el mas simple posible.
+Después viene el `module-info.java` , Este es el mas simple posible.
 
 ```java
     module zoo.animal.feeding {
@@ -24,25 +23,26 @@ Despues viene el module-info.java, Este es el mas simple posible.
 
 Hay algunas diferencias clave entre una declaración de módulo y una declaración de clase Java normal:
 
-- El fichero module-info.java debe ir en el root del modulo. Las clase Java deben ir en paquetes
-- El modulo tiene que tener la palabra clave  `module`.
+- El fichero `module-info.java`  debe ir en el root del módulo. 
+- Las clases Java deben ir en paquetes.
+- El módulo tiene que tener la palabra clave  *`module`*.
 - El nombre del módulo sigue las reglas de nomenclatura para nombres de paquetes. A menudo incluye puntos (.) en su nombre. Los nombres regulares de clases y paquetes no pueden tener guiones (-). Los nombres de los módulos siguen la misma regla.
+
 
 El siguiente paso es asegurarse de que los archivos estén en la estructura de directorios correcta. La figura muestra la estructura de directorio esperada.
 
 ![](creatingandrunningamodularprogram/Figure2.png)
 
-En particular, feeding es el directorio del módulo y el archivo `module-info.java` está directamente debajo de él. Al igual que con un archivo JAR normal, también tenemos el paquete zoo.animal.feeding con una subcarpeta. La clase Task está en la subcarpeta adecuada para su paquete.
+En particular, *feeding* es el directorio del módulo y el archivo `module-info.java` está directamente debajo de él. Al igual que con un archivo *JAR* normal, también tenemos el paquete *zoo.animal.feeding* con una subcarpeta. La clase Task está en la subcarpeta adecuada para su paquete.
 
-Además, tenga en cuenta que creamos un directorio llamado mods al mismo nivel que el módulo. Lo usamos para almacenar los artefactos del módulo un poco más adelante en el capítulo. Este directorio puede tener cualquier nombre, pero mods es un nombre común.
 
-## Compiling Our First Module
+## Compilando nuestro primer *`Module`*
 
-Antes de que podamos ejecutar el código modular, debemos compilarlo. Aparte de la opción de ruta del módulo, este código debería resultar familiar del Capítulo 1:
+Antes de que podamos ejecutar el código modular, debemos compilarlo. Aparte de la opción de ruta del módulo
 
 
 ```console
-    javac --module-path mods -d feeding feeding/zoo/animal/feeding/*.java feeding/module-info.java
+    javac --module-path mods -d feeding feeding/zoo/animal/feeding/*.java feeding/`module-info.java` 
 ```
 
  Si desea utilizar varias líneas em consola, el enfoque varía según el sistema operativo. Linux usa una barra invertida (\) para escapar del salto de línea.
@@ -60,9 +60,9 @@ Al igual que `classpath`, puede usar una abreviatura en el comando. La sintaxis`
 
     javac -p mods -d feeding feeding/zoo/animal/feeding/*.java feeding/*.java
 
-    javac -p mods -d feeding feeding/zoo/animal/feeding/*.java feeding/module-info.java
+    javac -p mods -d feeding feeding/zoo/animal/feeding/*.java feeding/`module-info.java` 
 
-    javac -p mods -d feeding feeding/zoo/animal/feeding/Task.java feeding/module-info.java
+    javac -p mods -d feeding feeding/zoo/animal/feeding/Task.java feeding/`module-info.java` 
 
     javac -p mods -d feeding feeding/zoo/animal/feeding/Task.java feeding/*.java
 
