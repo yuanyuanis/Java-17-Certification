@@ -102,14 +102,18 @@ En estos ejemplos, usamos feeding como la ruta del módulo porque ahí es donde 
 
 ## Empaquetar el primer Module
 
-Un módulo no sirve de mucho si solo podemos ejecutarlo en la carpeta en la que se creó. Nuestro siguiente paso es empaquetarlo. Asegúrese de crear un directorio de mods antes de ejecutar este comando:
+Un módulo no sirve de mucho si solo podemos ejecutarlo, en la carpeta en la que se creó. Nuestro siguiente paso es empaquetarlo. 
+
+
  ```console
     jar -cvf mods/zoo.animal.feeding.jar -C feeding/ .
 ```
-No hay nada específico del módulo aquí. Estamos empaquetando todo en el directorio de feeding y almacenándolo en un archivo JAR llamado zoo.animal.feeding.jar en la carpeta mods. Esto representa cómo se verá el módulo JAR para otro código que quiera usarlo. Ahora ejecutemos el programa nuevamente, pero esta vez usando el directorio mods en lugar de las clases sueltas:
+No hay nada específico de `module` aquí. Estamos empaquetando todo en el directorio *feeding* y almacenándolo en un fichero *JAR* llamado *zoo.animal.feeding.jar* en la carpeta *mods*. 
 
- ```console
+Esto representa cómo se verá el módulo JAR para otro código que quiera usarlo. Ahora ejecutemos el programa nuevamente, pero esta vez usando el directorio mods en lugar de las clases sueltas:
+
+```console
    java -p mods  -m zoo.animal.feeding/zoo.animal.feeding.Task
 ```
 
-Puede notar que este comando se ve idéntico al de la sección anterior excepto por el directorio. En el ejemplo anterior, se estaba alimentando. En este, es la ruta del módulo de mods. Dado que se utiliza la ruta del módulo, se está ejecutando un JAR de módulo.
+Puedes notar que este comando es idéntico al de la sección anterior excepto por el directorio.  En este, es la ruta del módulo de mods. Dado que se utiliza la ruta del módulo, se está ejecutando el *JAR* del módulo.
