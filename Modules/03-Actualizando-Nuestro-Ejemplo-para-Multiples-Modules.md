@@ -1,10 +1,10 @@
-# ¡Actualizando Nuestro Ejemplo para Multiples Modulos!
+# ¡Actualizando nuestro ejemplo para múltiples `module`!
 
-## Actualizando el módulo feeding
+## Actualizando el módulo *feeding*
 
 Dado que nuestros otros módulos tendrán que llamar al código en el paquete *zoo.animal.feeding*, debemos declarar esta intención en la declaración del módulo.
 
-La directiva `export` se usa para indicar que un módulo quiere que el paquete indicado pueda ser ejecutado y visible desde fuera. Sin una directiva de `export`, el módulo solo está disponible para ejecutarse desde la línea de comandos.
+La directiva `export` se usa para indicar que un módulo quiere que el paquete indicado pueda ser ejecutado y visible desde fuera. Sin una directiva de `export`, el módulo solo está disponible para ejecutarse desde línea de comandos.
 
 ```java
     module zoo.animal.feeding { 
