@@ -1,10 +1,12 @@
 # Trabajando con Parallel Streams
 
-Hasta ahora, todas los streams con los que has trabajado han sido *Serial Streams*. Los *Serial Streams* son streams en los que se ordenan los resultados y solo se procesa un elemento cada vez.
+Hasta ahora, todas los streams con los que has trabajado han sido *Serial Streams*. 
 
-Los *Paralell Streams* son capaces de procesar los resultados **simultáneamente**, utilizando varios subprocesos. Por ejemplo, puedes usar *Paralell Streams* y la operación `map()` para operar **simultáneamente** sobre los elementos del `Stream`, lo que mejora enormemente el rendimiento con respecto al procesamiento de un  elemento cada vez.
+- Los ***Serial Streams*** son streams en los que se ordenan los resultados y solo se procesa un elemento cada vez.
 
-El uso de *Paralell Streams* puede cambiar, no solo el rendimiento de su aplicación, sino los resultados esperados. Como verás, algunas **operaciones** requieren un manejo especial para poder ser procesadas de manera parallela.
+- Los ***Paralell Streams*** son capaces de procesar los resultados **simultáneamente**, utilizando varios subprocesos. Por ejemplo, puedes usar *Paralell Streams* y la operación `map()` para operar **simultáneamente** sobre los elementos del `Stream`, lo que mejora enormemente el rendimiento con respecto al procesamiento de un  elemento cada vez.
+
+El uso de *Paralell Streams* puede cambiar, no solo el rendimiento de su aplicación, sino los resultados esperados. Como verás, algunas **operaciones** requieren un manejo especial para poder ser procesadas de forma paralela.
 
 ## Creando Parallel Streams
 
@@ -12,18 +14,21 @@ La API Stream fue diseñada para facilitar la creación de *Paralell Streams*. P
 
 ```java
     Collection<Integer> collection = List.of(1,2);
+
+    // Forma 1
     Stream<Integer> p1 = collection.stream().parallel();
+    
+    // Forma 2
     Stream<Integer> p2 = collection.parallelStream();
 ```
 
-La interfaz `Stream` incluye un método `isParallel()` que se puede usar para probar si la instancia de un `Stream` admite el procesamiento en paralelo. 
-Algunas operaciones en stream conservan el atributo **parallel**, mientras que otras no.
+La interfaz `Stream` incluye un método `isParallel()` que se puede usar para probar si la instancia de un `Stream` admite el procesamiento en paralelo. Esto es así porque algunas operaciones en stream conservan el atributo **parallel**, mientras que otras no.
 
-## Realizando Parallel Decomposition
+## Realizando Descomposicion Paralela
 
-Una descomposición paralela es el proceso de tomar una tarea, dividirla en pequeñas partes que se puedan realizar **simultáneamente** y luego volver a ensamblar los resultados. 
+La ***descomposición paralela*** es el proceso de tomar una tarea, dividirla en pequeñas partes que se puedan realizar **simultáneamente** y luego volver a ensamblar los resultados. 
 
-Cuanto más concurrente sea una descomposición, mayor será la mejora del rendimiento del uso de sterams paralelos.
+Cuanto más concurrente sea una descomposición, mayor será la mejora del rendimiento del uso de *Paralell Streams*.
 
 Probémoslo. Primero, definamos una función reutilizable que simule realizar una trabajo y que tarda 5 segundos en realizarla.
 
@@ -32,13 +37,14 @@ Probémoslo. Primero, definamos una función reutilizable que simule realizar un
 		
 		try {
 			Thread.currentThread();
-			Thread.sleep(1000);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {}
 		return input;
 	}
 ```
 
-Podemos simular que estamos en una aplicación real, este trabajo podría implicar llamar a una BBDD o leer de un archivo. Ahora usemos este método con *Serial Streams*.
+Podemos simular que estamos en una aplicación real, este trabajo podría implicar llamar a una BBDD o leer de un archivo. 
+Ahora usemos este método con *Serial Streams*.
 
 ```java
     Instant start = Instant.now();
@@ -53,6 +59,7 @@ Podemos simular que estamos en una aplicación real, este trabajo podría implic
 ```
 
 ¿Qué crees que escupe este código cuando se ejecute como parte de un método main()? 
+
 Veamos:
 
 ```json
@@ -60,20 +67,20 @@ Veamos:
     Time: 25 seconds
 ```
 
-Como era de esperar, los resultados están ordenados y son predecibles porque estamos usando una stream en serie. Por lo que tarda alrededor de 25 segundos procesar los cinco resultados, uno cada vez. ¿Qué sucede si reemplazamos el codigo para usar `parallelStream()`? 
+Como era de esperar, los resultados están ordenados y son predecibles porque estamos usando una stream en serie. Por lo que tarda alrededor de 25 segundos procesar los cinco resultados, uno cada vez. 
 
-La siguiente es una salida de muestra:
+¿Qué sucede si reemplazamos el codigo para usar `parallelStream()`? ... imprimiria algo así:
 
 ```json
     3 2 1 5 4
     Time: 5 seconds
 ```
 
-Como puedes ver, los resultados ya no estan ordenados, ni son predecibles. Las operaciones `map()` y `forEach()` en `stream parallel` son equivalentes a enviar varias expresiones lambda Runnable a un Thread Pool Executor y luego esperar los resultados.
+Como puedes ver, los resultados ya no estan ordenados, ni son predecibles. Las operaciones `map()` y `forEach()` en `stream parallel` son equivalentes a enviar varias expresiones lambda Runnable a un Thread-Pool-Executor y luego esperar los resultados.
 
-## Ordering Results 
+## Ordenando resultados 
 
-Si la operación `Stream` necesita garantizar el orden y no estás seguro de si es en serie o en paralelo, puedes reemplazar la línea con una que use `forEachOrdered()`:
+Si la operación `Stream` necesita garantizar el orden y no estás seguro de si esta en serie o en paralelo, puedes reemplazar la línea con una que use `forEachOrdered()`:
 
 ```java
     .forEachOrdered(s -> System.out.print(s + " "));
@@ -86,8 +93,7 @@ Esto genera los resultados en el orden en que se definen en el `Stream`:
     1 2 3 4 5
     Time: 5 seconds
 ```
-Es verdad, hemos perdido parte del rendimiento al ordenar pero aun podemos hacer operaciones en paralelo.
-
+Es verdad, hemos perdido parte del rendimiento al ordenar pero aun podemos hacer operaciones en paralelo reduciendo mucho mas.
 
 ## Procesando Parallel Reductions
 
