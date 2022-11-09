@@ -57,9 +57,9 @@ La nueva parte es `module-path`. Esta opción indica la ubicación de cualquier 
 
 
 La opción `classpath` tiene tres posibles formas: 
-- -cp, --class-path, and -classpath. Aín puedes usar estas opciones.
+- `-cp`, `--class-path`, and `-classpath`. Aún puedes usar estas opciones.
 
-Al igual que `classpath`, puede usar una abreviatura en el comando. La sintaxis` --module-path` y -p son equivalentes. Eso significa que podríamos haber escrito muchos otros comandos en lugar del comando anterior.
+Al igual que `classpath`, puede usar una abreviatura en el comando. La sintaxis `--module-path` y `-p` son equivalentes. Eso significa que podríamos haber escrito muchos otros comandos en lugar del comando anterior.
 
  ```console
     javac -p mods -d feeding feeding/zoo/animal/feeding/*.java feeding/*.java
