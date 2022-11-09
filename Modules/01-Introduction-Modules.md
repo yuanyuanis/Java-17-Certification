@@ -8,8 +8,6 @@ La Java Platform Module System (JPMS) arupa codigo a alto nivel. El objetivo fun
 
 Es como un fichero JAR, con la excepcion de que el desarrollador elige que paquetes son accesible fuera del modulo.
 
-It’s like a JAR file, except a developer chooses which packages are accessible outside the module. 
-
 La Java Platform Module System includes lo following:
 
 - un formato para los ficheros module JAR.
