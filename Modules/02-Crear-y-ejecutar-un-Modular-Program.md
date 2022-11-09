@@ -64,9 +64,9 @@ Al igual que `classpath`, puede usar una abreviatura en el comando. La sintaxis`
  ```console
     javac -p mods -d feeding feeding/zoo/animal/feeding/*.java feeding/*.java
 
-    javac -p mods -d feeding feeding/zoo/animal/feeding/*.java feeding/`module-info.java` 
+    javac -p mods -d feeding feeding/zoo/animal/feeding/*.java feeding/module-info.java 
 
-    javac -p mods -d feeding feeding/zoo/animal/feeding/Task.java feeding/`module-info.java` 
+    javac -p mods -d feeding feeding/zoo/animal/feeding/Task.java feeding/module-info.java 
 
     javac -p mods -d feeding feeding/zoo/animal/feeding/Task.java feeding/*.java
  ```
@@ -74,7 +74,7 @@ Al igual que `classpath`, puede usar una abreviatura en el comando. La sintaxis`
 
 **Construyendo Modules(Build)**
 
-Incluso sin módulos, es raro ejecutar comandos javac y java manualmente en un proyecto real. Se vuelven largos y complicados muy rápidamente. La mayoría de los desarrolladores usan una herramienta de compilación como Maven o Gradle. Estas herramientas de compilación sugieren directorios en los que colocar los archivos de clase, como target/classes.
+Incluso sin módulos, es raro ejecutar comandos `javac` y java manualmente en un proyecto real. Se vuelven largos y complicados muy rápidamente. La mayoría de los desarrolladores usan una herramienta de compilación como Maven o Gradle. Estas herramientas de compilación sugieren directorios en los que colocar los archivos de clase, como target/classes.
 
 Es probable que la única vez que necesite conocer la sintaxis de estos comandos sea cuando realice el examen. Los conceptos en sí son útiles, independientemente.
 
@@ -100,7 +100,7 @@ Como ya viste que --module-path usa la forma abreviada de -p, apostamos a que no
 ```
 En estos ejemplos, usamos feeding como la ruta del módulo porque ahí es donde compilamos el código. Esto cambiará una vez que empaquetemos el módulo y lo ejecutemos.
 
-## Enpaquetar el primer Module
+## Empaquetar el primer Module
 
 Un módulo no sirve de mucho si solo podemos ejecutarlo en la carpeta en la que se creó. Nuestro siguiente paso es empaquetarlo. Asegúrese de crear un directorio de mods antes de ejecutar este comando:
  ```console
