@@ -1,14 +1,14 @@
-# Creando un servicio
+# Crear un servicio
 
 Un servicio se compone de una interfaz, cualquier clase a la que haga referencia la interfaz y una forma de buscar implementaciones de la interfaz. Las implementaciones no son parte del servicio.
 
 ![](creatingaservice/Modules-in-the-tour-application.png)
 
-No es necesario que tenga cuatro módulos separados. Lo hacemos para ilustrar los conceptos. Por ejemplo, la interfaz del proveedor de servicios y el localizador de servicios podrían estar en el mismo módulo.
+No es necesario que tenga cuatro módulos separados. Lo hacemos para ilustrar los conceptos. Por ejemplo, la interfaz del `service provider` y el localizador de servicios podrían estar en el mismo módulo.
 
-## Declaring Service Provider Interface
+## Declarando la interfaz `Service Provider`
 
-Primero, el módulo zoo.tours.api define un objeto Java llamado Souvenir. Se considera parte del servicio porque será referenciado por la interfaz.
+Primero, el módulo *zoo.tours.api* define un objeto Java llamado *Souvenir*.  Se considera parte del servicio porque será referenciado por la interfaz.
 
 ```java
     // Souvenir.java
@@ -17,7 +17,7 @@ Primero, el módulo zoo.tours.api define un objeto Java llamado Souvenir. Se con
     public record Souvenir(String description) { }
 ```
 
-A continuación, el módulo contiene un tipo de interfaz Java. Esta interfaz se denomina interfaz del proveedor de servicios porque especifica qué comportamiento tendrá nuestro servicio. En este caso, es una API simple con tres métodos.
+A continuación, programamos. A esta interfaz se la denomina `service provider` y especifica qué comportamiento tendrá el servicio. 
 
 ```java
     // Tour.java
@@ -30,17 +30,17 @@ A continuación, el módulo contiene un tipo de interfaz Java. Esta interfaz se 
     }
 ```
 
-Los tres métodos usan el modificador público implícito. Como estamos trabajando con módulos, también necesitamos crear un archivo module-info.java para que nuestra definición de módulo exporte el paquete que contiene la interfaz.
+
+Como estamos trabajando con módulos, necesitamos crear un archivo `module-info.java` para nuestra definición de módulo. Queremos exponer nuestra interfaz al exterior, con lo que es necesario usar `exports` sobre el paquete. 
 ```java
-
+ 
     // module-info.java
-
     module zoo.tours.api { 
         exports zoo.tours.api;
     }
 ```
 
-Ahora que tenemos ambos archivos, podemos compilar y empaquetar este módulo.
+Una vez tenemos todas las clases de nuestro módulo, compilamos y empaquetamos. 
 
 ```console
     javac -d serviceProviderInterfaceModule serviceProviderInterfaceModule/zoo/tours/api/*.java serviceProviderInterfaceModule/module-info.java
@@ -48,11 +48,16 @@ Ahora que tenemos ambos archivos, podemos compilar y empaquetar este módulo.
     jar -cvf mods/zoo.tours.api.jar -C serviceProviderInterfaceModule/ .
 ```
 
-## Creating a Service Locator
+## Crear el `Service Locator`
 
-Para completar nuestro servicio, necesitamos un localizador de servicios. Un localizador de servicios puede encontrar cualquier clase que implemente una interfaz de proveedor de servicios.
+Para completar nuestro servicio, necesitamos un localizador de servicios o `Service Locator`. 
 
-Afortunadamente, Java proporciona una clase ServiceLoader para ayudar con esta tarea. Pasa el tipo de interfaz del proveedor de servicios a su método load() y Java devolverá cualquier servicio de implementación que pueda encontrar. La siguiente clase lo muestra en acción:
+- Un `Service Locator` puede encontrar cualquier clase que implemente una interfaz de `service provider`.
+
+Afortunadamente, Java proporciona una clase `ServiceLoader` para ayudar con esta tarea. Pasa el tipo de interfaz del `service provider` a su método `load()` y Java devolverá cualquier implementación del servicio que pueda encontrar. 
+
+La siguiente clase lo muestra en acción:
+
 ```java
 
     package zoo.tours.reservations;
@@ -63,9 +68,10 @@ Afortunadamente, Java proporciona una clase ServiceLoader para ayudar con esta t
     
     public class TourFinder {
         public static Tour findSingleTour() {
-        ServiceLoader<Tour> loader = ServiceLoader.load(Tour.class);
-        for (Tour tour : loader) return tour;
-        return null;
+            ServiceLoader<Tour> loader = ServiceLoader.load(Tour.class);
+            for (Tour tour : loader) 
+                return tour;
+            return null;
         }
     
         public static List<Tour> findAllTours() {
@@ -77,10 +83,13 @@ Afortunadamente, Java proporciona una clase ServiceLoader para ayudar con esta t
         }
     }
 ```
+La llamada de `ServiceLoader` es relativamente costosa. Si estás escribiendo una aplicación real, considera almacenar en caché el resultado.
 
-La llamada de ServiceLoader es relativamente costosa. Si está escribiendo una aplicación real, es mejor almacenar en caché el resultado.
+Vamos con el módulo.
 
-Nuestra definición de módulo exporta el paquete con la clase de búsqueda TourFinder. Requiere el paquete de interfaz del proveedor de servicios. También tiene la directiva de usos ya que buscará un servicio.
+- Nuestra definición de módulo exporta el paquete con el `service locator`
+- Tenemos una dependencia de la API `service provider`, Nuestro service locator no puede funcionar sin ella, es decir, *la requerimos*
+- También tiene la directiva `uses`, ya que buscará un servicio.
 
 ```java
     // module-info.java
@@ -91,17 +100,21 @@ Nuestra definición de módulo exporta el paquete con la clase de búsqueda Tour
     }
 ```
 
-Recuerde que tanto los requisitos como los usos son necesarios, uno para compilar y otro para buscar. Finalmente, compilamos y empaquetamos el módulo.
+Recuerda que tanto  `require` como `uses`  son necesarios, uno para compilar y otro para buscar. 
 
-    javac -p mods -d serviceLocatorModule serviceLocatorModule/zoo/tours/reservations/*.java serviceLocatorModule/module-info.java
+Finalmente, compilamos y empaquetamos el módulo.
+
+   ```console
+ javac -p mods -d serviceLocatorModule serviceLocatorModule/zoo/tours/reservations/*.java serviceLocatorModule/module-info.java
 
     jar -cvf mods/zoo.tours.reservations.jar -C serviceLocatorModule/ .
+```
 
 Ahora que tenemos la interfaz y la lógica de búsqueda, hemos completado nuestro servicio.
 
-**Using ServiceLoader**
+**Usando ServiceLoader**
 
-Hay dos métodos en ServiceLoader que necesita conocer para el examen. La declaración es la siguiente, sin la implementación completa:
+Hay dos métodos en `ServiceLoader` que necesitamos conocer para el examen.
 
 ```java
     public final class ServiceLoader<S> implements Iterable<S> {
@@ -111,7 +124,9 @@ Hay dos métodos en ServiceLoader que necesita conocer para el examen. La declar
     }
 ```
 
-Como ya vimos, llamar a ServiceLoader.load() devuelve un objeto que puede recorrer normalmente. Sin embargo, solicitar un Stream le brinda un tipo diferente. La razón de esto es que un Stream controla cuándo se evalúan los elementos. Por lo tanto, un ServiceLoader devuelve un Stream de objetos de proveedor. Debe llamar a get() para recuperar el valor que deseaba. de cada Proveedor, como en este ejemplo:
+Como ya vimos, llamar a `ServiceLoader.load()` devuelve un objeto que puede recorrer normalmente. Sin embargo, solicitar un `Stream` te brinda un tipo diferente. La razón de esto es que un Stream controla cuándo se evalúan los elementos. Por lo tanto, un ServiceLoader devuelve un Stream del `service provider`. 
+
+Debes llamar a get() para recuperar el valor que desea de cada Proveedor, como en este ejemplo:
 
 ```java
     ServiceLoader.load(Tour.class) 
@@ -122,9 +137,9 @@ Como ya vimos, llamar a ServiceLoader.load() devuelve un objeto que puede recorr
         .ifPresent(System.out::println);
 ```
 
-## Invoking from a Consumer
+## Invocando desde un `Consumer`
 
-El siguiente paso es llamar al localizador de servicios por parte de un consumidor. Un consumidor (o cliente) se refiere a un módulo que obtiene y utiliza un servicio. Una vez que el consumidor ha adquirido un servicio a través del localizador de servicios, puede invocar los métodos proporcionados por la interfaz del proveedor de servicios.
+El siguiente paso es llamar al `service locator` por parte de un consumidor. Un consumidor (o cliente) se refiere a un módulo que obtiene y utiliza un servicio. Una vez que el consumidor ha adquirido un servicio a través del `service locator`, puede invocar los métodos proporcionados por la interfaz del `service provider`.
 
 ```java
     package zoo.visitor;
@@ -144,7 +159,7 @@ El siguiente paso es llamar al localizador de servicios por parte de un consumid
     }
 ```
 
-Nuestra definición de módulo no necesita saber nada acerca de las implementaciones ya que el módulo zoo.tours.reservations está manejando la búsqueda.
+Nuestro `module` no necesita saber nada acerca de las implementaciones, ya que el módulo *zoo.tours.reservations* está gestionando la búsqueda.
 
 ```java
     module zoo.visitor {
@@ -163,9 +178,9 @@ Esta vez, podemos ejecutar un programa después de compilarlo y empaquetarlo.
     java -p mods -m zoo.visitor/zoo.visitor.Tourist
 ```
 
-## Adding a Service Provider
+## Añadir el Service Provider
 
-Un proveedor de servicios es la implementación de una interfaz de proveedor de servicios. Como dijimos anteriormente, en tiempo de ejecución es posible tener múltiples clases o módulos de implementación. Nos ceñiremos a uno aquí por simplicidad.
+Un `service provider` es la implementación de una interfaz de `service`. Como dijimos anteriormente, en tiempo de ejecución es posible tener múltiples clases o módulos de implementación. Nos ceñiremos a uno por simplicidad.
 
 ```python
     package zoo.tours.agency;
@@ -184,45 +199,45 @@ Un proveedor de servicios es la implementación de una interfaz de proveedor de 
             return new Souvenir("stuffed animal");
         }
     }
+```
+El `module-info.java`
 
+```java
 
     module zoo.tours.agency {
         requires zoo.tours.api;
         provides zoo.tours.api.Tour with zoo.tours.agency.TourImpl;
     }
 ```
+En este caso, en la declaración del módulo *requerimos* obviamente la API Service que queremos implementar.
 
-The module declaration requires the module containing the interface as a dependency. We don’t export the package that
-implements the interface since we don’t want callers referring to it directly. Instead, we use the provides directive.
-This allows us to specify that we provide an implementation of the interface with a specific implementation class. The
-syntax looks like this:
+Además, necesitamos indicar que somos una implementación y para esto usamos la directiva `provides with`. 
+
+Con `provides` indicamos que somos una implementación y con `with` especificamos la clase concreta que implementa.
 
     provides interfaceName with className;
 
-We have not exported the package containing the implementation. Instead, we have made the implementation available to a
-service provider using the interface.
+No hemos exportado el paquete que contiene la implementación. En su lugar, hemos puesto la implementación a disposición.
 
-Finally, we compile it and package it up.
+Compilamos y empaquetamos
 
     javac -p mods -d serviceProviderModule serviceProviderModule/zoo/tours/agency/*.java 
     serviceProviderModule/module-info.java
     jar -cvf mods/zoo.tours.agency.jar -C serviceProviderModule/ .
 
-Now comes the cool part. We can run the Java program again.
+
+Ahora viene la parte genial. Podemos ejecutar el programa Java de nuevo.
 
     java -p mods -m zoo.visitor/zoo.visitor.Tourist
 
-Notice how we didn’t recompile the zoo.tours.reservations or zoo.visitor package. The service locator was able to
-observe that there was now a service provider implementation available and find it for us. This is useful when you have
-functionality that changes independently of the rest of the code base. For example, you might have custom reports or
-logging.
+Observa cómo no tenemos que volver a compilar el paquete *zoo.tours.reservations o zoo.visitor*. El `service locator` pudo observar que ahora había una implementación `service provider` disponible y la encuentra. Esto es útil cuando tiene una funcionalidad que cambia independientemente del resto del código base. Por ejemplo, puede tener informes o loggers personalizados.
 
 ## Reviewing Directives and Services
 
-Table 12.4 summarizes what we’ve covered in the section about services. We recommend learning really well what is needed
-when each artifact is in a separate module. That is most likely what you will see on the exam and will ensure that you
-understand the concepts. Table 12.5 lists all the directives you need to know for the exam.
+La tabla 12.4 resume lo que hemos cubierto en la sección sobre servicios. Recomendar aprender muy bien lo que se necesita, **cuando cada *artefacto* está en un módulo separado**. Es muy probable que eso sea lo que verá en el examen y además te asegurarás que comprendes los conceptos. 
 
 ![](creatingaservice/Reviewing-services.png)
+
+La tabla 12.5 enumera todas las directivas que necesita saber para el examen.
 
 ![](creatingaservice/Reviewing-directives.png)
