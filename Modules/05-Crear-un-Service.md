@@ -104,7 +104,7 @@ Recuerda que tanto  `require` como `uses`  son necesarios, uno para compilar y o
 
 Finalmente, compilamos y empaquetamos el módulo.
 
-   ```console
+```console
  javac -p mods -d serviceLocatorModule serviceLocatorModule/zoo/tours/reservations/*.java serviceLocatorModule/module-info.java
 
     jar -cvf mods/zoo.tours.reservations.jar -C serviceLocatorModule/ .
@@ -221,20 +221,24 @@ No hemos exportado el paquete que contiene la implementación. En su lugar, hemo
 
 Compilamos y empaquetamos
 
+```console
     javac -p mods -d serviceProviderModule serviceProviderModule/zoo/tours/agency/*.java 
     serviceProviderModule/module-info.java
     jar -cvf mods/zoo.tours.agency.jar -C serviceProviderModule/ .
+```
 
 
 Ahora viene la parte genial. Podemos ejecutar el programa Java de nuevo.
 
+```console
     java -p mods -m zoo.visitor/zoo.visitor.Tourist
+```
 
 Observa cómo no tenemos que volver a compilar el paquete *zoo.tours.reservations o zoo.visitor*. El `service locator` pudo observar que ahora había una implementación `service provider` disponible y la encuentra. Esto es útil cuando tiene una funcionalidad que cambia independientemente del resto del código base. Por ejemplo, puede tener informes o loggers personalizados.
 
-## Reviewing Directives and Services
+## Repasando Directives y Services
 
-La tabla 12.4 resume lo que hemos cubierto en la sección sobre servicios. Recomendar aprender muy bien lo que se necesita, **cuando cada *artefacto* está en un módulo separado**. Es muy probable que eso sea lo que verá en el examen y además te asegurarás que comprendes los conceptos. 
+La tabla 12.4 resume lo que hemos cubierto en la sección sobre servicios. Recomendar aprender muy bien lo que se necesita, **cuando cada *artefacto* está en un módulo separado**. Es muy probable que eso sea lo que caiga en el examen, y de paso, te asegurarás comprender bien los conceptos. 
 
 ![](creatingaservice/Reviewing-services.png)
 
