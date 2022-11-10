@@ -208,26 +208,26 @@ Lo más importante que debe recordar es que jmod es solo para trabajar con los a
 Uno de los beneficios de los módulos es poder suministrar solo las partes de Java que necesita. Nuestro ejemplo del zoológico del comienzo del capítulo no tiene muchas dependencias.
 
 Si el usuario ya no tiene Java o está en un dispositivo sin mucha memoria, descargar un JDK de más de 150 MB es una gran pregunta. ¡Veamos qué tan grande debe ser el paquete! Este comando crea nuestra distribución más pequeña:
- ```python
-   jlink --module-path mods --add-modules zoo.animal.talks --output zooA
+ ```console
+   `jlink` --module-path mods --add-modules zoo.animal.talks --output zooA
 
 ```
 Primero especificamos dónde encontrar los módulos personalizados con -p o --module-path. Luego especificamos los nombres de nuestros módulos con --add-modules. Esto incluirá las dependencias que requiere siempre que se puedan encontrar. Finalmente, especificamos el nombre de la carpeta de nuestro JDK más pequeño con --output.
 
 Hay muchos módulos en el JDK que no necesitamos. Además, las herramientas de desarrollo como javac no necesitan estar en una distribución de tiempo de ejecución.
+
 ## Reviewing Command-Line Option
 
-This section presents a number of tables that cover what you need to know about running command-line options for the
-exam.
+Esta sección presenta una serie de tablas que cubren lo que necesita saber sobre cómo ejecutar las opciones de línea de comandos para el examen.
 
 ![](discoveringmodules/Comparing-command-line-operations-1.png)
 
 ![](discoveringmodules/Comparing-command-line-operations-2.png)
 
-![](discoveringmodules/Options-you-need-to-know-for-the-exam:javac.png)
+![](discoveringmodules/Options-you-need-to-know-for-the-exam_javac.png)
 
-![](discoveringmodules/Options-you-need-to-know-for-the-exam:java.png)
+![](discoveringmodules/Options-you-need-to-know-for-the-exam_java.png)
 
-![](discoveringmodules/Options-you-need-to-know-for-the-exam:jar.png)
+![](discoveringmodules/Options-you-need-to-know-for-the-exam_jar.png)
 
-![](discoveringmodules/Options-you-need-to-know-for-the-exam:jdeps.png)
+![](discoveringmodules/Options-you-need-to-know-for-the-exam_jdeps.png)
