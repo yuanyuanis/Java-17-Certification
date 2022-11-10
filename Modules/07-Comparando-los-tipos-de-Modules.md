@@ -1,47 +1,35 @@
 # Comparing Types of Modules
 
-All the modules we’ve used so far in this chapter are called named modules. There are two other types of modules:
-automatic modules and unnamed modules. In this section, we describe these three types of modules. On the exam, you
-will need to be able to compare them.
+Todos los módulos que hemos usado hasta ahora en este capítulo se denominan módulos con nombre. Hay otros dos tipos de módulos: módulos automáticos y módulos sin nombre. En esta sección, describimos estos tres tipos de módulos. En el examen, deberá poder compararlos.
 
 ## Named Modules
 
-A named module is one containing a module-info.java file. To review, this file appears in the root of the JAR alongside
-one or more packages. Unless otherwise specified, a module is a named module. Named modules appear on the module path
-rather than the classpath. Later, you learn what happens if a JAR containing a module-info.java file is on the
-classpath. For now, just know it is not considered a named module because it is not on the module path.
+Un módulo con nombre es uno que contiene un archivo module-info.java. Para revisar, este archivo aparece en la raíz del JAR junto con uno o más paquetes. A menos que se especifique lo contrario, un módulo es un módulo con nombre. Los módulos con nombre aparecen en la ruta del módulo en lugar de en la ruta de clases. Más tarde, aprenderá qué sucede si un archivo JAR que contiene un archivo module-info.java está en el classpath. Por ahora, sepa que no se considera un módulo con nombre porque no está en la ruta del módulo.
 
-As a way of remembering this, a named module has the name inside the module-info.java file and is on the module path.
+Como una forma de recordar esto, un módulo con nombre tiene el nombre dentro del archivo module-info.java y está en la ruta del módulo.
 
 ## Automatic Modules
 
-An automatic module appears on the module path but does not contain a module-info.java file. It is simply a regular JAR
-file that is placed on the module path and gets treated as a module.
+Aparece un módulo automático en la ruta del módulo pero no contiene un archivo module-info.java. Es simplemente un archivo JAR normal que se coloca en la ruta del módulo y se trata como un módulo.
 
-As a way of remembering this, Java automatically determines the module name. The code referencing an automatic module
-treats it as if there is a module-info.java file present. It automatically exports all packages. It also determines the
-module name. How does it determine the module name, you ask? Excellent question.
+Como una forma de recordar esto, Java determina automáticamente el nombre del módulo. El código que hace referencia a un módulo automático lo trata como si hubiera un archivo module-info.java presente. Exporta automáticamente todos los paquetes. También determina el nombre del módulo. ¿Cómo determina el nombre del módulo, te preguntarás? Excelente pregunta.
 
-Every JAR file contains a special folder called META-INF and, within it, a text file called MANIFEST.MF. It can be
-created automatically when the JAR is created or by hand by the JAR’s author.
+Cada archivo JAR contiene una carpeta especial llamada META-INF y, dentro de ella, un archivo de texto llamado MANIFEST.MF. Puede ser creado automáticamente cuando se crea el JAR o a mano por el autor del JAR.
 
-The authors were encouraged to declare the name they intended to use for the module by adding a property named
-Automatic-Module-Name into their MANIFEST.MF file.
+Se animó a los autores a declarar el nombre que pretendían usar para el módulo agregando una propiedad denominada Automatic-Module-Name en su archivo MANIFEST.MF.
 
 **About the MANIFEST.MF File**
 
-A JAR file contains a special text file called META-INF/MANIFEST.MF that contains information about the JAR. It’s been
-around significantly longer than modules—since the early days of Java and JARs, to be exact.The figure shows how the
-manifest fits into the directory structure of a JAR file.
+Un archivo JAR contiene un archivo de texto especial llamado META-INF/MANIFEST.MF que contiene información sobre el JAR. Ha existido durante mucho más tiempo que los módulos, desde los primeros días de Java y los JAR, para ser exactos. La figura muestra cómo encaja el manifiesto en la estructura de directorios de un archivo JAR.
 
-The manifest contains extra information about the JAR file. For example, it often contains the version of Java used to
-build the JAR file. For command-line programs, the class with the main() method is commonly specified.
+El manifiesto contiene información adicional sobre el archivo JAR. Por ejemplo, a menudo contiene la versión de Java utilizada para crear el archivo JAR. Para los programas de línea de comandos, la clase con el método main() se especifica comúnmente.
 
-Each line in the manifest is a key/value pair separated by a colon.You can think of the manifest as a map of property
-names and values.The default manifest in Java 17 looks like this:
+Cada línea en el manifiesto es un par clave/valor separado por dos puntos. Puede pensar en el manifiesto como un mapa de nombres y valores de propiedades. El manifiesto predeterminado en Java 17 tiene este aspecto:
 
+```python
     Manifest-Version: 1.0
     Created-By: 17 (Oracle Corporation)
+```
 
 Specifying a single property in the manifest allowed library providers to make things easier for applications that
 wanted to use their library in a modular application. You can think of it as a promise that when the library becomes a
