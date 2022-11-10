@@ -1,18 +1,18 @@
 # Comparing Types of Modules
 
-Todos los módulos que hemos usado hasta ahora en este capítulo se denominan módulos con nombre. Hay otros dos tipos de módulos: módulos automáticos y módulos sin nombre. En esta sección, describimos estos tres tipos de módulos. En el examen, deberá poder compararlos.
+Todos los módulos que hemos usado hasta ahora en este capítulo se denominan `named modules`. Hay otros dos tipos de módulos: `automatic modules` y `unnamed modules`. En esta sección, describimos estos tres tipos de módulos. En el examen, deberá poder compararlos.
 
 ## Named Modules
 
-Un módulo con nombre es uno que contiene un archivo module-info.java. Para revisar, este archivo aparece en la raíz del JAR junto con uno o más paquetes. A menos que se especifique lo contrario, un módulo es un módulo con nombre. Los módulos con nombre aparecen en la ruta del módulo en lugar de en la ruta de clases. Más tarde, aprenderá qué sucede si un archivo JAR que contiene un archivo module-info.java está en el classpath. Por ahora, sepa que no se considera un módulo con nombre porque no está en la ruta del módulo.
+Un `named modules` es uno que contiene un archivo module-info.java. Para revisar, este archivo aparece en la raíz del JAR junto con uno o más paquetes. A menos que se especifique lo contrario, un módulo es un `named modules`. Los `named modules` aparecen en la ruta del módulo en lugar de en la ruta de clases. Más tarde, aprenderá qué sucede si un archivo JAR que contiene un archivo `module-info.java` está en el `classpath`. Por ahora, sepa que no se considera un `named modules` porque no está en la ruta del módulo.
 
-Como una forma de recordar esto, un módulo con nombre tiene el nombre dentro del archivo module-info.java y está en la ruta del módulo.
+Como una forma de recordar esto, un `named modules` tiene el nombre dentro del archivo module-info.java y está en la ruta del módulo.
 
-## Automatic Modules
+## `automatic modules`
 
-Aparece un módulo automático en la ruta del módulo pero no contiene un archivo module-info.java. Es simplemente un archivo JAR normal que se coloca en la ruta del módulo y se trata como un módulo.
+Aparece un `automatic modules` en la ruta del módulo pero no contiene un archivo `module-info.java`. Es simplemente un archivo JAR normal que se coloca en la ruta del módulo y se trata como un módulo.
 
-Como una forma de recordar esto, Java determina automáticamente el nombre del módulo. El código que hace referencia a un módulo automático lo trata como si hubiera un archivo module-info.java presente. Exporta automáticamente todos los paquetes. También determina el nombre del módulo. ¿Cómo determina el nombre del módulo, te preguntarás? Excelente pregunta.
+Como una forma de recordar esto, Java determina automáticamente el nombre del módulo. El código que hace referencia a un `automatic modules` lo trata como si hubiera un archivo module-info.java presente. Exporta automáticamente todos los paquetes. También determina el nombre del módulo. ¿Cómo determina el nombre del módulo, te preguntarás? Excelente pregunta.
 
 Cada archivo JAR contiene una carpeta especial llamada META-INF y, dentro de ella, un archivo de texto llamado MANIFEST.MF. Puede ser creado automáticamente cuando se crea el JAR o a mano por el autor del JAR.
 
@@ -26,66 +26,47 @@ El manifiesto contiene información adicional sobre el archivo JAR. Por ejemplo,
 
 Cada línea en el manifiesto es un par clave/valor separado por dos puntos. Puede pensar en el manifiesto como un mapa de nombres y valores de propiedades. El manifiesto predeterminado en Java 17 tiene este aspecto:
 
-```python
+```json
     Manifest-Version: 1.0
     Created-By: 17 (Oracle Corporation)
 ```
 
-Specifying a single property in the manifest allowed library providers to make things easier for applications that
-wanted to use their library in a modular application. You can think of it as a promise that when the library becomes a
-named module, it will use the specified module name.
+Especificar una sola propiedad en el manifiesto permitió a los proveedores de bibliotecas facilitar las cosas para las aplicaciones que querían usar su biblioteca en una aplicación modular. Puede considerarlo como una promesa de que cuando la biblioteca se convierta en un `named modules`, utilizará el nombre del módulo especificado.
 
-If the JAR file does not specify an automatic module name, Java will still allow you to use it in the module path. In
-this case, Java will determine the module name for you.
+Si el archivo JAR no especifica un nombre de `automatic modules`, Java aún le permitirá usarlo en la ruta del módulo. En este caso, Java determinará el nombre del módulo por usted.
 
-Java determines the automatic module name by basing it on the filename of the JAR file. Let’s go over the rules by
-starting with an example. Suppose we have a JAR file named holiday-calendar-1.0.0.jar.
+Java determina el nombre del `automatic modules` basándose en el nombre de archivo del archivo JAR. Repasemos las reglas comenzando con un ejemplo. Supongamos que tenemos un archivo JAR llamado holiday-calendar-1.0.0.jar.
 
-First Java will remove the extension .jar from the name. Then Java will remove the version from the end of the JAR
-filename. This is important because we want module names to be consistent. Having a different automatic module name
-every time you upgraded to a new version would not be good! After all, this would force you to change the module
-declaration of your nice, clean, modularized application every time you pulled in a later version of the holiday
-calendar JAR.
+Primero, Java eliminará la extensión .jar del nombre. Luego, Java eliminará la versión del final del nombre del archivo JAR. Esto es importante porque queremos que los nombres de los módulos sean coherentes. ¡Tener un nombre de `automatic modules` diferente cada vez que actualiza a una nueva versión no sería bueno! Después de todo, esto lo obligaría a cambiar la declaración del módulo de su aplicación agradable, limpia y modularizada cada vez que extraiga una versión posterior del JAR del calendario de vacaciones.
 
-Removing the version and extension gives us holiday-calendar. This leaves us with a problem. Dashes (-) are not allowed
-in module names. Java solves this problem by converting any special characters in the name to dots (.). As a result, the
-module name is holiday.calendar. Any characters other than letters and numbers are considered special characters in this
-replacement. Finally, any adjacent dots or leading/trailing dots are removed.
+Eliminar la versión y la extensión nos da un calendario de vacaciones. Esto nos deja con un problema. Los guiones (-) no están permitidos en los nombres de los módulos. Java resuelve este problema convirtiendo los caracteres especiales del nombre en puntos (.). Como resultado, el nombre del módulo es vacaciones.calendario. Todos los caracteres que no sean letras y números se consideran caracteres especiales en este reemplazo. Finalmente, se eliminan los puntos adyacentes o los puntos iniciales/posteriores.
 
-Since that’s a number of rules, let’s review the algorithm in a list for determining the name of an automatic module:
+Como son varias reglas, revisemos el algoritmo en una lista para determinar el nombre de un `automatic modules`:
 
-- If the MANIFEST.MF specifies an Automatic-Module-Name, use that. Otherwise, proceed with the remaining rules.
-- Remove the file extension from the JAR name.
-- Remove any version information from the end of the name. A version is digits and dots with possible extra information
-  at the end: for example, -1.0.0 or -1.0-RC.
-- Replace any remaining characters other than letters and numbers with dots.
-- Replace any sequences of dots with a single dot.
-- Remove the dot if it is the first or last character of the result.
+- Si MANIFEST.MF especifica un nombre de `automatic modules`, utilícelo. De lo contrario, proceda con las reglas restantes.
+- Elimine la extensión de archivo del nombre JAR.
+- Elimine cualquier información de versión del final del nombre. Una versión son dígitos y puntos con posible información adicional al final: por ejemplo, -1.0.0 o -1.0-RC.
+- Reemplace los caracteres restantes que no sean letras y números con puntos.
+- Reemplace cualquier secuencia de puntos con un solo punto.
+- Quite el punto si es el primer o último carácter del resultado.
 
 ![](comparingtypesofmodules/Practicing-with-automatic-module-names.png)
 
 ## Unnamed Modules
 
-An unnamed module appears on the classpath. Like an automatic module, it is a regular JAR. Unlike an automatic module,
-it is on the classpath rather than the module path. This means an unnamed module is treated like old code and a
-second-class citizen to modules.
+Aparece un `unnamed modules` en el classpath. Como un `automatic modules`, es un JAR regular. A diferencia de un `automatic modules`, está en la ruta de clase en lugar de la ruta del módulo. Esto significa que un `unnamed modules` se trata como un código antiguo y un ciudadano de segunda clase para los módulos.
 
-An unnamed module does not usually contain a module-info.java file. If it happens to contain one, that file will be
-ignored since it is on the classpath.
+Un `unnamed modules` no suele contener un archivo module-info.java. Si resulta que contiene uno, ese archivo será ignorado ya que está en el classpath.
 
-Unnamed modules do not export any packages to named or automatic modules. The unnamed module can read from any JARs on
-the classpath or module path. You can think of an unnamed module as code that works the way Java worked before modules.
-Yes, we know it is confusing for something that isn’t really a module to have the word module in its name.
+Los `unnamed modules` no exportan ningún paquete a `named modules` o automáticos. El `unnamed modules` puede leer desde cualquier archivo JAR en la ruta de clase o ruta del módulo. Puede pensar en un `unnamed modules` como un código que funciona de la forma en que funcionaba Java antes de los módulos. Sí, sabemos que es confuso que algo que no es realmente un módulo tenga la palabra módulo en su nombre.
 
-You can expect to get questions on the exam comparing the three types of modules. Please study Table 12.17 thoroughly
-and be prepared to answer questions about these items in any combination. A key point to remember is that code on the
-classpath can access the module path. By contrast, code on the module path is unable to read from the classpath.
+Puede esperar recibir preguntas en el examen comparando los tres tipos de módulos. Estudie detenidamente la tabla 12.17 y esté preparado para responder preguntas sobre estos elementos en cualquier combinación. Un punto clave a recordar es que el código en el classpath puede acceder a la ruta del módulo. Por el contrario, el código en la ruta del módulo no puede leer desde la ruta de clases.
 
 ## Reviewing Module Types
 
-You can expect to get questions on the exam comparing the three types of modules. Please study Table 12.17 thoroughly
-and be prepared to answer questions about these items in any combination. A key point to remember is that code on the
-classpath can access the module path. By contrast, code on the module path is unable to read from the classpath.
+Puede esperar recibir preguntas en el examen comparando los tres tipos de módulos. Estudie detenidamente la tabla 12.17 y esté preparado para responder preguntas sobre estos elementos en cualquier combinación. Un punto clave a recordar es que el código en el classpath puede acceder a la ruta del módulo. Por el contrario, el código en la ruta del módulo no puede leer desde la ruta de clases.
+
+
 
 ![](comparingtypesofmodules/Properties-of-module-types.png)
 
