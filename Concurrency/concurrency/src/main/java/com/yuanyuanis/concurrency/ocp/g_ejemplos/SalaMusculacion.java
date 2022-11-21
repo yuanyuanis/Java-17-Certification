@@ -1,4 +1,4 @@
-package com.yuanyuanis.concurrency.g_ejemplos;
+package com.yuanyuanis.concurrency.ocp.g_ejemplos;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
