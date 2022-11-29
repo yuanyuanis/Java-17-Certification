@@ -6,7 +6,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
-import org.junit.jupiter.api.Test;
+
 
 public class Executors9_BeeperControl {
 	
@@ -17,7 +17,7 @@ public class Executors9_BeeperControl {
 		Runnable beeper = () -> System.out.println("beep");
 		
 		// Con un delay de 10 segundos hace beep cada 5
-		final ScheduledFuture<?> beeperHandle = scheduler.scheduleAtFixedRate(beeper, 10, 5, SECONDS); 
+		ScheduledFuture<?> beeperHandle = scheduler.scheduleAtFixedRate(beeper, 10, 5, SECONDS);
 		
 		scheduler.schedule(() -> beeperHandle.cancel(true), 60 * 60, SECONDS); // Paramos el proceso a la hora.
 	}

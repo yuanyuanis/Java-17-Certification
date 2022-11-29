@@ -6,13 +6,11 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 
- * Una alternativa a los locks intrinsecas, con las mismas garantías en lo que
- * respecta a serialización y visibilidad.
+ * Una alternativa a los locks intrínsecos, con las mismas garantías en lo que respecta a serialización y visibilidad.
  * 
- * Lock es una interfaz con diferentes implementaciones que cambian el
- * comportamiento.
+ * Lock es una interfaz con diferentes implementaciones que cambian el comportamiento.
  * 
- * Ofrece cancelacion, fairness( justicia)
+ * Ofrece cancelación, fairness( justicia)
  * 
  * Justo en constructor:
  *
@@ -46,13 +44,13 @@ public class Safe4_ReentrantLock {
 	}
 
 	/**
-	 * TryLock -> Cogemos el Lock de despues de un tiempo, devuelve boolean.
+	 * TryLock --- Cogemos el Lock de después de un tiempo, devuelve boolean.
 	 * 
 	 * @throws InterruptedException
 	 */
 	public void bloqueaMiCasaConUnTiempo() throws InterruptedException {
 
-		// Tratamos de adquirir el lock después de un tiempo especifico.
+		// Tratamos de adquirir el lock después de un tiempo específico.
 		if (!bloqueo.tryLock(1l, TimeUnit.SECONDS)) {
 			System.out.println("Fallo al adquirir el lock, otro Thread lo posee");
 		} else {

@@ -10,9 +10,10 @@ public class ThreadsTest1 {
 			for (int i = 0; i <= 3; i++) {
 				System.out
 						.println("Se esta ejecutando el Thread: " + Thread.currentThread().getName() + " vuelta: " + i);
-				;
+
 			}
 		};
+
 		
 		Thread hilo1 = new Thread(tarea1,"Hilo1");
 		Thread hilo2 = new Thread(tarea2, "Hilo2");
@@ -43,7 +44,7 @@ public class ThreadsTest1 {
 			for (int i = 0; i <= 3; i++) {
 				System.out
 						.println("Se esta ejecutando el Thread: " + Thread.currentThread().getName() + " vuelta: " + i);
-				;
+
 			}
 		}
 	}
