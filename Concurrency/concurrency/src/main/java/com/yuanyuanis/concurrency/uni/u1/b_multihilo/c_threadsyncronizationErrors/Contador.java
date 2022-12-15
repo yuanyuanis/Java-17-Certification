@@ -6,10 +6,12 @@ class Contador {
     private AtomicInteger contador = new AtomicInteger(0);
 
     public  void incrementar() {
+
         contador.incrementAndGet();
+
     }
 
-    public AtomicInteger getCount() {
+    public AtomicInteger getCuenta() {
         return contador;
     }
 }

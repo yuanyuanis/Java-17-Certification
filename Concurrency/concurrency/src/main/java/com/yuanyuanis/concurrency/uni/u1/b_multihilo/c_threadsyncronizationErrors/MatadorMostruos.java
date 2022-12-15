@@ -1,10 +1,10 @@
 package com.yuanyuanis.concurrency.uni.u1.b_multihilo.c_threadsyncronizationErrors;
 
-public class IncrementarMostruos implements Runnable{
+public class MatadorMostruos implements Runnable{
 
     private Contador contador;
 
-    public IncrementarMostruos (Contador contador){
+    MatadorMostruos(Contador contador){
         this.contador = contador;
     }
 
@@ -13,11 +13,14 @@ public class IncrementarMostruos implements Runnable{
         for (int i = 0; i < 10_000; i++) {
             contador.incrementar();
         }
+
     }
 
     public static void main(String ...args) throws InterruptedException {
-        Contador cont = new Contador();
-        Runnable runnable = new IncrementarMostruos(cont);
+
+        Contador contadorRes = new Contador();
+
+        Runnable runnable = new MatadorMostruos(contadorRes);
 
         Thread goku = new Thread(runnable);
         Thread krilin = new Thread(runnable);
@@ -28,10 +31,9 @@ public class IncrementarMostruos implements Runnable{
         goku.join();
         krilin.join();
 
-        System.out.println("goku alive: " +goku.isAlive());
-        System.out.println("krilin alive: " +krilin.isAlive());
+        System.out.println("goku isAlive: "+ goku.isAlive() + "Krilin isAlive: " + krilin.isAlive());
 
-        System.out.println("El contador es: " + cont.getCount());
+        System.out.println("Contador: " + contadorRes.getCuenta());
 
     }
 }

@@ -34,8 +34,18 @@ public class B_ParallelStreams {
 			.forEach(s -> System.out.print(s+" "));
 		
 		Instant end = Instant.now();
-		System.out.println("\nTiempo transcurrido: " + Duration.between(start, end));
-		// Con parallel Stream el orden no esta garantizado
+		System.out.println("\nTiempo transcurrido: " + toSecondsFormat(Duration.between(start, end)));
+
+		// con parallel stream el tiempo no esta garantizado.
+
 	}
+
+	private static String toSecondsFormat(Duration duration) {
+
+		return duration.toString().replaceFirst("PT", "")
+				.replaceFirst("M", " minutos y ")
+				.replaceFirst("S", " segundos");
+	}
+
 
 }

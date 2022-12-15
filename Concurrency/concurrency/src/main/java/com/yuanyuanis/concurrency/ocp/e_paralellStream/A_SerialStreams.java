@@ -25,6 +25,8 @@ public class A_SerialStreams {
 		Collection<Integer> coleccion = List.of(1, 2, 3);
 		Stream<Integer> stream1  = coleccion.stream().parallel();
 		Stream<Integer> stream2  = coleccion.parallelStream();
+
+		// ------------------------------------------
 		
 		Instant start = Instant.now();
 		
@@ -34,9 +36,15 @@ public class A_SerialStreams {
 			.forEach(s -> System.out.print(s+" "));
 		
 		Instant end = Instant.now();
-		System.out.println("\nTiempo transcurrido: " + Duration.between(start, end));
-		
+		System.out.println("\nTiempo transcurrido: " + toSecondsFormat(Duration.between(start, end)));
 
+	}
+
+	private static String toSecondsFormat(Duration duration) {
+
+		return duration.toString().replaceFirst("PT", "")
+				.replaceFirst("M", " minutos y ")
+				.replaceFirst("S", " segundos");
 	}
 
 }

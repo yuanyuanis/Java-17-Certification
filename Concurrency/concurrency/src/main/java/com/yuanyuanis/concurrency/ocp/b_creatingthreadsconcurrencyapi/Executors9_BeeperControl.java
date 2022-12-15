@@ -15,9 +15,10 @@ public class Executors9_BeeperControl {
 	public void hazBeepPorUnaHora() {
 		
 		Runnable beeper = () -> System.out.println("beep");
-		
-		// Con un delay de 10 segundos hace beep cada 5
-		ScheduledFuture<?> beeperHandle = scheduler.scheduleAtFixedRate(beeper, 10, 5, SECONDS);
+
+		System.out.println("Inicializando Beeper, espere por favor ...");
+		// Ejecuta beeper con un delay de 5 segundos hace beep cada 2
+		ScheduledFuture<?> beeperHandle = scheduler.scheduleAtFixedRate(beeper, 5, 2, SECONDS);
 		
 		scheduler.schedule(() -> beeperHandle.cancel(true), 60 * 60, SECONDS); // Paramos el proceso a la hora.
 	}

@@ -12,17 +12,21 @@ public class ThrowSum {
         System.out.println("Ok");
     }
 
-    public void lanzarSumador(Integer n1, Integer n2, String fichero) throws IOException {
+    public void lanzarSumador(Integer n1, Integer n2, String fichResultado) throws IOException {
 
         System.out.println(Sumador.class.getCanonicalName());
 
+
+        // 1) Crear proceso.
         ProcessBuilder pb = new ProcessBuilder("java", Sumador.class.getCanonicalName(),
                 n1.toString(),
                 n2.toString());
 
-        pb.redirectError(new File("error.txt"));
-        pb.redirectOutput(new File(fichero));
 
+        pb.redirectError(new File("errores.txt"));
+        pb.redirectOutput(new File(fichResultado));
+
+        // 2) Arrancar proceso.
         pb.start();
     }
 }

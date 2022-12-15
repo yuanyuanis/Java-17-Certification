@@ -18,7 +18,5 @@ public class ProbandoMetodoJoin {
         t3.join();
 
         System.out.println("Se acaba el programa");
-
-
     }
 }

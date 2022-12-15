@@ -20,13 +20,13 @@ public class Executors4_Future_CalculadorCuadrado_RealMultithreading {
 	
 	public static void main(String ...args) throws InterruptedException, ExecutionException {
 		
-		var calculadorCuatrado = new Executors4_Future_CalculadorCuadrado_RealMultithreading();
-		
-		
-		Future<Integer> future1 = calculadorCuatrado.caculaCuadrado(4);
-		Future<Integer> future2 = calculadorCuatrado.caculaCuadrado(100);
-		
-		
+		var calculadorCuadrado = new Executors4_Future_CalculadorCuadrado_RealMultithreading();
+
+
+		Future<Integer> future1 = calculadorCuadrado.caculaCuadrado(4);
+		Future<Integer> future2 = calculadorCuadrado.caculaCuadrado(100);
+
+
 		while(!(future1.isDone() && future2.isDone())) {
 			System.out.println(
 				String.format("Future1 está %s u Future2 está %s ",
@@ -36,12 +36,12 @@ public class Executors4_Future_CalculadorCuadrado_RealMultithreading {
 			);
 			Thread.sleep(300);
 		}
-		
+
 
 		System.out.println("ResultadoF1: " + future1.get());
 		System.out.println("ResultadoF2: " + future2.get());
-		
-		calculadorCuatrado.service.shutdown();
+
+		calculadorCuadrado.service.shutdown();
 	}
 
 }

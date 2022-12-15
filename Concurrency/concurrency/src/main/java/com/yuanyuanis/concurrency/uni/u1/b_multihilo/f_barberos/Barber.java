@@ -13,7 +13,7 @@ import java.util.concurrent.Semaphore;
 class Barber {
     static Semaphore barber;
     static Semaphore customer;
-    static Semaphore mutex;            // Solo un sitio / se levanta de pronto
+    static Semaphore mutex;                  // Solo un sitio / se levanta de pronto
     static int seats = 2;                    // Número de sitios en la sala de espera.
     static int N = 5;                        // Numero de clientes.
 

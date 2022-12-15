@@ -56,7 +56,7 @@ public class Executors5_Callable implements Callable<String>{
 		
 		Instant end = Instant.now();
 		Duration dur = Duration.between(start, end);
-		System.out.println("Se ha tardado en ejecutar el codigo: "+ dur);
+		System.out.println("Se ha tardado en ejecutar el código: "+ dur);
 		
 		service.shutdown();
 		

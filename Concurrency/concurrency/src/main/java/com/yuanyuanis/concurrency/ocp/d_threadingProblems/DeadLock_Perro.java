@@ -1,5 +1,6 @@
 package com.yuanyuanis.concurrency.ocp.d_threadingProblems;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public record DeadLock_Perro(String name) {
@@ -8,9 +9,9 @@ public record DeadLock_Perro(String name) {
 		synchronized (comida) {
 			System.out.println(name() + " esta comiendo :-)");
 			esperar();
-			synchronized (bebida) {
-				System.out.println(name() + " esta bebiendo :-)");
-			}
+		}
+		synchronized (bebida) {
+			System.out.println(name() + " esta bebiendo :-)");
 		}
 		
 	}
@@ -18,9 +19,9 @@ public record DeadLock_Perro(String name) {
 		synchronized (bebida) {
 			System.out.println(name() + " esta bebiendo :-)");
 			esperar();
-			synchronized (comida) {
-				System.out.println(name() + " esta comiendo :-)");
-			}
+		}
+		synchronized (comida) {
+			System.out.println(name() + " esta comiendo :-)");
 		}
 	}
 	
@@ -44,13 +45,13 @@ public record DeadLock_Perro(String name) {
 		Comida comida = new Comida();
 		Bebida bebida = new Bebida();
 		
-		var service = Executors.newFixedThreadPool(3);
+		ExecutorService executorService = Executors.newFixedThreadPool(3);
 		
 		try {
-			service.submit(() -> perritoToby.comerYBeber(comida, bebida));
-			service.submit(() -> perritoLeyla.beberYComer(comida, bebida));
+			executorService.submit(() -> perritoToby.comerYBeber(comida, bebida));
+			executorService.submit(() -> perritoLeyla.beberYComer(comida, bebida));
 		} finally {
-			service.shutdown();
+			executorService.shutdown();
 		}
 		
 	}
