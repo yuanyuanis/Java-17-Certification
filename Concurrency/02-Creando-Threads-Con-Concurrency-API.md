@@ -83,7 +83,11 @@ Afortunadamente, los ingenieros de Java agregaron métodos de `submit()` a la in
 
 En la práctica, usar el método de `submit()` es bastante similar al método de execute(), excepto que el método de `submit() `devuelve una instancia de `Future` que se puede usar para determinar si la tarea ha completado la ejecución.
 
-***Métodos de la clase ExecuteService para ejecutar tareas*** 
+***Métodos de la clase ExecutorService para ejecutar tareas*** 
+
+
+
+
 
 | Nombre método   |      Descripcion      |
 |----------|:-------------:|
@@ -97,6 +101,9 @@ En la práctica, usar el método de `submit()` es bastante similar al método de
 | Nombre método   |      Descripcion      |
 |----------|:-------------:|
 | boolean	awaitTermination(long timeout, TimeUnit unit) | Bloquea hasta que todas las tareas hayan completado la ejecución después de una solicitud de cierre, se agote el tiempo de espera o se interrumpa el hilo actual, lo que ocurra primero. | 
+
+
+
 
 
 ## Enviando Tareas: execute() vs. submit()
