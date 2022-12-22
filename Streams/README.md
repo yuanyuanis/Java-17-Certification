@@ -173,12 +173,12 @@ La línea 18 te da más control. El método iterar() toma una semilla o un valor
 
 ## Hay que estudiarse esta tabla
 
-![Descripción de la imagen](./resources/Figure7.jpg)
+![Descripción de la imagen](./resources/Figure7.JPG)
 
 
 ## Common Terminal Operations
 
-![Descripción de la imagen](./resources/Figure2.jpg)
+![Descripción de la imagen](./resources/Figure2.JPG)
 
 ## Count
 public long count()
@@ -707,7 +707,7 @@ No solo es posible calcular el promedio, sino que también es fácil hacerlo. Cl
 - LongStream: Used for the primitive type `long`
 - DoubleStream: Used for the primitive types double and `float`
 
-![Descripción de la imagen](./resources/Figure3.jpg)
+![Descripción de la imagen](./resources/Figure3.JPG)
 
 Algunos ejemplos:
 
@@ -757,7 +757,7 @@ Algunos ejemplos:
 ```
 
 
-![Descripción de la imagen](./resources/Figure4.jpg)
+![Descripción de la imagen](./resources/Figure4.JPG)
 
 ## Using optional with Primitive Streams
 
@@ -770,7 +770,7 @@ Algunos ejemplos:
         System.out.println(optional.orElseGet(() -> Double.NaN)); //5.5
 ```
 
-![Descripción de la imagen](./resources/Figure5.jpg)
+![Descripción de la imagen](./resources/Figure5.JPG)
 
 ```java
 5: LongStream longs = LongStream.of(5, 10);
